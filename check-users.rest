@@ -1,0 +1,3 @@
+GET https://api.twitch.tv/helix/streams?user_login=krispoiss&user_login=testuser1&user_login=testuser2
+Client-ID: pl2hu83toh8d6havf73susul1lqdri
+Authorization: Bearer http://localhost

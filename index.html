@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sisumää LIVE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background-image.png') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+        }
+        .header img {
+            max-width: 100%;
+            height: auto;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .sidebar, .live-section, .offline-section {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .sidebar {
+            width: 25%;
+        }
+        .live-section, .offline-section {
+            width: 70%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .live-section div, .offline-section div {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .live-section div img, .offline-section div img {
+            width: 100%;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="file-e1SUjNlg6ASGOMaK4XMKEXD1" alt="Sisumää LIVE logo">
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Osalised</h2>
+            <ul id="user-list">
+                <!-- Siia tulevad kasutajad -->
+            </ul>
+        </div>
+        <div>
+            <div class="live-section" id="live-section">
+                <h2>Kes hetkel on live</h2>
+            </div>
+            <div class="offline-section" id="offline-section">
+                <h2>Kasutajad, kes on offline</h2>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const clientId = 'pl2hu83toh8d6havf73susul1lqdri';
+            const oauthToken = 'http://localhost';
+            const users = ["krispoissyuh", "rommy1337", "raido_ttv", "testuser3"];  // Lisage siia oma kasutajanimed
+            const userList = document.getElementById('user-list');
+            const liveSection = document.getElementById('live-section');
+            const offlineSection = document.getElementById('offline-section');
+
+            users.forEach(username => {
+                // Lisa kasutajad küljeribale
+                const userItem = document.createElement('li');
+                const userLink = document.createElement('a');
+                userLink.href = `https://twitch.tv/${username}`;
+                userLink.textContent = username;
+                userItem.appendChild(userLink);
+                userList.appendChild(userItem);
+
+                // Kontrolli, kas kasutaja on live
+                fetch(`https://api.twitch.tv/helix/streams?user_login=${username}`, {
+                    headers: {
+                        'Client-ID': clientId,
+                        'Authorization': `Bearer ${oauthToken}`
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.data && data.data.length > 0 && data.data[0].type === "live") {
+                        const userDiv = document.createElement('div');
+                        userDiv.innerHTML = `
+                            <p>${username}</p>
+                            <img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_${username}-440x248.jpg" alt="${username} thumbnail">
+                        `;
+                        liveSection.appendChild(userDiv);
+                    } else {
+                        const userDiv = document.createElement('div');
+                        userDiv.innerHTML = `
+                            <p>${username}</p>
+                            <img src="offline-thumbnail.png" alt="${username} thumbnail">
+                        `;
+                        offlineSection.appendChild(userDiv);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+            });
+
+            // Kui kedagi pole live, kuvame teate
+            setTimeout(() => {
+                if (!liveSection.querySelector('div')) {
+                    liveSection.innerHTML = "<p>Kedagi pole praegu lives</p>";
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
