@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # Import CORS
 import requests
 from bs4 import BeautifulSoup
 import json
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 def check_tiktok_live_status(url):
     response = requests.get(url)

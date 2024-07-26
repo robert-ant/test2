@@ -5,73 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sisumaa Live</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: url('assets/2024-07-14_18.17.44.png') no-repeat center center fixed;
-            background-size: cover;
-            margin: 0;
-            padding: 0;
-        }
-        .header {
-            text-align: center;
-            padding: 20px;
-        }
-        .header img {
-            max-width: 100%;
-            height: auto;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .sidebar, .live-section, .offline-section {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .sidebar {
-            width: 25%;
-        }
-        .live-section, .offline-section {
-            width: 70%;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-        .live-section div, .offline-section div {
-            background: rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px;
-        }
-        .live-section div img, .offline-section div img {
-            width: 100%;
-            border-radius: 10px;
-        }
-    </style>
 </head>
 <body>
     <div class="header">
-        <img src="assets/LOGOversionBASIC.png" alt="Sisumää LIVE logo">
+        <img src="assets/LOGOversionBASIC.png" alt="Sisumää LIVE logo" id="logo">
+        <label class="switch">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider round"></span>
+        </label>
     </div>
     <div class="container">
-        <div class="sidebar">
+        <div class="sidebar-container">
             <h2>Osalised</h2>
-            <ul id="user-list">
-                <!-- Siia tulevad kasutajad -->
-            </ul>
+            <div class="sidebar">
+                <ul id="user-list">
+                    <!-- Siia tulevad kasutajad -->
+                </ul>
+            </div>
         </div>
-        <div>
-            <div class="live-section" id="live-section">
-                <h2>Kes hetkel on live</h2>
-            </div>
-            <div class="offline-section" id="offline-section">
-                <h2>Kasutajad, kes on offline</h2>
-            </div>
+        <div class="live-container">
+            <h2>Kes hetkel on live</h2>
+            <div class="live-section" id="live-section"></div>
         </div>
     </div>
     <script>
@@ -81,11 +35,24 @@
             const youtubeApiKey = 'AIzaSyDna8MsiQrvWZ0GY2b2ZKIDKIRbk6UvRRw';
             const twitchUsers = ["krispoissyuh", "rommy1337", "raido_ttv", "ohnePixel"];  // Lisage siia oma Twitch kasutajanimed
             const youtubeUsers = ["UCx27Pkk8plpiosF14qXq-VA"];  // Lisage siia oma YouTube kanalite ID-d
-            const tiktokUsers = ["https://www.tiktok.com/@rockabillymees", "https://www.tiktok.com/@anotheruser"];  // Lisage siia oma TikTok kasutajanimed
+            const tiktokUsers = ["https://www.tiktok.com/@wasu_59q/live", "https://www.tiktok.com/@anotheruser"];  // Lisage siia oma TikTok kasutajanimed
             
             const userList = document.getElementById('user-list');
             const liveSection = document.getElementById('live-section');
-            const offlineSection = document.getElementById('offline-section');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const logo = document.getElementById('logo');
+
+            const darkModeLogo = 'assets/LOGOversionNIGHT.png';  // Replace with the path to your dark mode logo
+            const lightModeLogo = 'assets/LOGOversionBASIC.png';
+
+            darkModeToggle.addEventListener('change', () => {
+                document.body.classList.toggle('dark-mode');
+                if (darkModeToggle.checked) {
+                    logo.src = darkModeLogo;
+                } else {
+                    logo.src = lightModeLogo;
+                }
+            });
 
             twitchUsers.forEach(username => {
                 // Lisa Twitch kasutajad küljeribale
@@ -126,19 +93,13 @@
                 const liveUsers = data.data.map(stream => stream.user_name.toLowerCase());
 
                 twitchUsers.forEach(username => {
-                    const userDiv = document.createElement('div');
                     if (liveUsers.includes(username.toLowerCase())) {
+                        const userDiv = document.createElement('div');
                         userDiv.innerHTML = `
                             <p>${username}</p>
                             <img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_${username}-440x248.jpg" alt="${username} thumbnail">
                         `;
                         liveSection.appendChild(userDiv);
-                    } else {
-                        userDiv.innerHTML = `
-                            <p>${username}</p>
-                            <img src="offline-thumbnail.png" alt="${username} thumbnail">
-                        `;
-                        offlineSection.appendChild(userDiv);
                     }
                 });
 
@@ -154,23 +115,16 @@
                 fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&eventType=live&type=video&key=${youtubeApiKey}&channelId=${channelId}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log('YouTube API vastus:', data); // Logi API vastus
                     const liveChannels = data.items.map(item => item.snippet.channelId);
 
-                    const userDiv = document.createElement('div');
                     if (liveChannels.includes(channelId)) {
                         const videoId = data.items.find(item => item.snippet.channelId === channelId).id.videoId;
+                        const userDiv = document.createElement('div');
                         userDiv.innerHTML = `
                             <p>${username}</p>
                             <img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${username} thumbnail">
                         `;
                         liveSection.appendChild(userDiv);
-                    } else {
-                        userDiv.innerHTML = `
-                            <p>${username}</p>
-                            <img src="offline-thumbnail.png" alt="${username} thumbnail">
-                        `;
-                        offlineSection.appendChild(userDiv);
                     }
 
                     // Kui kedagi pole live, kuvame teate
@@ -178,7 +132,7 @@
                         liveSection.innerHTML += "<p>Kedagi pole praegu lives</p>";
                     }
                 })
-                .catch(error => console.error('Error fetching YouTube data:', error));
+                .catch(error => console.error('Error fetching YouTube live status:', error));
             }
 
             // Kontrolli, kas TikTok kasutajad on live
@@ -187,19 +141,13 @@
                 fetch(`/tiktok-status-check?url=${encodeURIComponent(url)}`)
                 .then(response => response.json())
                 .then(data => {
-                    const userDiv = document.createElement('div');
                     if (data.is_live) {
+                        const userDiv = document.createElement('div');
                         userDiv.innerHTML = `
                             <p>${username}</p>
                             <img src="https://www.tiktok.com/@${username}/live-thumbnail.jpg" alt="${username} thumbnail">
                         `;
                         liveSection.appendChild(userDiv);
-                    } else {
-                        userDiv.innerHTML = `
-                            <p>${username}</p>
-                            <img src="offline-thumbnail.png" alt="${username} thumbnail">
-                        `;
-                        offlineSection.appendChild(userDiv);
                     }
                 })
                 .catch(error => console.error('Error fetching TikTok live status:', error));
