@@ -1,12 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
 
-body {
-    font-family: 'Montserrat';
-    background: url('assets/2024-07-14_18.17.44.jpg') no-repeat center center fixed;
-    background-size: cover;
+html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
-    transition: background-color 0.5s, color 0.5s;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: url('assets/2024-07-14_18.17.44.jpg') no-repeat center center fixed;
+    background-size: cover;
+    transition: background-color 0.5s ease, background-image 0.5s ease, color 0.5s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 body.dark-mode {
@@ -17,53 +24,73 @@ body.dark-mode {
 
 .header {
     text-align: center;
-    padding: 20px;
+    padding: 20px 0;
     position: relative;
-}
-
-h2 {
-    margin-bottom: 5px;
-    margin-left: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .header img {
     width: 800px;
     height: 212px;
+    transition: opacity 0.5s ease;
 }
 
 .container {
     max-width: 800px;
-    margin: 0 auto;
     padding: 20px;
     display: flex;
-    justify-content: center;
-    gap: 20px;  /* Add this to set the gap between flex items */
+    justify-content: space-between;
+    gap: 20px;
 }
 
-.sidebar-container {
-    /* Removed empty rule */
-}
-
-.live-container {
-    width: auto;
+.sidebar-container, .live-container {
+    flex: 1;
 }
 
 .sidebar {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255);
     padding: 10px;
     border-radius: 10px;
-    transition: background-color 0.5s;
+    transition: background-color 0.5s ease;
     width: 266px;
+}
+
+body.dark-mode .sidebar {
+    background-color: #17153B;
 }
 
 #user-list {
     list-style-type: none;
-    padding-left: 0px;
+    padding-left: 0;
 }
 
-li {
-    padding-bottom: 16px;
-    padding-top: 5px;
+#user-list li {
+    padding: 5px 0 16px;
+}
+
+#user-list li a {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    align-items: center;
+    transition: color 0.5s ease;
+}
+
+body.dark-mode #user-list li a {
+    color: #F4F4F4;
+}
+
+#user-list li a:hover {
+    text-decoration: underline;
+}
+
+#user-list li a img {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
 }
 
 .live-section {
@@ -71,18 +98,12 @@ li {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-    transition: background-color 0.5s;
+    transition: background-color 0.5s ease;
     width: 527px;
-}
-
-body.dark-mode .sidebar {
-    background-color: #17153B;
-    transition: background-color 0.5s;
 }
 
 body.dark-mode .live-section div {
     background: #17153B;
-    transition: background-color 0.5s;
 }
 
 .live-section div {
@@ -90,6 +111,7 @@ body.dark-mode .live-section div {
     padding: 10px;
     text-align: center;
     border-radius: 17px;
+    transition: background-color 0.5s ease;
 }
 
 img {
@@ -101,13 +123,18 @@ img {
     width: 100%;
 }
 
+.live-section div a {
+    text-decoration: none;
+    color: inherit;
+}
+
 .switch {
     position: absolute;
-    top: 20px;
+    top: 15px;
     right: 20px;
-    display: inline-block;
     width: 60px;
     height: 34px;
+    display: inline-block;
 }
 
 .switch input {
@@ -124,26 +151,26 @@ img {
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
+    transition: background-color 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    border-radius: 0; /* Ensure the slider has no rounded corners */
 }
 
-.slider:before {
+.slider img {
+    height: 30px;
+    width: auto;
     position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
     left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
+    top: 2px; /* Adjust to align vertically */
+    transition: transform 0.5s ease;
 }
 
 input:checked + .slider {
     background-color: #2196F3;
 }
 
-input:checked + .slider:before {
+input:checked + .slider img {
     transform: translateX(26px);
 }

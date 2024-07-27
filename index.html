@@ -11,16 +11,16 @@
         <img src="assets/LOGOversionBASIC.png" alt="Sisumää LIVE logo" id="logo">
         <label class="switch">
             <input type="checkbox" id="darkModeToggle">
-            <span class="slider round"></span>
+            <span class="slider">
+                <img src="assets/son@4x.png" alt="Toggle" id="toggleImage">
+            </span>
         </label>
     </div>
     <div class="container">
         <div class="sidebar-container">
             <h2>Osalised</h2>
             <div class="sidebar">
-                <ul id="user-list">
-                    <!-- Siia tulevad kasutajad -->
-                </ul>
+                <ul id="user-list"></ul>
             </div>
         </div>
         <div class="live-container">
@@ -28,131 +28,6 @@
             <div class="live-section" id="live-section"></div>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const twitchClientId = 'pl2hu83toh8d6havf73susul1lqdri';
-            const twitchOAuthToken = 'ws30nb814vja12aufnvecscxs4pgt4';
-            const youtubeApiKey = 'AIzaSyDna8MsiQrvWZ0GY2b2ZKIDKIRbk6UvRRw';
-            const twitchUsers = ["krispoissyuh", "rommy1337", "raido_ttv", "ohnePixel"];  // Lisage siia oma Twitch kasutajanimed
-            const youtubeUsers = ["UCx27Pkk8plpiosF14qXq-VA"];  // Lisage siia oma YouTube kanalite ID-d
-            const tiktokUsers = ["https://www.tiktok.com/@wasu_59q/live", "https://www.tiktok.com/@anotheruser"];  // Lisage siia oma TikTok kasutajanimed
-            
-            const userList = document.getElementById('user-list');
-            const liveSection = document.getElementById('live-section');
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            const logo = document.getElementById('logo');
-
-            const darkModeLogo = 'assets/LOGOversionNIGHT.png';  // Replace with the path to your dark mode logo
-            const lightModeLogo = 'assets/LOGOversionBASIC.png';
-
-            darkModeToggle.addEventListener('change', () => {
-                document.body.classList.toggle('dark-mode');
-                if (darkModeToggle.checked) {
-                    logo.src = darkModeLogo;
-                } else {
-                    logo.src = lightModeLogo;
-                }
-            });
-
-            twitchUsers.forEach(username => {
-                // Lisa Twitch kasutajad küljeribale
-                const userItem = document.createElement('li');
-                const userLink = document.createElement('a');
-                userLink.href = `https://twitch.tv/${username}`;
-                userLink.textContent = username;
-                userItem.appendChild(userLink);
-                userList.appendChild(userItem);
-            });
-
-            youtubeUsers.forEach(channelId => {
-                fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${youtubeApiKey}`)
-                .then(response => response.json())
-                .then(data => {
-                    const username = data.items[0].snippet.title;
-                    const userItem = document.createElement('li');
-                    const userLink = document.createElement('a');
-                    userLink.href = `https://youtube.com/channel/${channelId}`;
-                    userLink.textContent = username;
-                    userItem.appendChild(userLink);
-                    userList.appendChild(userItem);
-
-                    checkIfLiveOnYouTube(channelId, username);
-                })
-                .catch(error => console.error('Error fetching YouTube channel data:', error));
-            });
-
-            // Kontrolli, kas Twitch kasutajad on live
-            fetch(`https://api.twitch.tv/helix/streams?${twitchUsers.map(user => `user_login=${user}`).join('&')}`, {
-                headers: {
-                    'Client-ID': twitchClientId,
-                    'Authorization': `Bearer ${twitchOAuthToken}`
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const liveUsers = data.data.map(stream => stream.user_name.toLowerCase());
-
-                twitchUsers.forEach(username => {
-                    if (liveUsers.includes(username.toLowerCase())) {
-                        const userDiv = document.createElement('div');
-                        userDiv.innerHTML = `
-                            <p>${username}</p>
-                            <img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_${username}-440x248.jpg" alt="${username} thumbnail">
-                        `;
-                        liveSection.appendChild(userDiv);
-                    }
-                });
-
-                // Kui kedagi pole live, kuvame teate
-                if (!liveSection.querySelector('div')) {
-                    liveSection.innerHTML += "<p>Kedagi pole praegu lives</p>";
-                }
-            })
-            .catch(error => console.error('Error fetching Twitch data:', error));
-
-            // Kontrolli, kas YouTube kasutajad on live
-            function checkIfLiveOnYouTube(channelId, username) {
-                fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&eventType=live&type=video&key=${youtubeApiKey}&channelId=${channelId}`)
-                .then(response => response.json())
-                .then(data => {
-                    const liveChannels = data.items.map(item => item.snippet.channelId);
-
-                    if (liveChannels.includes(channelId)) {
-                        const videoId = data.items.find(item => item.snippet.channelId === channelId).id.videoId;
-                        const userDiv = document.createElement('div');
-                        userDiv.innerHTML = `
-                            <p>${username}</p>
-                            <img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${username} thumbnail">
-                        `;
-                        liveSection.appendChild(userDiv);
-                    }
-
-                    // Kui kedagi pole live, kuvame teate
-                    if (!liveSection.querySelector('div')) {
-                        liveSection.innerHTML += "<p>Kedagi pole praegu lives</p>";
-                    }
-                })
-                .catch(error => console.error('Error fetching YouTube live status:', error));
-            }
-
-            // Kontrolli, kas TikTok kasutajad on live
-            tiktokUsers.forEach(url => {
-                const username = url.split('@')[1];
-                fetch(`/tiktok-status-check?url=${encodeURIComponent(url)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.is_live) {
-                        const userDiv = document.createElement('div');
-                        userDiv.innerHTML = `
-                            <p>${username}</p>
-                            <img src="https://www.tiktok.com/@${username}/live-thumbnail.jpg" alt="${username} thumbnail">
-                        `;
-                        liveSection.appendChild(userDiv);
-                    }
-                })
-                .catch(error => console.error('Error fetching TikTok live status:', error));
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
