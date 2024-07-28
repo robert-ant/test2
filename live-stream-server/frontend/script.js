@@ -1,18 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const twitchUsers = {
-        "krispoissyuh": "assets/krispoissyuh-icon.png",
-        "rommy1337": "assets/rommy1337-icon.png",
-        "raido_ttv": "assets/raido_ttv-icon.png",
-        "ohnePixel": "assets/ohnePixel-icon.png",
-        "KuruHS": "assets/ohnePixel-icon.png"
-    };
-    const youtubeUsers = {
-        "UCx27Pkk8plpiosF14qXq-VA": "assets/youtube-icon.png",
-        "UCSJ4gkVC6NrvII8umztf0Ow": "assets/youtube-icon.png"
-    };
-
-    const userList = document.getElementById('user-list');
-    const liveSection = document.getElementById('live-section');
+    const liveContainer = document.getElementById('live-container');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const logo = document.getElementById('logo');
     const toggleImage = document.getElementById('toggleImage');
@@ -58,65 +45,89 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Function to create and append user items
-    const appendUserItem = (username, link, icon) => {
-        const userItem = document.createElement('li');
-        const userLink = document.createElement('a');
-        userLink.href = link;
-        userLink.innerHTML = `<img src="${icon}" alt="Icon"> ${username}`;
-        userItem.appendChild(userLink);
-        userList.appendChild(userItem);
-    };
+    // Function to create streamer element
+    function createStreamerElement(username, thumbnail, platform) {
+        const div = document.createElement('div');
+        div.classList.add('streamer', 'online');
+        div.id = username;
 
-    // Add Twitch users to the sidebar
-    Object.keys(twitchUsers).forEach(username => {
-        appendUserItem(username, `https://twitch.tv/${username}`, twitchUsers[username]);
-    });
+        const img = document.createElement('img');
+        img.src = thumbnail;
+        img.alt = `${username} thumbnail`;
 
-    // Add YouTube users to the sidebar
-    Object.keys(youtubeUsers).forEach(channelId => {
-        appendUserItem(`YouTube Channel`, `https://youtube.com/channel/${channelId}`, youtubeUsers[channelId]);
-    });
+        const name = document.createElement('span');
+        name.innerText = `${username} (${platform})`;
 
-    // Fetch live stream data from the server for Twitch
-    fetch('/twitch/live')
-        .then(response => response.json())
-        .then(data => {
-            const liveUsers = new Set(data.data.map(stream => stream.user_name.toLowerCase()));
-            Object.keys(twitchUsers).forEach(username => {
-                if (liveUsers.has(username.toLowerCase())) {
-                    const userDiv = document.createElement('div');
-                    userDiv.innerHTML = `
-                        <a href="https://twitch.tv/${username}">
-                            <img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_${username}-440x248.jpg" alt="${username} thumbnail">
-                            <p>${username}</p>
-                        </a>`;
-                    liveSection.appendChild(userDiv);
-                }
-            });
-            if (!liveSection.querySelector('div')) {
-                liveSection.innerHTML += "<p>No one is live right now</p>";
-            }
-        })
-        .catch(error => console.error('Error fetching Twitch data:', error));
+        div.appendChild(img);
+        div.appendChild(name);
 
-    // Fetch live stream data from the server for YouTube
-    Object.keys(youtubeUsers).forEach(channelId => {
-        fetch(`/youtube/live/${channelId}`)
+        return div;
+    }
+
+    // Function to update the streamers
+    function updateStreamers() {
+        // Ensure containers exist
+        if (!liveContainer) {
+            console.error('Live container not found.');
+            return;
+        }
+
+        // Clear existing live container
+        liveContainer.innerHTML = '';
+
+        // Fetch Twitch live streams
+        fetch('http://localhost:3001/twitch/live')  // Ensure this matches the port your server is running on
             .then(response => response.json())
             .then(data => {
-                if (data.items && data.items.length > 0) {
-                    const username = data.items[0].snippet.channelTitle;
-                    const videoId = data.items[0].id.videoId;
-                    const userDiv = document.createElement('div');
-                    userDiv.innerHTML = `
-                        <a href="https://youtube.com/channel/${channelId}">
-                            <img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${username} thumbnail">
-                            <p>${username}</p>
-                        </a>`;
-                    liveSection.appendChild(userDiv);
+                if (data.data && data.data.length > 0) {
+                    const liveUsers = data.data.map(stream => ({
+                        username: stream.user_login.toLowerCase(),
+                        thumbnail: stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180'),
+                        platform: 'Twitch'
+                    }));
+
+                    liveUsers.forEach(user => {
+                        const streamerDiv = createStreamerElement(user.username, user.thumbnail, user.platform);
+                        liveContainer.appendChild(streamerDiv);
+                    });
                 }
             })
-            .catch(error => console.error('Error fetching YouTube channel data:', error));
-    });
+            .catch(error => {
+                console.error('Error fetching Twitch data:', error);
+            });
+
+        // Fetch YouTube live streams for each channel
+        const youtubeChannelIds = [
+            "UCx27Pkk8plpiosF14qXq-VA",
+            "UCSJ4gkVC6NrvII8umztf0Ow"
+        ];
+
+        youtubeChannelIds.forEach(channelId => {
+            fetch(`/youtube/live/${channelId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.items && data.items.length > 0) {
+                        const stream = data.items[0];
+                        const username = stream.snippet.channelTitle.toLowerCase();
+                        const thumbnail = stream.snippet.thumbnails.medium.url;
+                        const streamerDiv = createStreamerElement(username, thumbnail, 'YouTube');
+                        liveContainer.appendChild(streamerDiv);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching YouTube data:', error);
+                });
+        });
+    }
+
+    // Initial load
+    updateStreamers();
+
+    // Set interval to update streamers every minute
+    setInterval(updateStreamers, 60000); // 60000ms = 1 minute
 });

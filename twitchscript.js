@@ -1,5 +1,5 @@
 const clientId = 'pl2hu83toh8d6havf73susul1lqdri';
-const clientSecret = 'dxdqchz4bve6mgyyttb0mr92a7npf6';
+const clientSecret = '2htkl1prhlw07750xzjne3a6owdx2p';
 const url = 'https://id.twitch.tv/oauth2/token';
 
 const params = new URLSearchParams();
