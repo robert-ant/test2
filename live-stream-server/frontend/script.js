@@ -10,10 +10,6 @@ document.addEventListener("DOMContentLoaded", function() {
         "UCx27Pkk8plpiosF14qXq-VA": "assets/youtube-icon.png",
         "UCSJ4gkVC6NrvII8umztf0Ow": "assets/youtube-icon.png"
     };
-    const tiktokUsers = {
-        "wasu_59q": "assets/tiktok-icon.png",
-        "anotheruser": "assets/tiktok-icon.png"
-    };
 
     const userList = document.getElementById('user-list');
     const liveSection = document.getElementById('live-section');
@@ -119,24 +115,4 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         })
         .catch(error => console.error('Error fetching Twitch data:', error));
-
-    // Add TikTok users to the sidebar and check if they are live
-    Object.keys(tiktokUsers).forEach(username => {
-        const url = `https://www.tiktok.com/@${username}/live`;
-        appendUserItem(username, url, tiktokUsers[username]);
-        fetch(`/tiktok-status-check?url=${encodeURIComponent(url)}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.is_live) {
-                    const userDiv = document.createElement('div');
-                    userDiv.innerHTML = `
-                        <a href="${url}">
-                            <img src="https://www.tiktok.com/@${username}/live-thumbnail.jpg" alt="${username} thumbnail">
-                            <p>${username}</p>
-                        </a>`;
-                    liveSection.appendChild(userDiv);
-                }
-            })
-            .catch(error => console.error('Error fetching TikTok live status:', error));
-    });
 });
