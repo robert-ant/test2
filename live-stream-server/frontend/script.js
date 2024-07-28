@@ -73,28 +73,12 @@ document.addEventListener("DOMContentLoaded", function() {
         appendUserItem(username, `https://twitch.tv/${username}`, twitchUsers[username]);
     });
 
-    // Add YouTube users to the sidebar and check if they are live
+    // Add YouTube users to the sidebar
     Object.keys(youtubeUsers).forEach(channelId => {
-        fetch(`/youtube/live/${channelId}`)
-            .then(response => response.json())
-            .then(data => {
-                const username = data.items[0].snippet.channelTitle;
-                appendUserItem(username, `https://youtube.com/channel/${channelId}`, youtubeUsers[channelId]);
-                if (data.items.length > 0) {
-                    const videoId = data.items[0].id.videoId;
-                    const userDiv = document.createElement('div');
-                    userDiv.innerHTML = `
-                        <a href="https://youtube.com/channel/${channelId}">
-                            <img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${username} thumbnail">
-                            <p>${username}</p>
-                        </a>`;
-                    liveSection.appendChild(userDiv);
-                }
-            })
-            .catch(error => console.error('Error fetching YouTube channel data:', error));
+        appendUserItem(`YouTube Channel`, `https://youtube.com/channel/${channelId}`, youtubeUsers[channelId]);
     });
 
-    // Fetch Twitch streams and update live section
+    // Fetch live stream data from the server for Twitch
     fetch('/twitch/live')
         .then(response => response.json())
         .then(data => {
@@ -115,4 +99,24 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         })
         .catch(error => console.error('Error fetching Twitch data:', error));
+
+    // Fetch live stream data from the server for YouTube
+    Object.keys(youtubeUsers).forEach(channelId => {
+        fetch(`/youtube/live/${channelId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.items && data.items.length > 0) {
+                    const username = data.items[0].snippet.channelTitle;
+                    const videoId = data.items[0].id.videoId;
+                    const userDiv = document.createElement('div');
+                    userDiv.innerHTML = `
+                        <a href="https://youtube.com/channel/${channelId}">
+                            <img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${username} thumbnail">
+                            <p>${username}</p>
+                        </a>`;
+                    liveSection.appendChild(userDiv);
+                }
+            })
+            .catch(error => console.error('Error fetching YouTube channel data:', error));
+    });
 });

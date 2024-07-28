@@ -1,6 +1,10 @@
 {
   "dependencies": {
     "dotenv": "^16.4.5",
-    "find-open-port": "^2.0.3"
+    "express": "^4.19.2",
+    "find-open-port": "^2.0.3",
+    "node-cache": "^5.1.2",
+    "node-cron": "^3.0.3",
+    "node-fetch": "^3.3.2"
   }
 }

@@ -2,16 +2,11 @@ import express from 'express';
 import dotenv from 'dotenv';
 import NodeCache from 'node-cache';
 import fetch from 'node-fetch';
-import findOpenPort from 'find-open-port';
+import cron from 'node-cron';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import findOpenPort from 'find-open-port';
 
-// Required to resolve __dirname in ES module scope
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Load environment variables from the correct path
-dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
+dotenv.config();
 
 const app = express();
 const defaultPort = process.env.PORT || 3001;
@@ -19,16 +14,16 @@ const defaultPort = process.env.PORT || 3001;
 const youtubeApiKey = process.env.YOUTUBE_API_KEY;
 const twitchClientId = process.env.TWITCH_CLIENT_ID;
 const twitchClientSecret = process.env.TWITCH_CLIENT_SECRET;
-let twitchOAuthToken;
 
-const youtubeCache = new NodeCache({ stdTTL: 9 }); // Cache for 9 seconds
-const twitchCache = new NodeCache({ stdTTL: 9 }); // Cache for 9 seconds
+const youtubeCache = new NodeCache({ stdTTL: 300, checkperiod: 60 }); // Cache for 5 minutes
+const twitchCache = new NodeCache({ stdTTL: 300, checkperiod: 60 }); // Cache for 5 minutes
 
-console.log("YouTube API Key:", youtubeApiKey);
-console.log("Twitch Client ID:", twitchClientId);
-console.log("Twitch Client Secret:", twitchClientSecret);
+app.use(express.static('frontend'));
 
-app.use(express.static('frontend')); // Serve static files from the 'frontend' directory
+// Serve the main directory's HTML file
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Function to get Twitch OAuth token
 async function getTwitchOAuthToken() {
@@ -45,8 +40,7 @@ async function getTwitchOAuthToken() {
         });
         const data = await response.json();
         if (data.access_token) {
-            twitchOAuthToken = data.access_token;
-            console.log('Twitch Access Token:', twitchOAuthToken);
+            return data.access_token;
         } else {
             console.error('Error obtaining Twitch Access Token:', data);
         }
@@ -55,86 +49,90 @@ async function getTwitchOAuthToken() {
     }
 }
 
-// Call function to get token on startup
-getTwitchOAuthToken();
+let twitchOAuthToken;
 
-app.get('/youtube/live/:channelId', async (req, res) => {
-    const { channelId } = req.params;
-    const cachedResponse = youtubeCache.get(channelId);
-
-    if (cachedResponse) {
-        return res.json(cachedResponse);
-    }
-
-    try {
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&eventType=live&type=video&key=${youtubeApiKey}&channelId=${channelId}`;
-        console.log(`Fetching YouTube data from URL: ${url}`);
-        
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (data.error) {
-            console.error('YouTube API error:', data);
-            return res.status(data.error.code).json({ message: data.error.message, errors: data.error.errors });
-        }
-
-        youtubeCache.set(channelId, data);
-        res.json(data);
-    } catch (error) {
-        console.error('Error fetching YouTube data:', error);
-        res.status(500).json({ error: 'Error fetching YouTube data', details: error });
-    }
+// Periodic task to update Twitch OAuth token
+cron.schedule('0 * * * *', async () => {
+    twitchOAuthToken = await getTwitchOAuthToken();
 });
 
-app.get('/twitch/live', async (req, res) => {
-    const cachedResponse = twitchCache.get('twitch-live');
-
-    if (cachedResponse) {
-        return res.json(cachedResponse);
+// Function to fetch YouTube live streams
+async function fetchYouTubeLiveStreams() {
+    const youtubeUsers = ["UCx27Pkk8plpiosF14qXq-VA", "UCSJ4gkVC6NrvII8umztf0Ow"];
+    for (const channelId of youtubeUsers) {
+        try {
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&eventType=live&type=video&key=${youtubeApiKey}&channelId=${channelId}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            if (!data.error) {
+                youtubeCache.set(channelId, data);
+            } else {
+                console.error('YouTube API error:', data);
+            }
+        } catch (error) {
+            console.error('Error fetching YouTube data:', error);
+        }
     }
+}
 
+// Function to fetch Twitch live streams
+async function fetchTwitchLiveStreams() {
+    const twitchUsers = ["krispoissyuh", "rommy1337", "raido_ttv", "ohnePixel", "KuruHS"];
     if (!twitchOAuthToken) {
-        await getTwitchOAuthToken();
+        twitchOAuthToken = await getTwitchOAuthToken();
     }
-
     try {
-        const url = `https://api.twitch.tv/helix/streams?user_login=krispoissyuh&user_login=rommy1337&user_login=raido_ttv&user_login=ohnePixel&user_login=KuruHS`;
-        console.log(`Fetching Twitch data from URL: ${url}`);
-        
+        const url = `https://api.twitch.tv/helix/streams?user_login=${twitchUsers.join('&user_login=')}`;
         const response = await fetch(url, {
             headers: {
                 'Client-ID': twitchClientId,
                 'Authorization': `Bearer ${twitchOAuthToken}`
             }
         });
-        
-        if (!response.ok) {
-            console.error('Twitch API request failed:', response.statusText);
-            return res.status(response.status).json({ error: response.statusText });
-        }
-
         const data = await response.json();
-        
-        if (data.error) {
-            console.error('Twitch API error:', data);
-            return res.status(data.status).json({ message: data.message, errors: data.errors });
+        if (!data.error) {
+            twitchCache.set('twitch-live', data);
+        } else {
+                console.error('Twitch API error:', data);
         }
-
-        console.log('Twitch API response:', data);
-
-        twitchCache.set('twitch-live', data);
-        res.json(data);
     } catch (error) {
         console.error('Error fetching Twitch data:', error);
-        res.status(500).json({ error: 'Error fetching Twitch data', details: error });
+    }
+}
+
+// Schedule periodic fetching
+cron.schedule('*/5 * * * *', () => {
+    fetchYouTubeLiveStreams();
+    fetchTwitchLiveStreams();
+});
+
+// API endpoints to serve cached data
+app.get('/youtube/live/:channelId', (req, res) => {
+    const { channelId } = req.params;
+    const cachedResponse = youtubeCache.get(channelId);
+    if (cachedResponse) {
+        res.json(cachedResponse);
+    } else {
+        res.status(404).json({ error: 'No data available' });
+    }
+});
+
+app.get('/twitch/live', (req, res) => {
+    const cachedResponse = twitchCache.get('twitch-live');
+    if (cachedResponse) {
+        res.json(cachedResponse);
+    } else {
+        res.status(404).json({ error: 'No data available' });
     }
 });
 
 // Find an open port and start the server
-findOpenPort({ startPort: defaultPort }).then(port => {
-    app.listen(port, () => {
-        console.log(`Server running at http://localhost:${port}`);
+findOpenPort({ startingPort: defaultPort, endingPort: defaultPort + 100 })
+    .then(openPort => {
+        app.listen(openPort, () => {
+            console.log(`Server running at http://localhost:${openPort}`);
+        });
+    })
+    .catch(error => {
+        console.error('Error finding open port:', error);
     });
-}).catch(error => {
-    console.error('Error finding open port:', error);
-});
