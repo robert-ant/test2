@@ -1,3 +1,3 @@
 GET https://api.twitch.tv/helix/streams?user_login=krispoissyuh&user_login=rommy1337&user_login=raido_ttv
 Client-ID: pl2hu83toh8d6havf73susul1lqdri
-Authorization: Bearer eicln6mehz2ru6t1k4safmmxigre82
+Authorization: Bearer 42ajumby3kxyfvhs2wbpd0fzil5u6o

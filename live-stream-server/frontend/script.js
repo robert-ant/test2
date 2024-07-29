@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     const liveContainer = document.getElementById('live-container');
+    const sidebarContainer = document.getElementById('user-list');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const logo = document.getElementById('logo');
     const toggleImage = document.getElementById('toggleImage');
@@ -8,6 +9,15 @@ document.addEventListener("DOMContentLoaded", function() {
     const lightModeLogo = 'assets/LOGOversionBASIC.png';
     const lightModeImage = 'assets/son.png';
     const darkModeImage = 'assets/muun.png';
+
+    const customLogos = {
+        "krispoissyuh": "assets/krispoissyuh_logo.png",
+        "rommy1337": "assets/rommy1337_logo.png",
+        "raido_ttv": "assets/raido_ttv_logo.png",
+        "ohnePixel": "assets/ohnePixel_logo.png",
+        "KuruHS": "assets/KuruHS_logo.png",
+        "Joehills": "assets/JoehillsS_logo.png"
+    };
 
     // Initialize the toggle image and mode from localStorage
     if (localStorage.getItem('darkMode') === 'enabled') {
@@ -45,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Function to create streamer element
+    // Function to create streamer element for live section
     function createStreamerElement(username, thumbnail, platform) {
         const div = document.createElement('div');
         div.classList.add('streamer', 'online');
@@ -64,21 +74,45 @@ document.addEventListener("DOMContentLoaded", function() {
         return div;
     }
 
+    // Function to create sidebar user element
+    function createSidebarUserElement(username) {
+        const li = document.createElement('li');
+        li.id = username;
+
+        const img = document.createElement('img');
+        img.src = customLogos[username] || 'assets/default_logo.png';
+        img.alt = `${username} logo`;
+        img.classList.add('sidebar-logo');
+
+        const name = document.createElement('span');
+        name.innerText = username;
+        name.classList.add('sidebar-text');
+
+        li.appendChild(img);
+        li.appendChild(name);
+
+        return li;
+    }
+
     // Function to update the streamers
     function updateStreamers() {
         // Ensure containers exist
-        if (!liveContainer) {
-            console.error('Live container not found.');
+        if (!liveContainer || !sidebarContainer) {
+            console.error('Containers not found.');
             return;
         }
 
         // Clear existing live container
         liveContainer.innerHTML = '';
 
+        // Clear existing sidebar container
+        sidebarContainer.innerHTML = '';
+
         // Fetch Twitch live streams
-        fetch('http://localhost:3001/twitch/live')  // Ensure this matches the port your server is running on
+        fetch('http://localhost:3001/twitch/live')
             .then(response => response.json())
             .then(data => {
+                console.log('Twitch data:', data);
                 if (data.data && data.data.length > 0) {
                     const liveUsers = data.data.map(stream => ({
                         username: stream.user_login.toLowerCase(),
@@ -89,6 +123,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     liveUsers.forEach(user => {
                         const streamerDiv = createStreamerElement(user.username, user.thumbnail, user.platform);
                         liveContainer.appendChild(streamerDiv);
+
+                        const userLi = createSidebarUserElement(user.username);
+                        sidebarContainer.appendChild(userLi);
                     });
                 }
             })
@@ -96,33 +133,26 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.error('Error fetching Twitch data:', error);
             });
 
-        // Fetch YouTube live streams for each channel
-        const youtubeChannelIds = [
-            "UCx27Pkk8plpiosF14qXq-VA",
-            "UCSJ4gkVC6NrvII8umztf0Ow"
-        ];
-
-        youtubeChannelIds.forEach(channelId => {
-            fetch(`/youtube/live/${channelId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.items && data.items.length > 0) {
-                        const stream = data.items[0];
+        // Fetch YouTube live streams
+        fetch('http://localhost:3001/youtube/live')
+            .then(response => response.json())
+            .then(data => {
+                console.log('YouTube data:', data);
+                if (data && data.length > 0) {
+                    data.forEach(stream => {
                         const username = stream.snippet.channelTitle.toLowerCase();
                         const thumbnail = stream.snippet.thumbnails.medium.url;
                         const streamerDiv = createStreamerElement(username, thumbnail, 'YouTube');
                         liveContainer.appendChild(streamerDiv);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching YouTube data:', error);
-                });
-        });
+
+                        const userLi = createSidebarUserElement(username);
+                        sidebarContainer.appendChild(userLi);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching YouTube data:', error);
+            });
     }
 
     // Initial load
