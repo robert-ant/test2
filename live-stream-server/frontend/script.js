@@ -16,9 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "raido_ttv": "assets/raido_ttv_logo.png",
         "ohnePixel": "assets/ohnePixel_logo.png",
         "KuruHS": "assets/KuruHS_logo.png",
-        "Joehills": "assets/JoehillsS_logo.png",
-        "UCx27Pkk8plpiosF14qXq-VA": "assets/youtube_logo.png",
-        "UCSJ4gkVC6NrvII8umztf0Ow": "assets/youtube_logo.png"
+        "Joehills": "assets/Joehills_logo.png"
     };
 
     // Initialize the toggle image and mode from localStorage
@@ -64,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
         div.id = username;
 
         const img = document.createElement('img');
-        img.src = thumbnail;
+        img.src = thumbnail.replace('{width}', '320').replace('{height}', '180');
         img.alt = `${username} thumbnail`;
 
         const name = document.createElement('span');
@@ -111,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function() {
         sidebarContainer.innerHTML = '';
 
         // Fetch Twitch live streams
-        fetch('http://localhost:3001/twitch/live')
+        fetch('/twitch/live')
             .then(response => response.json())
             .then(data => {
                 console.log('Twitch data:', data);
@@ -136,34 +134,6 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .catch(error => {
                 console.error('Error fetching Twitch data:', error);
-            });
-
-        // Fetch YouTube live streams
-        fetch('http://localhost:3001/youtube/live')
-            .then(response => response.json())
-            .then(data => {
-                console.log('YouTube data:', data);
-                if (data && data.length > 0) {
-                    data.forEach(stream => {
-                        if (stream.live) {
-                            const username = stream.channelId; // Using channelId as username
-                            const channelName = stream.channelName; // Channel name from API response
-                            const thumbnail = 'assets/youtube_thumbnail_placeholder.png'; // Placeholder thumbnail
-                            const streamerDiv = createStreamerElement(username, channelName, thumbnail, 'YouTube');
-                            liveContainer.appendChild(streamerDiv);
-
-                            const userLi = createSidebarUserElement(username, channelName);
-                            sidebarContainer.appendChild(userLi);
-                        } else {
-                            console.log(`Channel ${stream.channelName} is not live.`);
-                        }
-                    });
-                } else {
-                    console.log('No live YouTube streams found.');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching YouTube data:', error);
             });
     }
 
