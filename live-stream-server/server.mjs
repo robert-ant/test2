@@ -54,27 +54,33 @@ async function getTwitchOAuthToken() {
 let twitchOAuthToken;
 
 cron.schedule('0 * * * *', async () => {
-    twitchOAuthToken = await getTitchOAuthToken();
+    twitchOAuthToken = await getTwitchOAuthToken();
     console.log('Twitch OAuth token updated:', twitchOAuthToken);
 });
 
-async function fetchYouTubeLiveStream(channelId) {
-    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&eventType=live&type=video&key=${youtubeApiKey}&channelId=${channelId}`;
+async function fetchYouTubeLiveStatus(channelId) {
+    const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${youtubeApiKey}`;
     const response = await fetch(url);
     const data = await response.json();
+
     if (data.items && data.items.length > 0) {
-        return data.items[0]; // Assuming you want the first live stream
+        const channelData = data.items[0];
+        const channelName = channelData.snippet.title;
+        const liveBroadcastContent = channelData.snippet.liveBroadcastContent;
+        console.log(`Channel: ${channelName}, Live Broadcast Content: ${liveBroadcastContent}`);
+        return { channelId, channelName, live: liveBroadcastContent === 'live' };
     } else {
-        return null;
+        console.log(`No data found for YouTube channel ID: ${channelId}`);
+        return { channelId, live: false };
     }
 }
 
-async function fetchYouTubeLiveStreams() {
+async function fetchYouTubeLiveStatuses() {
     const youtubeChannelIds = ["UCx27Pkk8plpiosF14qXq-VA", "UCSJ4gkVC6NrvII8umztf0Ow"];
-    const promises = youtubeChannelIds.map(channelId => fetchYouTubeLiveStream(channelId));
+    const promises = youtubeChannelIds.map(channelId => fetchYouTubeLiveStatus(channelId));
     const results = await Promise.all(promises);
-    const liveStreams = results.filter(result => result !== null);
-    youtubeCache.set('youtube-live', liveStreams);
+    console.log('YouTube live statuses:', results);
+    youtubeCache.set('youtube-live', results);
 }
 
 async function fetchTwitchLiveStreams() {
@@ -109,7 +115,7 @@ async function fetchTwitchLiveStreams() {
 }
 
 cron.schedule('*/5 * * * *', () => {
-    fetchYouTubeLiveStreams();
+    fetchYouTubeLiveStatuses();
     fetchTwitchLiveStreams();
 });
 
@@ -134,6 +140,6 @@ app.get('/twitch/live', (req, res) => {
 app.listen(defaultPort, () => {
     console.log(`Server running at http://localhost:${defaultPort}`);
     // Initial fetch to populate the cache
-    fetchYouTubeLiveStreams();
+    fetchYouTubeLiveStatuses();
     fetchTwitchLiveStreams();
 });

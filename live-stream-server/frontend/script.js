@@ -16,7 +16,9 @@ document.addEventListener("DOMContentLoaded", function() {
         "raido_ttv": "assets/raido_ttv_logo.png",
         "ohnePixel": "assets/ohnePixel_logo.png",
         "KuruHS": "assets/KuruHS_logo.png",
-        "Joehills": "assets/JoehillsS_logo.png"
+        "Joehills": "assets/JoehillsS_logo.png",
+        "UCx27Pkk8plpiosF14qXq-VA": "assets/youtube_logo.png",
+        "UCSJ4gkVC6NrvII8umztf0Ow": "assets/youtube_logo.png"
     };
 
     // Initialize the toggle image and mode from localStorage
@@ -56,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Function to create streamer element for live section
-    function createStreamerElement(username, thumbnail, platform) {
+    function createStreamerElement(username, channelName, thumbnail, platform) {
         const div = document.createElement('div');
         div.classList.add('streamer', 'online');
         div.id = username;
@@ -66,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function() {
         img.alt = `${username} thumbnail`;
 
         const name = document.createElement('span');
-        name.innerText = `${username} (${platform})`;
+        name.innerText = `${channelName} (${platform})`;
 
         div.appendChild(img);
         div.appendChild(name);
@@ -75,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Function to create sidebar user element
-    function createSidebarUserElement(username) {
+    function createSidebarUserElement(username, channelName) {
         const li = document.createElement('li');
         li.id = username;
 
@@ -85,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function() {
         img.classList.add('sidebar-logo');
 
         const name = document.createElement('span');
-        name.innerText = username;
+        name.innerText = channelName || username;
         name.classList.add('sidebar-text');
 
         li.appendChild(img);
@@ -116,17 +118,20 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (data.data && data.data.length > 0) {
                     const liveUsers = data.data.map(stream => ({
                         username: stream.user_login.toLowerCase(),
+                        channelName: stream.user_name,
                         thumbnail: stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180'),
                         platform: 'Twitch'
                     }));
 
                     liveUsers.forEach(user => {
-                        const streamerDiv = createStreamerElement(user.username, user.thumbnail, user.platform);
+                        const streamerDiv = createStreamerElement(user.username, user.channelName, user.thumbnail, user.platform);
                         liveContainer.appendChild(streamerDiv);
 
-                        const userLi = createSidebarUserElement(user.username);
+                        const userLi = createSidebarUserElement(user.username, user.channelName);
                         sidebarContainer.appendChild(userLi);
                     });
+                } else {
+                    console.log('No live Twitch streams found.');
                 }
             })
             .catch(error => {
@@ -140,14 +145,21 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.log('YouTube data:', data);
                 if (data && data.length > 0) {
                     data.forEach(stream => {
-                        const username = stream.snippet.channelTitle.toLowerCase();
-                        const thumbnail = stream.snippet.thumbnails.medium.url;
-                        const streamerDiv = createStreamerElement(username, thumbnail, 'YouTube');
-                        liveContainer.appendChild(streamerDiv);
+                        if (stream.live) {
+                            const username = stream.channelId; // Using channelId as username
+                            const channelName = stream.channelName; // Channel name from API response
+                            const thumbnail = 'assets/youtube_thumbnail_placeholder.png'; // Placeholder thumbnail
+                            const streamerDiv = createStreamerElement(username, channelName, thumbnail, 'YouTube');
+                            liveContainer.appendChild(streamerDiv);
 
-                        const userLi = createSidebarUserElement(username);
-                        sidebarContainer.appendChild(userLi);
+                            const userLi = createSidebarUserElement(username, channelName);
+                            sidebarContainer.appendChild(userLi);
+                        } else {
+                            console.log(`Channel ${stream.channelName} is not live.`);
+                        }
                     });
+                } else {
+                    console.log('No live YouTube streams found.');
                 }
             })
             .catch(error => {
