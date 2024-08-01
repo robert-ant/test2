@@ -106,6 +106,25 @@ app.get('/twitch/live', csrfProtection, async (req, res) => {
     }
 });
 
+// Store user statuses
+const userStatuses = {};
+
+// Endpoint to update user status
+app.post('/update-user-status', (req, res) => {
+    const { user, state } = req.body;
+    if (user && (state === 'on' || state === 'off')) {
+        userStatuses[user] = state;
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(400);
+    }
+});
+
+// Endpoint to get user status
+app.get('/user-status', (req, res) => {
+    res.json(userStatuses);
+});
+
 // Route to provide CSRF token
 app.get('/csrf-token', csrfProtection, (req, res) => {
     res.json({ csrfToken: req.csrfToken() });
@@ -114,22 +133,57 @@ app.get('/csrf-token', csrfProtection, (req, res) => {
 // Login route with CSRF protection
 app.post('/login', csrfProtection, (req, res) => {
     const { username, password } = req.body;
+    const validUsers = {
+        admin: 'password',
+        user1: 'password1',
+        user2: 'password2',
+        user3: 'password3',
+        user4: 'password4',
+        user5: 'password5',
+        user6: 'password6',
+        user7: 'password7',
+        user8: 'password8',
+        user9: 'password9',
+        user10: 'password10',
+        user11: 'password11',
+        user12: 'password12'
+    };
 
-    // Here you would validate the username and password against your database
-    if (username === 'admin' && password === 'password') {
+    if (validUsers[username] && validUsers[username] === password) {
         req.session.user = username;
-        res.json({ page: 'adminPage.html' });
+        res.json({ page: `${username}Page.html` });
     } else {
         res.status(401).send('Invalid username or password');
     }
 });
 
-// Serve admin page
-app.get('/adminPage', (req, res) => {
-    if (req.session.user === 'admin') {
-        res.sendFile(path.join(__dirname, 'frontend', 'adminPage.html'));
+// Serve user pages
+app.get('/:userPage', (req, res) => {
+    const userPage = req.params.userPage;
+    const validPages = [
+        'adminPage.html',
+        'user1Page.html',
+        'user2Page.html',
+        'user3Page.html',
+        'user4Page.html',
+        'user5Page.html',
+        'user6Page.html',
+        'user7Page.html',
+        'user8Page.html',
+        'user9Page.html',
+        'user10Page.html',
+        'user11Page.html',
+        'user12Page.html'
+    ];
+
+    if (validPages.includes(userPage)) {
+        if (req.session.user && userPage === `${req.session.user}Page.html`) {
+            res.sendFile(path.join(__dirname, 'frontend', userPage));
+        } else {
+            res.status(403).send('Forbidden');
+        }
     } else {
-        res.status(403).send('Forbidden');
+        res.status(404).send('Page not found');
     }
 });
 

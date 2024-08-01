@@ -14,6 +14,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-height: 100vh;
 }
 
 body.dark-mode {
@@ -44,14 +45,21 @@ body.dark-mode {
     display: flex;
     justify-content: space-between;
     gap: 20px;
+    flex: 1;
 }
 
 .sidebar-container, .live-container {
     flex: 1;
 }
 
+.sidebar-container h2,
+.live-container h2 {
+    margin-top: 20px; /* Adjust this value to move the headers down */
+    margin-bottom: 5px;
+}
+
 .sidebar {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255);
     padding: 10px;
     border-radius: 10px;
     transition: background-color 0.5s ease;
@@ -69,6 +77,8 @@ body.dark-mode .sidebar {
 
 #user-list li {
     padding: 5px 0 16px;
+    display: flex;
+    align-items: center;
 }
 
 #user-list li a {
@@ -87,10 +97,14 @@ body.dark-mode #user-list li a {
     text-decoration: underline;
 }
 
-#user-list li a img {
+.sidebar-logo {
     margin-right: 10px;
-    width: 16px;
-    height: 16px;
+    width: 30px;
+    height: 30px;
+}
+
+.sidebar-text {
+    font-size: 16px;
 }
 
 .live-section {
@@ -176,15 +190,14 @@ input:checked + .slider img {
 }
 
 .footer {
-    position: fixed;
-    bottom: 0;
     width: 100%;
     text-align: center;
+    padding: 10px 0;
+    margin-top: auto;
 }
 
 .footer.dark-mode {
     color: #F4F4F4;
-    padding: 10px 0;
 }
 
 .footer a {
