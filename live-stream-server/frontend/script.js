@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const liveContainer = document.getElementById('live-container');
+    const liveContainer = document.getElementById('live-section');
     const sidebarContainer = document.getElementById('user-list');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const logo = document.getElementById('logo');

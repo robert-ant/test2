@@ -1,66 +1,106 @@
 <!DOCTYPE html>
-<html lang="et">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #17153B; /* Dark background for the entire page */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: #ffffff; /* White background for the container */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 80%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #error-message {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <form id="login-form" method="POST" action="/login">
-            <input type="hidden" id="csrfToken" name="_csrf" value="">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+        <form id="login-form">
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <input type="hidden" id="csrf-token" name="_csrf">
             <button type="submit">Login</button>
         </form>
+        <div id="error-message"></div>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
+        async function fetchCsrfToken() {
             try {
                 const response = await fetch('/csrf-token', {
                     method: 'GET',
-                    credentials: 'same-origin'
+                    credentials: 'include'
                 });
-                if (response.ok) {
-                    const data = await response.json();
-                    document.getElementById('csrfToken').value = data.csrfToken;
-                } else {
-                    console.error('Failed to fetch CSRF token');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch CSRF token');
                 }
+                const data = await response.json();
+                document.getElementById('csrf-token').value = data.csrfToken;
             } catch (error) {
                 console.error('Error fetching CSRF token:', error);
             }
-        });
+        }
 
-        document.getElementById('login-form').addEventListener('submit', async (event) => {
+        fetchCsrfToken();
+
+        document.getElementById('login-form').addEventListener('submit', async function(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            const csrfToken = document.getElementById('csrfToken').value;
+            const csrfToken = document.getElementById('csrf-token').value;
 
-            if (!username || !password) {
-                alert('Username and password are required');
-                return;
-            }
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'CSRF-Token': csrfToken
+                    },
+                    body: JSON.stringify({ username, password }),
+                    credentials: 'include'
+                });
 
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'CSRF-Token': csrfToken
-                },
-                body: JSON.stringify({ username, password })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                window.location.href = `/${data.page}`;
-            } else {
-                alert('Invalid username or password');
+                if (response.ok) {
+                    const data = await response.json();
+                    window.location.href = `/${data.page}`;
+                } else {
+                    const errorText = await response.text();
+                    document.getElementById('error-message').textContent = errorText;
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
             }
         });
     </script>
