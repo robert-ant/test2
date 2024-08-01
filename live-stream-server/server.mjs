@@ -7,6 +7,7 @@ import NodeCache from 'node-cache';
 import fetch from 'node-fetch';
 import fs from 'fs';
 import rateLimit from 'express-rate-limit';
+import Bottleneck from 'bottleneck';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import findOpenPort from 'find-open-port';
@@ -40,29 +41,17 @@ app.use((req, res, next) => {
     next();
 });
 
-// Rate limiting middleware
+// Rate limiting middleware for incoming requests
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100 // limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
 
-// Route to provide CSRF token
-app.get('/csrf-token', csrfProtection, (req, res) => {
-    res.json({ csrfToken: req.csrfToken() });
-});
-
-// Login route with CSRF protection
-app.post('/login', csrfProtection, (req, res) => {
-    const { username, password } = req.body;
-
-    // Here you would validate the username and password against your database
-    if (username === 'admin' && password === 'password') {
-        req.session.user = username;
-        res.json({ page: 'adminPage.html' });
-    } else {
-        res.status(401).send('Invalid username or password');
-    }
+// Rate limiter for Twitch API requests
+const apiLimiter = new Bottleneck({
+    minTime: 75, // Minimum time between requests, Twitch allows 800 requests per minute
+    maxConcurrent: 1 // Ensure only one request at a time
 });
 
 // Function to fetch Twitch OAuth token
@@ -84,12 +73,16 @@ async function fetchTwitchToken() {
 
 // Function to fetch live stream data from Twitch
 async function fetchTwitchData(token) {
-    const response = await fetch('https://api.twitch.tv/helix/streams', {
-        headers: {
-            'Client-ID': process.env.TWITCH_CLIENT_ID,
-            'Authorization': `Bearer ${token}`
-        }
-    });
+    const users = ["krispoissyuh", "rommy1337", "raido_ttv", "ohnePixel", "KuruHS", "Joehills", "NickEh30", "xChocoBars"];
+    const queryParams = users.map(user => `user_login=${user}`).join('&');
+    const response = await apiLimiter.schedule(() =>
+        fetch(`https://api.twitch.tv/helix/streams?${queryParams}`, {
+            headers: {
+                'Client-ID': process.env.TWITCH_CLIENT_ID,
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    );
     const data = await response.json();
     return data;
 }
@@ -110,6 +103,24 @@ app.get('/twitch/live', csrfProtection, async (req, res) => {
     } catch (error) {
         console.error('Error fetching Twitch data:', error);
         res.status(500).json({ error: 'Failed to fetch Twitch data' });
+    }
+});
+
+// Route to provide CSRF token
+app.get('/csrf-token', csrfProtection, (req, res) => {
+    res.json({ csrfToken: req.csrfToken() });
+});
+
+// Login route with CSRF protection
+app.post('/login', csrfProtection, (req, res) => {
+    const { username, password } = req.body;
+
+    // Here you would validate the username and password against your database
+    if (username === 'admin' && password === 'password') {
+        req.session.user = username;
+        res.json({ page: 'adminPage.html' });
+    } else {
+        res.status(401).send('Invalid username or password');
     }
 });
 

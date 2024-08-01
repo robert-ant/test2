@@ -51,7 +51,7 @@ body.dark-mode {
 }
 
 .sidebar {
-    background: rgba(255, 255, 255);
+    background: rgba(255, 255, 255, 0.8);
     padding: 10px;
     border-radius: 10px;
     transition: background-color 0.5s ease;
@@ -111,12 +111,12 @@ body.dark-mode .live-section div {
     padding: 10px;
     text-align: center;
     border-radius: 17px;
-    transition: background-color 0.5s ease;
+    transition: background-color 0.5s ease, opacity 0.5s ease;
 }
 
 img {
     height: 142.31px;
-    width: 213.500px;
+    width: 213.5px;
 }
 
 .live-section div img {
@@ -174,26 +174,27 @@ input:checked + .slider {
 input:checked + .slider img {
     transform: translateX(26px);
 }
+
 .footer {
     position: fixed;
     bottom: 0;
     width: 100%;
     text-align: center;
 }
+
 .footer.dark-mode {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    color: #F4F4F4;;
+    color: #F4F4F4;
     padding: 10px 0;
 }
+
 .footer a {
     color: black;
+}
 
-}.footer.dark-mode a {
+.footer.dark-mode a {
     color: #F4F4F4;
 }
+
 .login-container {
     background: rgba(255, 255, 255, 0.8);
     padding: 20px;
@@ -206,13 +207,16 @@ input:checked + .slider img {
     align-items: center;
     box-sizing: border-box; /* Ensures padding is included in the total width */
 }
+
 .login-container h2 {
     margin-bottom: 20px;
 }
+
 .login-container label {
     align-self: flex-start;
     margin: 5px 0;
 }
+
 .login-container input[type="text"], .login-container input[type="password"] {
     width: 100%;
     padding: 10px;
@@ -221,6 +225,7 @@ input:checked + .slider img {
     border-radius: 5px;
     box-sizing: border-box; /* Ensures padding is included in the total width */
 }
+
 .login-container input[type="submit"] {
     width: 100%;
     padding: 10px;
@@ -231,4 +236,32 @@ input:checked + .slider img {
     font-size: 16px;
     cursor: pointer;
     box-sizing: border-box; /* Ensures padding is included in the total width */
+}
+
+/* Fade-in and fade-out animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s forwards;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s forwards;
+    pointer-events: none;
 }

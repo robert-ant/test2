@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const liveContainer = document.getElementById('live-section');
+    const liveContainer = document.getElementById('live-container');
     const sidebarContainer = document.getElementById('user-list');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const logo = document.getElementById('logo');
@@ -11,13 +11,26 @@ document.addEventListener("DOMContentLoaded", function() {
     const darkModeImage = 'assets/muun.png';
 
     const customLogos = {
-        "krispoissyuh": "assets/krispoissyuh_logo.png",
-        "rommy1337": "assets/rommy1337_logo.png",
-        "raido_ttv": "assets/raido_ttv_logo.png",
-        "ohnePixel": "assets/ohnePixel_logo.png",
-        "KuruHS": "assets/KuruHS_logo.png",
-        "Joehills": "assets/Joehills_logo.png"
+        "krispoissyuh": "assets/kp.png",
+        "rommy1337": "assets/kp.png",
+        "raido_ttv": "assets/kp.png",
+        "ohnePixel": "assets/kp.png",
+        "KuruHS": "assets/kp.png",
+        "Joehills": "assets/kp.png",
+        "NickEh30": "assets/kp.png",
+        "xChocoBars": "assets/kp.png"
     };
+
+    const allUsers = [
+        { username: "krispoissyuh", channelName: "Krispoiss" },
+        { username: "rommy1337", channelName: "Rommy1337" },
+        { username: "raido_ttv", channelName: "Raido_ttv" },
+        { username: "ohnePixel", channelName: "OhnePixel" },
+        { username: "KuruHS", channelName: "KuruHS" },
+        { username: "Joehills", channelName: "Joehills" },
+        { username: "NickEh30", channelName: "NickEh30" },
+        { username: "xChocoBars", channelName: "xChocoBars" }
+    ];
 
     // Initialize the toggle image and mode from localStorage
     if (localStorage.getItem('darkMode') === 'enabled') {
@@ -62,8 +75,9 @@ document.addEventListener("DOMContentLoaded", function() {
         div.id = username;
 
         const img = document.createElement('img');
-        img.src = thumbnail.replace('{width}', '320').replace('{height}', '180');
+        img.src = thumbnail;
         img.alt = `${username} thumbnail`;
+        img.classList.add('stream-thumbnail');
 
         const name = document.createElement('span');
         name.innerText = `${channelName} (${platform})`;
@@ -77,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Function to create sidebar user element
     function createSidebarUserElement(username, channelName) {
         const li = document.createElement('li');
-        li.id = username;
+        li.id = `${username}-sidebar`;
 
         const img = document.createElement('img');
         img.src = customLogos[username] || 'assets/default_logo.png';
@@ -102,35 +116,51 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        // Clear existing live container
-        liveContainer.innerHTML = '';
-
         // Clear existing sidebar container
         sidebarContainer.innerHTML = '';
+
+        // Add all users to the sidebar
+        allUsers.forEach(user => {
+            const userLi = createSidebarUserElement(user.username, user.channelName);
+            sidebarContainer.appendChild(userLi);
+        });
+
+        // Clear existing live container
+        liveContainer.innerHTML = '';
 
         // Fetch Twitch live streams
         fetch('/twitch/live')
             .then(response => response.json())
             .then(data => {
                 console.log('Twitch data:', data);
-                if (data.data && data.data.length > 0) {
-                    const liveUsers = data.data.map(stream => ({
-                        username: stream.user_login.toLowerCase(),
-                        channelName: stream.user_name,
-                        thumbnail: stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180'),
-                        platform: 'Twitch'
-                    }));
 
-                    liveUsers.forEach(user => {
-                        const streamerDiv = createStreamerElement(user.username, user.channelName, user.thumbnail, user.platform);
+                // Track live users
+                const liveUsernames = data.data ? data.data.map(stream => stream.user_login.toLowerCase()) : [];
+
+                // Update the live container
+                allUsers.forEach(user => {
+                    const sidebarElement = document.getElementById(`${user.username}-sidebar`);
+
+                    if (liveUsernames.includes(user.username.toLowerCase())) {
+                        const stream = data.data.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
+                        const thumbnail = stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180');
+                        const platform = 'Twitch';
+
+                        // Create new element for live container
+                        const streamerDiv = createStreamerElement(user.username, user.channelName, thumbnail, platform);
                         liveContainer.appendChild(streamerDiv);
 
-                        const userLi = createSidebarUserElement(user.username, user.channelName);
-                        sidebarContainer.appendChild(userLi);
-                    });
-                } else {
-                    console.log('No live Twitch streams found.');
-                }
+                        // Highlight live users in the sidebar
+                        if (sidebarElement) {
+                            sidebarElement.classList.add('online');
+                        }
+                    } else {
+                        // Remove online class from sidebar if user is not live
+                        if (sidebarElement) {
+                            sidebarElement.classList.remove('online');
+                        }
+                    }
+                });
             })
             .catch(error => {
                 console.error('Error fetching Twitch data:', error);
