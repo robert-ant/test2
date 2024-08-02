@@ -3,41 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
+    <title>User1 Page</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .admin-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Full viewport height */
-            background: var(--background-color); /* Use the same background color as your index page */
+        .container {
+            padding: 20px;
         }
-
         .box {
             background: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 500px;
             text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
-
         .switch {
             position: relative;
             display: inline-block;
             width: 60px;
             height: 34px;
         }
-
         .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
-
         .slider {
             position: absolute;
             cursor: pointer;
@@ -46,10 +39,9 @@
             right: 0;
             bottom: 0;
             background-color: #ccc;
-            transition: .4s;
+            transition: 0.4s;
             border-radius: 34px;
         }
-
         .slider:before {
             position: absolute;
             content: "";
@@ -58,52 +50,44 @@
             left: 4px;
             bottom: 4px;
             background-color: white;
-            transition: .4s;
+            transition: 0.4s;
             border-radius: 50%;
         }
-
         input:checked + .slider {
             background-color: #2196F3;
         }
-
         input:checked + .slider:before {
             transform: translateX(26px);
-        }
-
-        .onoff-labels {
-            display: flex;
-            justify-content: space-between;
-            width: 100px;
-            margin-top: 10px;
-        }
-
-        .onoff-labels span {
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .on-label {
-            color: green;
-        }
-
-        .off-label {
-            color: red;
         }
     </style>
 </head>
 <body>
-    <div class="admin-container">
+    <div class="container">
         <div class="box">
-            <h2>Kas ma olen live?</h2>
+            <span class="slider-label">Kas ma olen live?</span>
             <label class="switch">
-                <input type="checkbox" id="liveToggle">
+                <input type="checkbox" id="user1-switch">
                 <span class="slider"></span>
             </label>
-            <div class="onoff-labels">
-                <span class="off-label">OFF</span>
-                <span class="on-label">ON</span>
-            </div>
         </div>
     </div>
+    <script>
+        document.getElementById('user8-switch').addEventListener('change', function() {
+            const state = this.checked ? 'on' : 'off';
+            fetch('/update-user-status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user: 'user8', state: state })
+            }).then(response => {
+                if (response.ok) {
+                    console.log(`User8 status updated to ${state}`);
+                } else {
+                    console.error('Failed to update status');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

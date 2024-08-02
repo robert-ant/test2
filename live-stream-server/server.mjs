@@ -73,7 +73,7 @@ async function fetchTwitchToken() {
 
 // Function to fetch live stream data from Twitch
 async function fetchTwitchData(token) {
-    const users = ["krispoissyuh", "rommy1337", "raido_ttv", "ohnePixel", "KuruHS", "Joehills", "NickEh30", "xChocoBars"];
+    const users = ["SidneyEweka", "fl0m", "Ranger", "ohnePixel", "jasontheween", "BLASTPremier", "trausi", "Fibii", "PRXf0rsakeN", "Dashy", "s0mcs", "d0cc_tv", "Smacko"];
     const queryParams = users.map(user => `user_login=${user}`).join('&');
     const response = await apiLimiter.schedule(() =>
         fetch(`https://api.twitch.tv/helix/streams?${queryParams}`, {
@@ -98,7 +98,11 @@ app.get('/twitch/live', csrfProtection, async (req, res) => {
             token = await fetchTwitchToken();
             cache.set('twitchToken', token);
         }
-        const twitchData = await fetchTwitchData(token);
+        let twitchData = cache.get('twitchData');
+        if (!twitchData) {
+            twitchData = await fetchTwitchData(token);
+            cache.set('twitchData', twitchData);
+        }
         res.json(twitchData);
     } catch (error) {
         console.error('Error fetching Twitch data:', error);

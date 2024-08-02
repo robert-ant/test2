@@ -11,11 +11,19 @@ document.addEventListener("DOMContentLoaded", function() {
     const darkModeImage = 'assets/muun.png';
 
     const customLogos = {
-        "rommy1337": "assets/kp.jpg",
-        "raido_ttv": "assets/kp.jpg",
+        "SidneyEweka": "assets/kp.jpg",
+        "fl0m": "assets/kp.jpg",
         "ohnePixel": "assets/kp.jpg",
-        "KuruHS": "assets/kp.jpg",
-        "Joehills": "assets/kp.jpg",
+        "Ranger": "assets/kp.jpg",
+        "jasontheween": "assets/kp.jpg",
+        "BLASTPremier": "assets/kp.jpg",
+        "trausi": "assets/kp.jpg",
+        "Fibii": "assets/kp.jpg",
+        "PRXf0rsakeN": "assets/kp.jpg",
+        "Dashy": "assets/kp.jpg",
+        "s0mcs": "assets/kp.jpg",
+        "d0cc_tv": "assets/kp.jpg",
+        "Smacko": "assets/kp.jpg",
         "user1": "assets/kp.jpg",
         "user2": "assets/kp.jpg",
         "user3": "assets/kp.jpg",
@@ -31,26 +39,34 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     const twitchUsers = [
-        { username: "rommy1337", channelName: "Rommy1337" },
-        { username: "raido_ttv", channelName: "Raido_ttv" },
+        { username: "SidneyEweka", channelName: "SidneyEweka" },
+        { username: "fl0m", channelName: "fl0m" },
         { username: "ohnePixel", channelName: "OhnePixel" },
-        { username: "KuruHS", channelName: "KuruHS" },
-        { username: "Joehills", channelName: "Joehills" }
+        { username: "Ranger", channelName: "Ranger" },
+        { username: "jasontheween", channelName: "jasontheween" },
+        { username: "BLASTPremier", channelName: "BLASTPremier" },
+        { username: "trausi", channelName: "trausi" },
+        { username: "Fibii", channelName: "Fibii" },
+        { username: "PRXf0rsakeN", channelName: "PRXf0rsakeN" },
+        { username: "Dashy", channelName: "Dashy" },
+        { username: "s0mcs", channelName: "s0mcs" },
+        { username: "d0cc_tv", channelName: "d0cc_tv" },
+        { username: "Smacko", channelName: "Smacko" }
     ];
 
     const customUsers = [
-        { username: "user1", channelName: "Krispoiss", url: "customPage1.html", thumbnail: "assets/emoji.png" },
-        { username: "user2", channelName: "User2", url: "customPage2.html", thumbnail: "path_to_your_custom_thumbnail2.jpg" },
-        { username: "user3", channelName: "User3", url: "customPage3.html", thumbnail: "path_to_your_custom_thumbnail3.jpg" },
-        { username: "user4", channelName: "User4", url: "customPage4.html", thumbnail: "path_to_your_custom_thumbnail4.jpg" },
-        { username: "user5", channelName: "User5", url: "customPage5.html", thumbnail: "path_to_your_custom_thumbnail5.jpg" },
-        { username: "user6", channelName: "User6", url: "customPage6.html", thumbnail: "path_to_your_custom_thumbnail6.jpg" },
-        { username: "user7", channelName: "User7", url: "customPage7.html", thumbnail: "path_to_your_custom_thumbnail7.jpg" },
-        { username: "user8", channelName: "User8", url: "customPage8.html", thumbnail: "path_to_your_custom_thumbnail8.jpg" },
-        { username: "user9", channelName: "User9", url: "customPage9.html", thumbnail: "path_to_your_custom_thumbnail9.jpg" },
-        { username: "user10", channelName: "User10", url: "customPage10.html", thumbnail: "path_to_your_custom_thumbnail10.jpg" },
-        { username: "user11", channelName: "User11", url: "customPage11.html", thumbnail: "path_to_your_custom_thumbnail11.jpg" },
-        { username: "user12", channelName: "User12", url: "customPage12.html", thumbnail: "path_to_your_custom_thumbnail12.jpg" }
+        { username: "user1", channelName: "Krispoiss", url: "https://www.tiktok.com/@krispoiss/live", thumbnail: "assets/emoji.png" },
+        { username: "user2", channelName: "User2", url: "customPage2.html", thumbnail: "assets/emoji.png" },
+        { username: "user3", channelName: "User3", url: "customPage3.html", thumbnail: "assets/emoji.png" },
+        { username: "user4", channelName: "User4", url: "customPage4.html", thumbnail: "assets/emoji.png" },
+        { username: "user5", channelName: "User5", url: "customPage5.html", thumbnail: "assets/emoji.png" },
+        { username: "user6", channelName: "User6", url: "customPage6.html", thumbnail: "assets/emoji.png" },
+        { username: "user7", channelName: "User7", url: "customPage7.html", thumbnail: "assets/emoji.png" },
+        { username: "user8", channelName: "User8", url: "customPage8.html", thumbnail: "assets/emoji.png" },
+        { username: "user9", channelName: "User9", url: "customPage9.html", thumbnail: "assets/emoji.png" },
+        { username: "user10", channelName: "User10", url: "customPage10.html", thumbnail: "assets/emoji.png" },
+        { username: "user11", channelName: "User11", url: "customPage11.html", thumbnail: "assets/emoji.png" },
+        { username: "user12", channelName: "User12", url: "customPage12.html", thumbnail: "assets/emoji.png" }
     ];
 
     const allUsers = [...twitchUsers, ...customUsers];
@@ -116,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Function to create sidebar user element
-    function createSidebarUserElement(username, channelName) {
+    function createSidebarUserElement(username, channelName, url) {
         const li = document.createElement('li');
         li.id = `${username}-sidebar`;
 
@@ -125,7 +141,8 @@ document.addEventListener("DOMContentLoaded", function() {
         img.alt = `${username} logo`;
         img.classList.add('sidebar-logo');
 
-        const name = document.createElement('span');
+        const name = document.createElement('a');
+        name.href = url;
         name.innerText = channelName || username;
         name.classList.add('sidebar-text');
 
@@ -148,12 +165,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Add all users to the sidebar
         allUsers.forEach(user => {
-            const userLi = createSidebarUserElement(user.username, user.channelName);
+            const url = twitchUsers.find(tu => tu.username === user.username) ? `https://www.twitch.tv/${user.username}` : user.url;
+            const userLi = createSidebarUserElement(user.username, user.channelName, url);
             sidebarContainer.appendChild(userLi);
         });
 
-        // Clear existing live container
-        liveContainer.innerHTML = '';
+        // Apply fade-out class to existing live container
+        Array.from(liveContainer.children).forEach(child => {
+            child.classList.add('fade-out');
+        });
 
         // Fetch Twitch live streams
         fetch('/twitch/live')
@@ -175,6 +195,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                         // Create new element for live container
                         const streamerDiv = createStreamerElement(user.username, user.channelName, thumbnail, url);
+                        streamerDiv.classList.add('fade-in');
                         liveContainer.appendChild(streamerDiv);
 
                         // Highlight live users in the sidebar
@@ -203,6 +224,7 @@ fetch('/user-status')
 
             // Create new element for live container
             const streamerDiv = createStreamerElement(user.username, user.channelName, thumbnail, url);
+            streamerDiv.classList.add('fade-in');
             liveContainer.appendChild(streamerDiv);
 
             // Highlight live users in the sidebar
@@ -212,6 +234,15 @@ fetch('/user-status')
             }
         }
     });
+
+    // Remove fade-out elements after animation
+    setTimeout(() => {
+        Array.from(liveContainer.children).forEach(child => {
+            if (child.classList.contains('fade-out')) {
+                liveContainer.removeChild(child);
+            }
+        });
+    }, 500); // Adjust the timeout to match the fade-out animation duration
 })
 .catch(error => {
     console.error('Error fetching user statuses:', error);
@@ -222,5 +253,5 @@ fetch('/user-status')
 updateStreamers();
 
 // Set interval to update streamers every minute
-setInterval(updateStreamers, 60000); // 60000ms = 1 minute
+setInterval(updateStreamers, 120000); // 60000ms = 1 minute
 });
