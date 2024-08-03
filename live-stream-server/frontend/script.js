@@ -1,14 +1,19 @@
 document.addEventListener("DOMContentLoaded", function() {
     const liveContainer = document.getElementById('live-container');
     const sidebarContainer = document.getElementById('user-list');
+    const sidebar = document.querySelector('.sidebar');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const logo = document.getElementById('logo');
     const toggleImage = document.getElementById('toggleImage');
+    const toggleSidebarWrapper = document.getElementById('toggleSidebarWrapper');
+    const unfoldImage = document.getElementById('unfold');
 
     const darkModeLogo = 'assets/LOGOversionNIGHT.png';
     const lightModeLogo = 'assets/LOGOversionBASIC.png';
     const lightModeImage = 'assets/son.png';
     const darkModeImage = 'assets/muun.png';
+    const lightModeUnfold = 'assets/unfold.png';
+    const darkModeUnfold = 'assets/unfolddark.png';
 
     const customLogos = {
         "SidneyEweka": "assets/kp.jpg",
@@ -71,46 +76,69 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const allUsers = [...twitchUsers, ...customUsers];
 
-    // Initialize the toggle image and mode from localStorage
-    if (localStorage.getItem('darkMode') === 'enabled') {
+    function applyDarkMode() {
         document.body.classList.add('dark-mode');
-        darkModeToggle.checked = true;
         logo.src = darkModeLogo;
         toggleImage.src = darkModeImage;
+        unfoldImage.src = darkModeUnfold;
         document.body.style.backgroundImage = "url('assets/2024-07-14_18.17.57.jpg')";
-    } else {
+    }
+
+    function applyLightMode() {
+        document.body.classList.remove('dark-mode');
         logo.src = lightModeLogo;
         toggleImage.src = lightModeImage;
+        unfoldImage.src = lightModeUnfold;
         document.body.style.backgroundImage = "url('assets/2024-07-14_18.17.44.jpg')";
     }
 
-    darkModeToggle.addEventListener('change', () => {
-        document.body.classList.toggle('dark-mode');
-        if (darkModeToggle.checked) {
-            localStorage.setItem('darkMode', 'enabled');
-            logo.style.opacity = '0';
-            setTimeout(() => {
-                logo.src = darkModeLogo;
-                toggleImage.src = darkModeImage;
-                document.body.style.backgroundImage = "url('assets/2024-07-14_18.17.57.jpg')";
-                logo.style.opacity = '1';
-            }, 250);
-        } else {
-            localStorage.setItem('darkMode', 'disabled');
-            logo.style.opacity = '0';
-            setTimeout(() => {
-                logo.src = lightModeLogo;
-                toggleImage.src = lightModeImage;
-                document.body.style.backgroundImage = "url('assets/2024-07-14_18.17.44.jpg')";
-                logo.style.opacity = '1';
-            }, 250);
-        }
-    });
+    function initializeDarkMode() {
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            // Automatically apply theme based on preference only for mobile/tablet
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                applyDarkMode();
+            } else {
+                applyLightMode();
+            }
 
-    // Function to create streamer element for live section
+            // Listen for changes in the color scheme
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                if (event.matches) {
+                    applyDarkMode();
+                } else {
+                    applyLightMode();
+                }
+            });
+
+            // Remove the dark mode toggle button on mobile/tablet
+            if (darkModeToggle) {
+                darkModeToggle.parentElement.style.display = 'none';
+            }
+        } else {
+            // For desktop, use localStorage to set the initial mode
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                applyDarkMode();
+                darkModeToggle.checked = true;
+            } else {
+                applyLightMode();
+                darkModeToggle.checked = false;
+            }
+
+            darkModeToggle.addEventListener('change', () => {
+                if (darkModeToggle.checked) {
+                    localStorage.setItem('darkMode', 'enabled');
+                    applyDarkMode();
+                } else {
+                    localStorage.setItem('darkMode', 'disabled');
+                    applyLightMode();
+                }
+            });
+        }
+    }
+
     function createStreamerElement(username, channelName, thumbnail, url) {
         const div = document.createElement('div');
-        div.classList.add('streamer', 'online');
+        div.classList.add('streamer', 'online', 'fade-in');
         div.id = username;
 
         const img = document.createElement('img');
@@ -131,7 +159,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return div;
     }
 
-    // Function to create sidebar user element
     function createSidebarUserElement(username, channelName, url) {
         const li = document.createElement('li');
         li.id = `${username}-sidebar`;
@@ -152,106 +179,77 @@ document.addEventListener("DOMContentLoaded", function() {
         return li;
     }
 
-    // Function to update the streamers
+    function updateStreamerElements(users, liveUsernames, streamsData) {
+        users.forEach(user => {
+            const isLive = liveUsernames.includes(user.username.toLowerCase());
+            const existingElement = document.getElementById(user.username);
+
+            if (isLive) {
+                const stream = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
+                const thumbnail = stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180');
+                const url = `https://www.twitch.tv/${user.username}`;
+
+                if (!existingElement) {
+                    const newElement = createStreamerElement(user.username, user.channelName, thumbnail, url);
+                    liveContainer.appendChild(newElement);
+                } else {
+                    existingElement.querySelector('img').src = thumbnail;
+                    existingElement.querySelector('span').innerText = user.channelName;
+                    existingElement.classList.remove('fade-out');
+                    existingElement.classList.add('fade-in');
+                }
+            } else if (existingElement) {
+                existingElement.classList.add('fade-out');
+                setTimeout(() => {
+                    liveContainer.removeChild(existingElement);
+                }, 500);
+            }
+        });
+    }
+
     function updateStreamers() {
-        // Ensure containers exist
         if (!liveContainer || !sidebarContainer) {
             console.error('Containers not found.');
             return;
         }
 
-        // Clear existing sidebar container
         sidebarContainer.innerHTML = '';
 
-        // Add all users to the sidebar
         allUsers.forEach(user => {
             const url = twitchUsers.find(tu => tu.username === user.username) ? `https://www.twitch.tv/${user.username}` : user.url;
             const userLi = createSidebarUserElement(user.username, user.channelName, url);
             sidebarContainer.appendChild(userLi);
         });
 
-        // Apply fade-out class to existing live container
-        Array.from(liveContainer.children).forEach(child => {
-            child.classList.add('fade-out');
-        });
-
-        // Fetch Twitch live streams
         fetch('/twitch/live')
             .then(response => response.json())
             .then(data => {
                 console.log('Twitch data:', data);
-
-                // Track live users
                 const liveUsernames = data.data ? data.data.map(stream => stream.user_login.toLowerCase()) : [];
-
-                // Update the live container for Twitch users
-                twitchUsers.forEach(user => {
-                    const sidebarElement = document.getElementById(`${user.username}-sidebar`);
-
-                    if (liveUsernames.includes(user.username.toLowerCase())) {
-                        const stream = data.data.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
-                        const thumbnail = stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180');
-                        const url = `https://www.twitch.tv/${user.username}`;
-
-                        // Create new element for live container
-                        const streamerDiv = createStreamerElement(user.username, user.channelName, thumbnail, url);
-                        streamerDiv.classList.add('fade-in');
-                        liveContainer.appendChild(streamerDiv);
-
-                        // Highlight live users in the sidebar
-                        if (sidebarElement) {
-                            sidebarElement.classList.add('online');
-                        }
-                    } else {
-                        // Remove online class from sidebar if user is not live
-                        if (sidebarElement) {
-                            sidebarElement.classList.remove('online');
-                        }
-                    }
-                });
+                updateStreamerElements(twitchUsers, liveUsernames, data.data);
             })
             .catch(error => {
                 console.error('Error fetching Twitch data:', error);
             });
-            // Fetch and display user status for custom users
-fetch('/user-status')
-.then(response => response.json())
-.then(userStatuses => {
-    customUsers.forEach(user => {
-        if (userStatuses[user.username] === 'on') {
-            const url = user.url;
-            const thumbnail = user.thumbnail;
 
-            // Create new element for live container
-            const streamerDiv = createStreamerElement(user.username, user.channelName, thumbnail, url);
-            streamerDiv.classList.add('fade-in');
-            liveContainer.appendChild(streamerDiv);
+        fetch('/user-status')
+            .then(response => response.json())
+            .then(userStatuses => {
+                const liveUsernames = Object.keys(userStatuses).filter(username => userStatuses[username] === 'on');
+                updateStreamerElements(customUsers, liveUsernames, []);
+            })
+            .catch(error => {
+                console.error('Error fetching user statuses:', error);
+            });
+    }
 
-            // Highlight live users in the sidebar
-            const sidebarElement = document.getElementById(`${user.username}-sidebar`);
-            if (sidebarElement) {
-                sidebarElement.classList.add('online');
-            }
-        }
-    });
+    initializeDarkMode();
+    updateStreamers();
+    setInterval(updateStreamers, 120000);
 
-    // Remove fade-out elements after animation
-    setTimeout(() => {
-        Array.from(liveContainer.children).forEach(child => {
-            if (child.classList.contains('fade-out')) {
-                liveContainer.removeChild(child);
-            }
+    if (window.matchMedia("(max-width: 768px)").matches) {
+        toggleSidebarWrapper.addEventListener('click', () => {
+            sidebar.classList.toggle('visible');
         });
-    }, 500); // Adjust the timeout to match the fade-out animation duration
-})
-.catch(error => {
-    console.error('Error fetching user statuses:', error);
-});
-}
-
-// Initial load
-updateStreamers();
-
-// Set interval to update streamers every minute
-setInterval(updateStreamers, 120000); // 60000ms = 1 minute
+    }
 });
