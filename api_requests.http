@@ -1,3 +1,0 @@
-###
-# YouTube API Request with all parameters
-GET https://www.googleapis.com/youtube/v3/search?part=snippet&eventType=live&type=video&key=AIzaSyDna8MsiQrvWZ0GY2b2ZKIDKIRbk6UvRRw&channelId=UCSJ4gkVC6NrvII8umztf0Ow
