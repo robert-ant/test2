@@ -37,7 +37,7 @@ const csrfProtection = csurf({ cookie: false });
 
 // Set CSP headers
 app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "default-src 'self'; img-src 'self' https://static-cdn.jtvnw.net data:; script-src 'self'");
+    res.setHeader("Content-Security-Policy", "default-src 'self'; img-src 'self' data: https://static-cdn.jtvnw.net; script-src 'self'");
     next();
 });
 
