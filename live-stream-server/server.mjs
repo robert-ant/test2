@@ -5,18 +5,16 @@ import csurf from 'csurf';
 import path from 'path';
 import NodeCache from 'node-cache';
 import fetch from 'node-fetch';
-import fs from 'fs';
 import rateLimit from 'express-rate-limit';
 import Bottleneck from 'bottleneck';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import findOpenPort from 'find-open-port';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const port = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000; // Use Vercel's port or default to 3000
 
 // Middleware for serving static files
 app.use(express.static(path.join(__dirname, 'frontend')));
@@ -191,12 +189,7 @@ app.get('/:userPage', (req, res) => {
     }
 });
 
-// Port finder
-findOpenPort().then(openPort => {
-    fs.writeFileSync(path.join(__dirname, 'frontend', 'port.txt'), openPort.toString());
-    app.listen(openPort, () => {
-        console.log(`Server running at http://localhost:${openPort}`);
-    });
-}).catch(err => {
-    console.error('Failed to find an open port:', err);
+// Start the server on the correct port
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
