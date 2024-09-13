@@ -14,6 +14,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
+
+// Trust proxy headers set by Vercel or other reverse proxies
+app.set('trust proxy', 1); // Trust the first proxy
+
 const PORT = process.env.PORT || 3000; // Use Vercel's port or default to 3000
 
 // Middleware for serving static files
@@ -54,19 +58,33 @@ const apiLimiter = new Bottleneck({
 
 // Function to fetch Twitch OAuth token
 async function fetchTwitchToken() {
-    const response = await fetch('https://id.twitch.tv/oauth2/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            client_id: process.env.TWITCH_CLIENT_ID,
-            client_secret: process.env.TWITCH_CLIENT_SECRET,
-            grant_type: 'client_credentials'
-        })
-    });
-    const data = await response.json();
-    return data.access_token;
+    try {
+        const response = await fetch('https://id.twitch.tv/oauth2/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                client_id: process.env.TWITCH_CLIENT_ID,
+                client_secret: process.env.TWITCH_CLIENT_SECRET,
+                grant_type: 'client_credentials'
+            })
+        });
+
+        const data = await response.json();
+
+        // Log the response for debugging
+        console.log('Twitch Token Response:', data);
+
+        if (!response.ok) {
+            throw new Error(`Error fetching token: ${data.error} - ${data.message}`);
+        }
+
+        return data.access_token;
+    } catch (error) {
+        console.error('Failed to fetch Twitch OAuth token:', error);
+        return null; // Return null if the token fetch fails
+    }
 }
 
 // Function to fetch live stream data from Twitch
@@ -93,13 +111,21 @@ app.get('/twitch/live', csrfProtection, async (req, res) => {
     try {
         let token = cache.get('twitchToken');
         if (!token) {
+            console.log('No cached token found. Fetching a new one...');
             token = await fetchTwitchToken();
-            cache.set('twitchToken', token);
+            if (!token) {
+                return res.status(500).json({ error: 'Failed to fetch Twitch OAuth token' });
+            }
+            cache.set('twitchToken', token, 3600); // Cache token for 1 hour (3600 seconds)
         }
+
         let twitchData = cache.get('twitchData');
         if (!twitchData) {
             twitchData = await fetchTwitchData(token);
-            cache.set('twitchData', twitchData);
+            if (!twitchData) {
+                return res.status(500).json({ error: 'Failed to fetch Twitch data' });
+            }
+            cache.set('twitchData', twitchData, 300); // Cache data for 5 minutes
         }
         res.json(twitchData);
     } catch (error) {
