@@ -513,6 +513,10 @@ body.dark-mode .live-section div {
     transition: background-color 0.5s ease, opacity 0.5s ease;
 }
 
+.streamer {
+    cursor: pointer; /* Change cursor to pointer to indicate the element is clickable */
+}
+
 img {
     height: 142.31px;
     width: 213.5px;
