@@ -94,14 +94,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function initializeDarkMode() {
         if (window.matchMedia("(max-width: 768px)").matches) {
-            // Automatically apply theme based on preference only for mobile/tablet
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 applyDarkMode();
             } else {
                 applyLightMode();
             }
 
-            // Listen for changes in the color scheme
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
                 if (event.matches) {
                     applyDarkMode();
@@ -110,12 +108,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
 
-            // Remove the dark mode toggle button on mobile/tablet
             if (darkModeToggle) {
                 darkModeToggle.parentElement.style.display = 'none';
             }
         } else {
-            // For desktop, use localStorage to set the initial mode
             if (localStorage.getItem('darkMode') === 'enabled') {
                 applyDarkMode();
                 darkModeToggle.checked = true;
