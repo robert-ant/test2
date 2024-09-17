@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
     ];
 
     const customUsers = [
-        { username: "user1", channelName: "user1", url: "https://www.tiktok.com/", thumbnail: "assets/emoji.png" },
+        { username: "user1", channelName: "user1", url: "https://www.tiktok.com/@eviltheevilresidentevil/live", thumbnail: "assets/emoji.png" },
         { username: "user2", channelName: "User2", url: "customPage2.html", thumbnail: "assets/emoji.png" },
         { username: "user3", channelName: "User3", url: "customPage3.html", thumbnail: "assets/emoji.png" },
         { username: "user4", channelName: "User4", url: "customPage4.html", thumbnail: "assets/emoji.png" },
