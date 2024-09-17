@@ -175,16 +175,15 @@ document.addEventListener("DOMContentLoaded", function() {
         return li;
     }
 
-    function updateStreamerElements(users, liveUsernames, streamsData) {
-        users.forEach(user => {
+    function updateStreamerElements(liveUsernames, streamsData) {
+        allUsers.forEach(user => {
             const isLive = liveUsernames.includes(user.username.toLowerCase());
             const existingElement = document.getElementById(user.username);
-
+    
             if (isLive) {
                 let thumbnail = 'assets/emoji.png'; // Default thumbnail for custom users
                 let url = user.url || '#'; // Default to "#" if no URL is provided
-
-                // If it's a Twitch user, get the correct stream info
+    
                 if (streamsData && streamsData.length > 0) {
                     const stream = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
                     if (stream) {
@@ -192,24 +191,30 @@ document.addEventListener("DOMContentLoaded", function() {
                         url = `https://www.twitch.tv/${user.username}`;
                     }
                 }
-
+    
                 if (!existingElement) {
                     const newElement = createStreamerElement(user.username, user.channelName, thumbnail, url);
                     liveContainer.appendChild(newElement);
                 } else {
+                    // Update existing element
                     existingElement.querySelector('img').src = thumbnail;
                     existingElement.querySelector('span').innerText = user.channelName;
                     existingElement.classList.remove('fade-out');
                     existingElement.classList.add('fade-in');
                 }
             } else if (existingElement) {
+                // Add a delay before removing elements to prevent flickering
                 existingElement.classList.add('fade-out');
                 setTimeout(() => {
-                    liveContainer.removeChild(existingElement);
-                }, 500);
+                    // Double-check if the user is still offline before removing
+                    if (!liveUsernames.includes(user.username.toLowerCase())) {
+                        liveContainer.removeChild(existingElement);
+                    }
+                }, 2000); // Wait 2 seconds before removing (adjust as necessary)
             }
         });
     }
+    
 
     function updateSidebar() {
         if (!sidebarContainer) {
@@ -226,68 +231,35 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // WebSocket Integration
-    const socket = new WebSocket('wss://sisumaa.vercel.app');
+    // Server-Sent Events (SSE) Integration
+    const eventSource = new EventSource('/events');
 
-    socket.addEventListener('open', () => {
-        console.log('Connected to WebSocket server');
-    });
+    eventSource.onopen = () => {
+        console.log('Connected to SSE server');
+    };
 
-    socket.addEventListener('message', event => {
+    eventSource.onmessage = (event) => {
         const message = JSON.parse(event.data);
 
         if (message.type === 'twitch-update') {
             console.log('Received Twitch update:', message.data);
             const liveUsernames = message.data.data.map(stream => stream.user_login.toLowerCase());
-            updateStreamerElements(twitchUsers, liveUsernames, message.data.data);
-        }
-
-        if (message.type === 'manual-update') {
-            console.log(`Received manual status update: ${message.user} is ${message.state}`);
-            const user = customUsers.find(u => u.username === message.user);
-            if (user) {
-                if (message.state === 'on') {
-                    const existingElement = document.getElementById(user.username);
-                    if (!existingElement) {
-                        const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
-                        liveContainer.appendChild(newElement);
-                    }
-                } else {
-                    const userElement = document.getElementById(message.user);
-                    if (userElement) {
-                        userElement.classList.add('fade-out');
-                        setTimeout(() => {
-                            liveContainer.removeChild(userElement);
-                        }, 500);
-                    }
-                }
-            }
+            updateStreamerElements(liveUsernames, message.data.data);
         }
 
         if (message.type === 'manual-status-update') {
-            const statuses = message.data;
-            Object.keys(statuses).forEach(user => {
-                const state = statuses[user];
-                const userElement = document.getElementById(user);
-                if (state === 'on') {
-                    const existingElement = document.getElementById(user);
-                    if (!existingElement) {
-                        const newElement = createStreamerElement(user, user, 'assets/emoji.png', '#');
-                        liveContainer.appendChild(newElement);
-                    }
-                } else if (userElement) {
-                    userElement.classList.add('fade-out');
-                    setTimeout(() => {
-                        liveContainer.removeChild(userElement);
-                    }, 500);
-                }
-            });
+            console.log(`Received manual status update:`, message.data);
+            updateStreamerElements(Object.keys(message.data), message.data);
         }
-    });
 
-    socket.addEventListener('close', () => {
-        console.log('WebSocket connection closed');
-    });
+        if (message.type === 'welcome') {
+            console.log(message.message);
+        }
+    };
+
+    eventSource.onerror = (error) => {
+        console.error('Error with SSE connection:', error);
+    };
 
     // Initialize dark mode and sidebar
     initializeDarkMode();
