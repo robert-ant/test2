@@ -9,6 +9,10 @@ import rateLimit from 'express-rate-limit';
 import Bottleneck from 'bottleneck';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import dotenv from 'dotenv'; // Import dotenv
+
+// Load environment variables from .env file
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
