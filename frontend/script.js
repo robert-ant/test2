@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // WebSocket Integration
-    const socket = new WebSocket('ws:https://sisumaa.vercel.app');
+    const socket = new WebSocket('wss:https://sisumaa.vercel.app');
 
     socket.addEventListener('open', () => {
         console.log('Connected to WebSocket server');
