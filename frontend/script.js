@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
     ];
 
     const customUsers = [
-        { username: "user1", channelName: "user1", url: "https://www.tiktok.com/@eviltheevilresidentevil/live", thumbnail: "assets/emoji.png" },
+        { username: "user1", channelName: "user1", url: "https://www.tiktok.com/", thumbnail: "assets/emoji.png" },
         { username: "user2", channelName: "User2", url: "customPage2.html", thumbnail: "assets/emoji.png" },
         { username: "user3", channelName: "User3", url: "customPage3.html", thumbnail: "assets/emoji.png" },
         { username: "user4", channelName: "User4", url: "customPage4.html", thumbnail: "assets/emoji.png" },
@@ -181,9 +181,17 @@ document.addEventListener("DOMContentLoaded", function() {
             const existingElement = document.getElementById(user.username);
 
             if (isLive) {
-                const stream = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
-                const thumbnail = stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180');
-                const url = `https://www.twitch.tv/${user.username}`;
+                let thumbnail = 'assets/emoji.png'; // Default thumbnail for custom users
+                let url = user.url || '#'; // Default to "#" if no URL is provided
+
+                // If it's a Twitch user, get the correct stream info
+                if (streamsData && streamsData.length > 0) {
+                    const stream = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
+                    if (stream) {
+                        thumbnail = stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180');
+                        url = `https://www.twitch.tv/${user.username}`;
+                    }
+                }
 
                 if (!existingElement) {
                     const newElement = createStreamerElement(user.username, user.channelName, thumbnail, url);
@@ -203,9 +211,9 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    function updateStreamers() {
-        if (!liveContainer || !sidebarContainer) {
-            console.error('Containers not found.');
+    function updateSidebar() {
+        if (!sidebarContainer) {
+            console.error('Sidebar container not found.');
             return;
         }
 
@@ -216,32 +224,74 @@ document.addEventListener("DOMContentLoaded", function() {
             const userLi = createSidebarUserElement(user.username, user.channelName, url);
             sidebarContainer.appendChild(userLi);
         });
-
-        fetch('/twitch/live')
-            .then(response => response.json())
-            .then(data => {
-                console.log('Twitch data:', data);
-                const liveUsernames = data.data ? data.data.map(stream => stream.user_login.toLowerCase()) : [];
-                updateStreamerElements(twitchUsers, liveUsernames, data.data);
-            })
-            .catch(error => {
-                console.error('Error fetching Twitch data:', error);
-            });
-
-        fetch('/user-status')
-            .then(response => response.json())
-            .then(userStatuses => {
-                const liveUsernames = Object.keys(userStatuses).filter(username => userStatuses[username] === 'on');
-                updateStreamerElements(customUsers, liveUsernames, []);
-            })
-            .catch(error => {
-                console.error('Error fetching user statuses:', error);
-            });
     }
 
+    // WebSocket Integration
+    const socket = new WebSocket('ws://localhost:3000');
+
+    socket.addEventListener('open', () => {
+        console.log('Connected to WebSocket server');
+    });
+
+    socket.addEventListener('message', event => {
+        const message = JSON.parse(event.data);
+
+        if (message.type === 'twitch-update') {
+            console.log('Received Twitch update:', message.data);
+            const liveUsernames = message.data.data.map(stream => stream.user_login.toLowerCase());
+            updateStreamerElements(twitchUsers, liveUsernames, message.data.data);
+        }
+
+        if (message.type === 'manual-update') {
+            console.log(`Received manual status update: ${message.user} is ${message.state}`);
+            const user = customUsers.find(u => u.username === message.user);
+            if (user) {
+                if (message.state === 'on') {
+                    const existingElement = document.getElementById(user.username);
+                    if (!existingElement) {
+                        const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
+                        liveContainer.appendChild(newElement);
+                    }
+                } else {
+                    const userElement = document.getElementById(message.user);
+                    if (userElement) {
+                        userElement.classList.add('fade-out');
+                        setTimeout(() => {
+                            liveContainer.removeChild(userElement);
+                        }, 500);
+                    }
+                }
+            }
+        }
+
+        if (message.type === 'manual-status-update') {
+            const statuses = message.data;
+            Object.keys(statuses).forEach(user => {
+                const state = statuses[user];
+                const userElement = document.getElementById(user);
+                if (state === 'on') {
+                    const existingElement = document.getElementById(user);
+                    if (!existingElement) {
+                        const newElement = createStreamerElement(user, user, 'assets/emoji.png', '#');
+                        liveContainer.appendChild(newElement);
+                    }
+                } else if (userElement) {
+                    userElement.classList.add('fade-out');
+                    setTimeout(() => {
+                        liveContainer.removeChild(userElement);
+                    }, 500);
+                }
+            });
+        }
+    });
+
+    socket.addEventListener('close', () => {
+        console.log('WebSocket connection closed');
+    });
+
+    // Initialize dark mode and sidebar
     initializeDarkMode();
-    updateStreamers();
-    setInterval(updateStreamers, 120000);
+    updateSidebar();
 
     if (window.matchMedia("(max-width: 768px)").matches) {
         toggleSidebarWrapper.addEventListener('click', () => {

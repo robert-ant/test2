@@ -140,11 +140,6 @@ img {
     width: 213.5px;
 }
 
-.live-section div img {
-    width: 100%;
-    height: auto; /* Ensure the image maintains its aspect ratio */
-}
-
 .live-section div a {
     text-decoration: none;
     color: inherit;
@@ -523,10 +518,6 @@ img {
     width: 213.5px;
 }
 
-.live-section div img {
-    width: 100%;
-    height: auto; /* Ensure the image maintains its aspect ratio */
-}
 
 .live-section div a {
     text-decoration: none;

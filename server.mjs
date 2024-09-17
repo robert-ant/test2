@@ -1,3 +1,4 @@
+import { WebSocketServer } from 'ws'; // Import WebSocketServer from ws
 import express from 'express';
 import cookieSession from 'cookie-session';
 import bodyParser from 'body-parser';
@@ -9,65 +10,39 @@ import rateLimit from 'express-rate-limit';
 import Bottleneck from 'bottleneck';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import dotenv from 'dotenv'; // Import dotenv
+import dotenv from 'dotenv';
 
-// Load environment variables from .env file
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
+const cache = new NodeCache({ stdTTL: 300, checkperiod: 150 });
+const userStatuses = cache.get('userStatuses') || {}; // Load cached userStatuses from NodeCache
 
-// Trust proxy headers set by Vercel or other reverse proxies
-app.set('trust proxy', 1); // Trust the first proxy
+// Middleware to parse incoming request bodies
+app.use(bodyParser.json()); // To parse JSON requests
+app.use(bodyParser.urlencoded({ extended: true })); // To parse URL-encoded requests
 
-const PORT = process.env.PORT || 3000; // Use Vercel's port or default to 3000
+// Create WebSocket server
+const wss = new WebSocketServer({ noServer: true });
 
-// Middleware for serving static files
-app.use(express.static(path.join(__dirname, 'frontend')));
+// Broadcast function to send data to all connected clients
+const broadcast = (data) => {
+    wss.clients.forEach(client => {
+        if (client.readyState === client.OPEN) {  // Correct usage of client.OPEN
+            client.send(JSON.stringify(data));
+        }
+    });
+};
 
-// Cookie session middleware
-app.use(cookieSession({
-    name: 'session',
-    keys: [process.env.SESSION_SECRET || 'default_session_secret'],
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-}));
-
-// Body parser middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// CSRF protection middleware
-const csrfProtection = csurf({ cookie: false });
-
-// Set CSP headers
-app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "default-src 'self'; img-src 'self' data: https://static-cdn.jtvnw.net; script-src 'self'");
-    next();
-});
-
-// Rate limiting middleware for incoming requests
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
-});
-app.use(limiter);
-
-// Rate limiter for Twitch API requests
-const apiLimiter = new Bottleneck({
-    minTime: 75, // Minimum time between requests, Twitch allows 800 requests per minute
-    maxConcurrent: 1 // Ensure only one request at a time
-});
-
-// Function to fetch Twitch OAuth token
+// Fetch Twitch OAuth token
 async function fetchTwitchToken() {
     try {
         const response = await fetch('https://id.twitch.tv/oauth2/token', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 client_id: process.env.TWITCH_CLIENT_ID,
                 client_secret: process.env.TWITCH_CLIENT_SECRET,
@@ -76,95 +51,79 @@ async function fetchTwitchToken() {
         });
 
         const data = await response.json();
-
-        // Log the response for debugging
-        console.log('Twitch Token Response:', data);
-
-        if (!response.ok) {
-            throw new Error(`Error fetching token: ${data.error} - ${data.message}`);
-        }
-
+        if (!response.ok) throw new Error(`Error fetching token: ${data.error} - ${data.message}`);
         return data.access_token;
     } catch (error) {
         console.error('Failed to fetch Twitch OAuth token:', error);
-        return null; // Return null if the token fetch fails
+        return null;
     }
 }
 
-// Function to fetch live stream data from Twitch
+// Fetch Twitch data
 async function fetchTwitchData(token) {
     const users = ["SidneyEweka", "fl0m", "Ranger", "ohnePixel", "jasontheween", "BLASTPremier", "trausi", "Fibii", "PRXf0rsakeN", "Dashy", "s0mcs", "d0cc_tv", "Smacko"];
     const queryParams = users.map(user => `user_login=${user}`).join('&');
-    const response = await apiLimiter.schedule(() =>
-        fetch(`https://api.twitch.tv/helix/streams?${queryParams}`, {
-            headers: {
-                'Client-ID': process.env.TWITCH_CLIENT_ID,
-                'Authorization': `Bearer ${token}`
-            }
-        })
-    );
+    const response = await fetch(`https://api.twitch.tv/helix/streams?${queryParams}`, {
+        headers: {
+            'Client-ID': process.env.TWITCH_CLIENT_ID,
+            'Authorization': `Bearer ${token}`
+        }
+    });
     const data = await response.json();
     return data;
 }
 
-// Cache setup
-const cache = new NodeCache({ stdTTL: 300, checkperiod: 150 });
-
-// Route to get live Twitch streams
-app.get('/twitch/live', csrfProtection, async (req, res) => {
-    try {
-        let token = cache.get('twitchToken');
-        if (!token) {
-            console.log('No cached token found. Fetching a new one...');
-            token = await fetchTwitchToken();
-            if (!token) {
-                return res.status(500).json({ error: 'Failed to fetch Twitch OAuth token' });
-            }
-            cache.set('twitchToken', token, 3600); // Cache token for 1 hour (3600 seconds)
-        }
-
-        let twitchData = cache.get('twitchData');
-        if (!twitchData) {
-            console.log('No cached Twitch data found. Fetching new data...');
-            twitchData = await fetchTwitchData(token);
-            if (!twitchData) {
-                return res.status(500).json({ error: 'Failed to fetch Twitch data' });
-            }
-            cache.set('twitchData', twitchData, 300); // Cache data for 5 minutes
-        }
-
-        res.json(twitchData);
-    } catch (error) {
-        console.error('Error in /twitch/live route:', error);  // Log the exact error
-        res.status(500).json({ error: 'Internal server error' });
+// Periodically fetch Twitch data and broadcast it to connected clients
+setInterval(async () => {
+    let token = cache.get('twitchToken');
+    if (!token) {
+        token = await fetchTwitchToken();
+        if (token) cache.set('twitchToken', token, 3600); // Cache token for 1 hour
     }
-});
+    if (token) {
+        const twitchData = await fetchTwitchData(token);
+        cache.set('twitchData', twitchData, 300); // Cache Twitch data for 5 minutes
+        broadcast({ type: 'twitch-update', data: twitchData }); // Broadcast Twitch data to all clients
+    }
+}, 60000); // Fetch every 1 minute
 
-// Store user statuses
-const userStatuses = {};
-
-// Endpoint to update user status
+// Handle manual status updates (e.g., from admin or user pages)
 app.post('/update-user-status', (req, res) => {
-    const { user, state } = req.body;
+    const { user, state } = req.body || {}; // Ensure req.body exists
+
+    if (!user || !state) {
+        return res.status(400).send('Missing user or state'); // Handle missing body data
+    }
+
     if (user && (state === 'on' || state === 'off')) {
-        userStatuses[user] = state;
+        userStatuses[user] = state; // Update user status
+        cache.set('userStatuses', userStatuses); // Cache the updated user statuses
+        broadcast({ type: 'manual-update', user, state }); // Broadcast manual update to all clients
         res.sendStatus(200);
     } else {
-        res.sendStatus(400);
+        res.status(400).send('Invalid user or state');
     }
 });
 
-// Endpoint to get user status
-app.get('/user-status', (req, res) => {
-    res.json(userStatuses);
-});
+// Middleware for serving static files and handling session and CSRF
+app.use(cookieSession({
+    name: 'session',
+    keys: [process.env.SESSION_SECRET || 'default_secret'],
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}));
+
+// Serve static frontend files (e.g., adminPage, user1Page, etc.)
+app.use(express.static(path.join(__dirname, 'frontend')));
+
+// CSRF Protection Middleware
+const csrfProtection = csurf({ cookie: false });
 
 // Route to provide CSRF token
 app.get('/csrf-token', csrfProtection, (req, res) => {
     res.json({ csrfToken: req.csrfToken() });
 });
 
-// Login route with CSRF protection
+// Route for login handling with CSRF protection
 app.post('/login', csrfProtection, (req, res) => {
     const { username, password } = req.body;
     const validUsers = {
@@ -191,7 +150,7 @@ app.post('/login', csrfProtection, (req, res) => {
     }
 });
 
-// Serve user pages
+// Route to serve user pages (adminPage, user1Page, etc.)
 app.get('/:userPage', (req, res) => {
     const userPage = req.params.userPage;
     const validPages = [
@@ -221,7 +180,30 @@ app.get('/:userPage', (req, res) => {
     }
 });
 
-// Start the server on the correct port
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// Start the server and integrate WebSocket with HTTP server
+const server = app.listen(process.env.PORT || 3000, () => {
+    console.log(`Server running on port ${process.env.PORT || 3000}`);
+});
+
+server.on('upgrade', (request, socket, head) => {
+    wss.handleUpgrade(request, socket, head, ws => {
+        wss.emit('connection', ws, request);
+    });
+});
+
+// Handle WebSocket connection
+wss.on('connection', (ws) => {
+    console.log('Client connected to WebSocket');
+
+    // Send cached Twitch data immediately upon connection
+    const cachedTwitchData = cache.get('twitchData');
+    if (cachedTwitchData) {
+        ws.send(JSON.stringify({ type: 'twitch-update', data: cachedTwitchData }));
+    }
+
+    // Send cached user statuses immediately upon connection
+    ws.send(JSON.stringify({ type: 'manual-status-update', data: userStatuses }));
+
+    // Send initial welcome message
+    ws.send(JSON.stringify({ type: 'welcome', message: 'Connected to WebSocket server' }));
 });

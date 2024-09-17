@@ -162,7 +162,6 @@
         </div>
     </div>
     <script>
-        // Function to handle switch state changes
         function handleSwitchChange(user, state) {
             fetch('/update-user-status', {
                 method: 'POST',
@@ -179,11 +178,10 @@
             });
         }
 
-        // Add event listeners to all switches
-        document.querySelectorAll('.switch input').forEach(switchElement => {
+        document.querySelectorAll('input[type="checkbox"]').forEach(switchElement => {
             switchElement.addEventListener('change', (event) => {
-                const user = event.target.id.split('-')[0];
-                const state = event.target.checked ? 'on' : 'off';
+                const user = event.target.id.split('-')[0]; // Extract user ID from the switch ID
+                const state = event.target.checked ? 'on' : 'off'; // Determine the state
                 handleSwitchChange(user, state);
             });
         });
