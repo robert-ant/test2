@@ -121,16 +121,18 @@ app.get('/twitch/live', csrfProtection, async (req, res) => {
 
         let twitchData = cache.get('twitchData');
         if (!twitchData) {
+            console.log('No cached Twitch data found. Fetching new data...');
             twitchData = await fetchTwitchData(token);
             if (!twitchData) {
                 return res.status(500).json({ error: 'Failed to fetch Twitch data' });
             }
             cache.set('twitchData', twitchData, 300); // Cache data for 5 minutes
         }
+
         res.json(twitchData);
     } catch (error) {
-        console.error('Error fetching Twitch data:', error);
-        res.status(500).json({ error: 'Failed to fetch Twitch data' });
+        console.error('Error in /twitch/live route:', error);  // Log the exact error
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
