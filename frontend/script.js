@@ -209,41 +209,41 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    function updateManualElements(manualStatuses) {
-        const isStatusChanged = JSON.stringify(manualStatuses) !== JSON.stringify(cachedManualStatus);
-    
-        if (!isStatusChanged) {
-            return; // Exit if no change in manual statuses
-        }
-    
-        cachedManualStatus = { ...manualStatuses }; // Update cache
-    
-        customUsers.forEach(user => {
-            const isManualOn = manualStatuses[user.username] === 'on';
-            let existingElement = document.getElementById(user.username);
-    
-            if (isManualOn) {
-                // Add the user as live
-                if (!existingElement) {
-                    const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
-                    liveContainer.appendChild(newElement);
-                } else {
-                    existingElement.classList.remove('fade-out');
-                    existingElement.classList.add('fade-in');
-                }
-            } else if (existingElement) {
-                // Fade out and remove the user if set to off
-                existingElement.classList.add('fade-out');
-                setTimeout(() => {
-                    // Ensure the element is still a child of liveContainer before removing
-                    if (liveContainer.contains(existingElement)) {
-                        liveContainer.removeChild(existingElement);
-                    }
-                }, 500);
-            }
-        });
+ function updateManualElements(manualStatuses) {
+    const isStatusChanged = JSON.stringify(manualStatuses) !== JSON.stringify(cachedManualStatus);
+
+    if (!isStatusChanged) {
+        return; // Exit if no change in manual statuses
     }
-    
+
+    cachedManualStatus = { ...manualStatuses }; // Update cache
+
+    customUsers.forEach(user => {
+        const isManualOn = manualStatuses[user.username] === 'on';
+        let existingElement = document.getElementById(user.username);
+
+        if (isManualOn) {
+            // Add the user as live
+            if (!existingElement) {
+                const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
+                liveContainer.appendChild(newElement);
+            } else {
+                existingElement.classList.remove('fade-out');
+                existingElement.classList.add('fade-in');
+            }
+        } else if (existingElement) {
+            // Fade out and remove the user if set to off
+            existingElement.classList.add('fade-out');
+            setTimeout(() => {
+                // Ensure the element is still a child of liveContainer before removing
+                if (liveContainer.contains(existingElement)) {
+                    liveContainer.removeChild(existingElement);
+                }
+            }, 500);
+        }
+    });
+}
+
 
     // Function to update the sidebar
     function updateSidebar() {
