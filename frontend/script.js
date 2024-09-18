@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Poll the server every 2 minutes
     function pollForUpdates() {
-        fetch('/updates')
+        fetch('/updates') // Correctly pointing to the /updates endpoint
             .then(response => response.json())
             .then(data => {
                 if (data.twitch && data.twitch.data) {
