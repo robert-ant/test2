@@ -173,6 +173,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function updateTwitchElements(liveUsernames, streamsData) {
         const isDataChanged = JSON.stringify(liveUsernames) !== JSON.stringify(cachedTwitchData);
+
         if (!isDataChanged) {
             return; // Exit if no change in Twitch data
         }
@@ -210,17 +211,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function updateManualElements(manualStatuses) {
         const isStatusChanged = JSON.stringify(manualStatuses) !== JSON.stringify(cachedManualStatus);
+    
         if (!isStatusChanged) {
             return; // Exit if no change in manual statuses
         }
-
+    
         cachedManualStatus = { ...manualStatuses }; // Update cache
-
+    
         customUsers.forEach(user => {
             const isManualOn = manualStatuses[user.username] === 'on';
             let existingElement = document.getElementById(user.username);
-
+    
             if (isManualOn) {
+                // Add the user as live
                 if (!existingElement) {
                     const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
                     liveContainer.appendChild(newElement);
@@ -229,8 +232,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     existingElement.classList.add('fade-in');
                 }
             } else if (existingElement) {
+                // Fade out and remove the user if set to off
                 existingElement.classList.add('fade-out');
                 setTimeout(() => {
+                    // Ensure the element is still a child of liveContainer before removing
                     if (liveContainer.contains(existingElement)) {
                         liveContainer.removeChild(existingElement);
                     }
@@ -238,7 +243,9 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+    
 
+    // Function to update the sidebar
     function updateSidebar() {
         if (!sidebarContainer) {
             console.error('Sidebar container not found.');
@@ -254,27 +261,29 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Polling function to fetch updates from the backend
-    function pollForUpdates() {
-        fetch('/updates')
-            .then(response => response.json())
-            .then(data => {
-                if (data.twitch) {
-                    const liveUsernames = data.twitch.data.map(stream => stream.user_login.toLowerCase());
-                    updateTwitchElements(liveUsernames, data.twitch.data);
-                }
-                if (data.manual) {
-                    updateManualElements(data.manual);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching updates:', error);
-            });
-    }
+    // SSE connection to receive updates
+    const eventSource = new EventSource('/events');
 
-    // Start polling for updates every 10 seconds
-    setInterval(pollForUpdates, 10000); // Poll every 10 seconds
-    pollForUpdates(); // Initial fetch
+    eventSource.onopen = () => {
+        console.log('Connected to SSE server');
+    };
+
+    eventSource.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+
+        if (message.type === 'twitch-update') {
+            const liveUsernames = message.data.data.map(stream => stream.user_login.toLowerCase());
+            updateTwitchElements(liveUsernames, message.data.data); // Only update if data has changed
+        }
+
+        if (message.type === 'manual-status-update') {
+            updateManualElements(message.data); // Only update manual statuses if changed
+        }
+    };
+
+    eventSource.onerror = (error) => {
+        console.error('SSE connection error:', error);
+    };
 
     initializeDarkMode();
     updateSidebar(); // Update the sidebar on page load
