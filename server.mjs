@@ -34,27 +34,29 @@ app.use(
 );
 
 // Fetch Twitch OAuth token
-async function fetchTwitchToken() {
-    try {
-        const response = await fetch('https://id.twitch.tv/oauth2/token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                client_id: process.env.TWITCH_CLIENT_ID,
-                client_secret: process.env.TWITCH_CLIENT_SECRET,
-                grant_type: 'client_credentials',
-            }),
-        });
-
-        const data = await response.json();
-        if (!response.ok) throw new Error(`Error fetching token: ${data.error} - ${data.message}`);
-        return data.access_token;
-    } catch (error) {
-        console.error('Failed to fetch Twitch OAuth token:', error);
-        return null;
+    async function fetchTwitchToken() {
+        try {
+            const response = await fetch('https://id.twitch.tv/oauth2/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    client_id: process.env.TWITCH_CLIENT_ID,
+                    client_secret: process.env.TWITCH_CLIENT_SECRET,
+                    grant_type: 'client_credentials',
+                }),
+            });
+    
+            const data = await response.json();
+            if (!response.ok) throw new Error(`Error fetching token: ${data.error} - ${data.message}`);
+            
+            console.log('Fetched Twitch Token:', data.access_token); // Log the token to check if it's valid
+            
+            return data.access_token;
+        } catch (error) {
+            console.error('Failed to fetch Twitch OAuth token:', error);
+            return null;
+        }
     }
-}
-
 // Fetch Twitch data
 async function fetchTwitchData(token) {
     const users = ['SidneyEweka', 'fl0m', 'Ranger', 'ohnePixel', 'jasontheween'];
