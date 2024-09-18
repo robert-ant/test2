@@ -513,7 +513,7 @@ body.dark-mode .live-section div {
     transition: background-color 0.5s ease, opacity 0.5s ease;
 }
 
-.streamer {
+.streamer online fade-in {
     cursor: pointer; /* Change cursor to pointer to indicate the element is clickable */
 }
 
