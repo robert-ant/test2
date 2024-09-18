@@ -64,17 +64,13 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "user2", channelName: "User2", url: "customPage2.html", thumbnail: "assets/emoji.png" },
         { username: "user3", channelName: "User3", url: "customPage3.html", thumbnail: "assets/emoji.png" },
         { username: "user4", channelName: "User4", url: "customPage4.html", thumbnail: "assets/emoji.png" },
-        { username: "user5", channelName: "User5", url: "customPage5.html", thumbnail: "assets/emoji.png" },
-        { username: "user6", channelName: "User6", url: "customPage6.html", thumbnail: "assets/emoji.png" },
-        { username: "user7", channelName: "User7", url: "customPage7.html", thumbnail: "assets/emoji.png" },
-        { username: "user8", channelName: "User8", url: "customPage8.html", thumbnail: "assets/emoji.png" },
-        { username: "user9", channelName: "User9", url: "customPage9.html", thumbnail: "assets/emoji.png" },
-        { username: "user10", channelName: "User10", url: "customPage10.html", thumbnail: "assets/emoji.png" },
-        { username: "user11", channelName: "User11", url: "customPage11.html", thumbnail: "assets/emoji.png" },
-        { username: "user12", channelName: "User12", url: "customPage12.html", thumbnail: "assets/emoji.png" }
+        { username: "user5", channelName: "User5", url: "customPage5.html", thumbnail: "assets/emoji.png" }
     ];
 
     const allUsers = [...twitchUsers, ...customUsers];
+
+    let cachedTwitchData = null;
+    let cachedManualStatus = {};
 
     function applyDarkMode() {
         document.body.classList.add('dark-mode');
@@ -175,47 +171,81 @@ document.addEventListener("DOMContentLoaded", function() {
         return li;
     }
 
-    function updateStreamerElements(liveUsernames, streamsData) {
-        allUsers.forEach(user => {
+    function updateTwitchElements(liveUsernames, streamsData) {
+        const isDataChanged = JSON.stringify(liveUsernames) !== JSON.stringify(cachedTwitchData);
+
+        if (!isDataChanged) {
+            return; // Exit if no change in Twitch data
+        }
+
+        cachedTwitchData = [...liveUsernames]; // Update cache
+
+        twitchUsers.forEach(user => {
             const isLive = liveUsernames.includes(user.username.toLowerCase());
-            const existingElement = document.getElementById(user.username);
-    
+            let existingElement = document.getElementById(user.username);
+
             if (isLive) {
-                let thumbnail = 'assets/emoji.png'; // Default thumbnail for custom users
-                let url = user.url || '#'; // Default to "#" if no URL is provided
-    
-                if (streamsData && streamsData.length > 0) {
-                    const stream = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
-                    if (stream) {
-                        thumbnail = stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180');
-                        url = `https://www.twitch.tv/${user.username}`;
-                    }
+                let thumbnail = 'assets/emoji.png';
+                let url = `https://www.twitch.tv/${user.username}`;
+
+                const stream = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
+                if (stream) {
+                    thumbnail = stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180');
                 }
-    
+
                 if (!existingElement) {
                     const newElement = createStreamerElement(user.username, user.channelName, thumbnail, url);
                     liveContainer.appendChild(newElement);
                 } else {
-                    // Update existing element
                     existingElement.querySelector('img').src = thumbnail;
                     existingElement.querySelector('span').innerText = user.channelName;
                     existingElement.classList.remove('fade-out');
                     existingElement.classList.add('fade-in');
                 }
             } else if (existingElement) {
-                // Add a delay before removing elements to prevent flickering
+                existingElement.classList.add('fade-out');
+                setTimeout(() => liveContainer.removeChild(existingElement), 500);
+            }
+        });
+    }
+
+    function updateManualElements(manualStatuses) {
+        const isStatusChanged = JSON.stringify(manualStatuses) !== JSON.stringify(cachedManualStatus);
+    
+        if (!isStatusChanged) {
+            return; // Exit if no change in manual statuses
+        }
+    
+        cachedManualStatus = { ...manualStatuses }; // Update cache
+    
+        customUsers.forEach(user => {
+            const isManualOn = manualStatuses[user.username] === 'on';
+            let existingElement = document.getElementById(user.username);
+    
+            if (isManualOn) {
+                // Add the user as live
+                if (!existingElement) {
+                    const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
+                    liveContainer.appendChild(newElement);
+                } else {
+                    existingElement.classList.remove('fade-out');
+                    existingElement.classList.add('fade-in');
+                }
+            } else if (existingElement) {
+                // Fade out and remove the user if set to off
                 existingElement.classList.add('fade-out');
                 setTimeout(() => {
-                    // Double-check if the user is still offline before removing
-                    if (!liveUsernames.includes(user.username.toLowerCase())) {
+                    // Ensure the element is still a child of liveContainer before removing
+                    if (liveContainer.contains(existingElement)) {
                         liveContainer.removeChild(existingElement);
                     }
-                }, 2000); // Wait 2 seconds before removing (adjust as necessary)
+                }, 500);
             }
         });
     }
     
 
+    // Function to update the sidebar
     function updateSidebar() {
         if (!sidebarContainer) {
             console.error('Sidebar container not found.');
@@ -231,7 +261,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Server-Sent Events (SSE) Integration
+    // SSE connection to receive updates
     const eventSource = new EventSource('/events');
 
     eventSource.onopen = () => {
@@ -242,28 +272,21 @@ document.addEventListener("DOMContentLoaded", function() {
         const message = JSON.parse(event.data);
 
         if (message.type === 'twitch-update') {
-            console.log('Received Twitch update:', message.data);
             const liveUsernames = message.data.data.map(stream => stream.user_login.toLowerCase());
-            updateStreamerElements(liveUsernames, message.data.data);
+            updateTwitchElements(liveUsernames, message.data.data); // Only update if data has changed
         }
 
         if (message.type === 'manual-status-update') {
-            console.log(`Received manual status update:`, message.data);
-            updateStreamerElements(Object.keys(message.data), message.data);
-        }
-
-        if (message.type === 'welcome') {
-            console.log(message.message);
+            updateManualElements(message.data); // Only update manual statuses if changed
         }
     };
 
     eventSource.onerror = (error) => {
-        console.error('Error with SSE connection:', error);
+        console.error('SSE connection error:', error);
     };
 
-    // Initialize dark mode and sidebar
     initializeDarkMode();
-    updateSidebar();
+    updateSidebar(); // Update the sidebar on page load
 
     if (window.matchMedia("(max-width: 768px)").matches) {
         toggleSidebarWrapper.addEventListener('click', () => {

@@ -26,12 +26,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'frontend')));
 
 // SSE endpoint for real-time updates
+const clients = new Set(); // Keep track of connected SSE clients
+
 app.get('/events', (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
 
+    // Function to send data
     const sendData = (data) => {
         res.write(`data: ${JSON.stringify(data)}\n\n`);
     };
@@ -39,6 +42,7 @@ app.get('/events', (req, res) => {
     // Send welcome message and cached data on connect
     sendData({ type: 'welcome', message: 'Connected to SSE server' });
 
+    // Send both Twitch data and manual status on connect
     const cachedTwitchData = cache.get('twitchData');
     if (cachedTwitchData) {
         sendData({ type: 'twitch-update', data: cachedTwitchData });
@@ -49,20 +53,24 @@ app.get('/events', (req, res) => {
         sendData({ type: 'manual-status-update', data: cachedStatuses });
     }
 
-    // Push updates periodically
-    const intervalId = setInterval(() => {
-        const twitchData = cache.get('twitchData');
-        if (twitchData) {
-            sendData({ type: 'twitch-update', data: twitchData });
-        }
-    }, 60000); // Every 60 seconds
+    // Store client connection
+    clients.add({ res });
 
-    // Clean up on disconnect
+    // Clean up when the client disconnects
     req.on('close', () => {
-        clearInterval(intervalId);
+        clients.delete({ res });
         res.end();
     });
 });
+
+// Function to broadcast updates to all connected clients
+function broadcast(message) {
+    clients.forEach(client => {
+        if (client.res) {
+            client.res.write(`data: ${JSON.stringify(message)}\n\n`);
+        }
+    });
+}
 
 // Fetch Twitch OAuth token
 async function fetchTwitchToken() {
@@ -110,6 +118,9 @@ setInterval(async () => {
     if (token) {
         const twitchData = await fetchTwitchData(token);
         cache.set('twitchData', twitchData, 300); // Cache Twitch data for 5 minutes
+
+        // Broadcast Twitch data to all clients
+        broadcast({ type: 'twitch-update', data: twitchData });
     }
 }, 60000); // Fetch every 1 minute
 
@@ -124,6 +135,13 @@ app.post('/update-user-status', (req, res) => {
     if (user && (state === 'on' || state === 'off')) {
         userStatuses[user] = state;
         cache.set('userStatuses', userStatuses); // Cache the updated user statuses
+
+        // Broadcast manual update instantly
+        broadcast({
+            type: 'manual-status-update',
+            data: userStatuses // Send updated statuses to all clients
+        });
+
         res.sendStatus(200);
     } else {
         res.status(400).send('Invalid user or state');
