@@ -34,29 +34,29 @@ app.use(
 );
 
 // Fetch Twitch OAuth token
-    async function fetchTwitchToken() {
-        try {
-            const response = await fetch('https://id.twitch.tv/oauth2/token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    client_id: process.env.TWITCH_CLIENT_ID,
-                    client_secret: process.env.TWITCH_CLIENT_SECRET,
-                    grant_type: 'client_credentials',
-                }),
-            });
-    
-            const data = await response.json();
-            if (!response.ok) throw new Error(`Error fetching token: ${data.error} - ${data.message}`);
-            
-            console.log('Fetched Twitch Token:', data.access_token); // Log the token to check if it's valid
-            
-            return data.access_token;
-        } catch (error) {
-            console.error('Failed to fetch Twitch OAuth token:', error);
-            return null;
-        }
+async function fetchTwitchToken() {
+    try {
+        const response = await fetch('https://id.twitch.tv/oauth2/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                client_id: process.env.TWITCH_CLIENT_ID,
+                client_secret: process.env.TWITCH_CLIENT_SECRET,
+                grant_type: 'client_credentials',
+            }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(`Error fetching token: ${data.error} - ${data.message}`);
+
+        console.log('Fetched Twitch Token:', data.access_token);
+        return data.access_token;
+    } catch (error) {
+        console.error('Failed to fetch Twitch OAuth token:', error);
+        return null;
     }
+}
+
 // Fetch Twitch data
 async function fetchTwitchData(token) {
     const users = ['SidneyEweka', 'fl0m', 'Ranger', 'ohnePixel', 'jasontheween'];
@@ -84,33 +84,61 @@ setInterval(async () => {
     }
 }, 60000); // Fetch every 1 minute
 
-// Polling endpoint for Twitch data
-app.get('/twitch/live', (req, res) => {
+// Polling endpoint for updates (manual and Twitch)
+app.get('/updates', (req, res) => {
     const twitchData = cache.get('twitchData') || {};
-    res.json(twitchData);
-});
-
-// Endpoint to fetch user statuses
-app.get('/user-status', (req, res) => {
     const manualStatuses = cache.get('userStatuses') || {};
-    res.json(manualStatuses);
+
+    // Debugging logs to check what's returned
+    console.log('Twitch Data:', twitchData);
+    console.log('Manual Statuses:', manualStatuses);
+
+    // Ensure valid structure is returned
+    res.json({
+        twitch: twitchData,
+        manual: manualStatuses
+    });
 });
 
 // Handle manual status updates (admin or user pages)
 app.post('/update-user-status', (req, res) => {
     const { user, state } = req.body || {};
 
+    // Debug logging to check incoming status updates
+    console.log('Received manual status update:', { user, state });
+
     if (!user || !state) {
+        console.log('Missing user or state in manual status update.');
         return res.status(400).send('Missing user or state');
     }
 
     if (user && (state === 'on' || state === 'off')) {
         userStatuses[user] = state;
         cache.set('userStatuses', userStatuses); // Cache the updated user statuses
+
+        // Log the updated manual statuses to verify
+        console.log('Updated manual statuses:', userStatuses);
+
         res.sendStatus(200);
     } else {
+        console.log('Invalid user or state.');
         res.status(400).send('Invalid user or state');
     }
+});
+
+// Polling endpoint for updates (manual and Twitch)
+app.get('/updates', (req, res) => {
+    const twitchData = cache.get('twitchData') || {};
+    const manualStatuses = cache.get('userStatuses') || {};
+
+    // Debugging logs to check what's returned
+    console.log('Twitch Data:', twitchData);
+    console.log('Manual Statuses:', manualStatuses);
+
+    res.json({
+        twitch: twitchData,
+        manual: manualStatuses
+    });
 });
 
 // Route for login handling

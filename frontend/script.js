@@ -1,47 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     const liveContainer = document.getElementById('live-container');
-    const sidebarContainer = document.getElementById('user-list');
-    const sidebar = document.querySelector('.sidebar');
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    const logo = document.getElementById('logo');
-    const toggleImage = document.getElementById('toggleImage');
-    const toggleSidebarWrapper = document.getElementById('toggleSidebarWrapper');
-    const unfoldImage = document.getElementById('unfold');
-
-    const darkModeLogo = 'assets/LOGOversionNIGHT.png';
-    const lightModeLogo = 'assets/LOGOversionBASIC.png';
-    const lightModeImage = 'assets/son.png';
-    const darkModeImage = 'assets/muun.png';
-    const lightModeUnfold = 'assets/unfold.png';
-    const darkModeUnfold = 'assets/unfolddark.png';
-
-    const customLogos = {
-        "SidneyEweka": "assets/kp.jpg",
-        "fl0m": "assets/kp.jpg",
-        "ohnePixel": "assets/kp.jpg",
-        "Ranger": "assets/kp.jpg",
-        "jasontheween": "assets/kp.jpg",
-        "BLASTPremier": "assets/kp.jpg",
-        "trausi": "assets/kp.jpg",
-        "Fibii": "assets/kp.jpg",
-        "PRXf0rsakeN": "assets/kp.jpg",
-        "Dashy": "assets/kp.jpg",
-        "s0mcs": "assets/kp.jpg",
-        "d0cc_tv": "assets/kp.jpg",
-        "Smacko": "assets/kp.jpg",
-        "user1": "assets/kp.jpg",
-        "user2": "assets/kp.jpg",
-        "user3": "assets/kp.jpg",
-        "user4": "assets/kp.jpg",
-        "user5": "assets/kp.jpg",
-        "user6": "assets/kp.jpg",
-        "user7": "assets/kp.jpg",
-        "user8": "assets/kp.jpg",
-        "user9": "assets/kp.jpg",
-        "user10": "assets/kp.jpg",
-        "user11": "assets/kp.jpg",
-        "user12": "assets/kp.jpg"
-    };
+    const sidebarContainer = document.getElementById('user-list'); // Sidebar element
 
     const twitchUsers = [
         { username: "SidneyEweka", channelName: "SidneyEweka" },
@@ -61,73 +20,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const customUsers = [
         { username: "user1", channelName: "user1", url: "https://www.tiktok.com/", thumbnail: "assets/emoji.png" },
-        { username: "user2", channelName: "User2", url: "customPage2.html", thumbnail: "assets/emoji.png" },
-        { username: "user3", channelName: "User3", url: "customPage3.html", thumbnail: "assets/emoji.png" },
-        { username: "user4", channelName: "User4", url: "customPage4.html", thumbnail: "assets/emoji.png" },
-        { username: "user5", channelName: "User5", url: "customPage5.html", thumbnail: "assets/emoji.png" }
+        { username: "user2", channelName: "user2", url: "customPage2.html", thumbnail: "assets/emoji.png" },
+        { username: "user3", channelName: "user3", url: "customPage3.html", thumbnail: "assets/emoji.png" },
+        { username: "user4", channelName: "user4", url: "customPage4.html", thumbnail: "assets/emoji.png" },
+        { username: "user5", channelName: "user5", url: "customPage5.html", thumbnail: "assets/emoji.png" },
     ];
-
-    const allUsers = [...twitchUsers, ...customUsers];
 
     let cachedTwitchData = null;
     let cachedManualStatus = {};
 
-    function applyDarkMode() {
-        document.body.classList.add('dark-mode');
-        logo.src = darkModeLogo;
-        toggleImage.src = darkModeImage;
-        unfoldImage.src = darkModeUnfold;
-        document.body.style.backgroundImage = "url('assets/2024-07-14_18.17.57.jpg')";
-    }
-
-    function applyLightMode() {
-        document.body.classList.remove('dark-mode');
-        logo.src = lightModeLogo;
-        toggleImage.src = lightModeImage;
-        unfoldImage.src = lightModeUnfold;
-        document.body.style.backgroundImage = "url('assets/2024-07-14_18.17.44.jpg')";
-    }
-
-    function initializeDarkMode() {
-        if (window.matchMedia("(max-width: 768px)").matches) {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                applyDarkMode();
-            } else {
-                applyLightMode();
-            }
-
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-                if (event.matches) {
-                    applyDarkMode();
-                } else {
-                    applyLightMode();
-                }
-            });
-
-            if (darkModeToggle) {
-                darkModeToggle.parentElement.style.display = 'none';
-            }
-        } else {
-            if (localStorage.getItem('darkMode') === 'enabled') {
-                applyDarkMode();
-                darkModeToggle.checked = true;
-            } else {
-                applyLightMode();
-                darkModeToggle.checked = false;
-            }
-
-            darkModeToggle.addEventListener('change', () => {
-                if (darkModeToggle.checked) {
-                    localStorage.setItem('darkMode', 'enabled');
-                    applyDarkMode();
-                } else {
-                    localStorage.setItem('darkMode', 'disabled');
-                    applyLightMode();
-                }
-            });
-        }
-    }
-
+    // Create streamer elements for the live container
     function createStreamerElement(username, channelName, thumbnail, url) {
         const div = document.createElement('div');
         div.classList.add('streamer', 'online', 'fade-in');
@@ -151,12 +53,13 @@ document.addEventListener("DOMContentLoaded", function() {
         return div;
     }
 
+    // Create sidebar user elements
     function createSidebarUserElement(username, channelName, url) {
         const li = document.createElement('li');
         li.id = `${username}-sidebar`;
 
         const img = document.createElement('img');
-        img.src = customLogos[username] || 'assets/kp.jpg';
+        img.src = 'assets/emoji.png'; // Example image for the sidebar
         img.alt = `${username} logo`;
         img.classList.add('sidebar-logo');
 
@@ -171,11 +74,15 @@ document.addEventListener("DOMContentLoaded", function() {
         return li;
     }
 
+    // Update Twitch elements in the live container
     function updateTwitchElements(liveUsernames, streamsData) {
-        const isDataChanged = JSON.stringify(liveUsernames) !== JSON.stringify(cachedTwitchData);
+        if (!streamsData || streamsData.length === 0) {
+            console.log('No Twitch users are live.');
+            return;
+        }
 
-        if (!isDataChanged) {
-            return; // Exit if no change in Twitch data
+        if (JSON.stringify(liveUsernames) === JSON.stringify(cachedTwitchData)) {
+            return; // No update if data hasn't changed
         }
 
         cachedTwitchData = [...liveUsernames]; // Update cache
@@ -207,90 +114,78 @@ document.addEventListener("DOMContentLoaded", function() {
                 setTimeout(() => liveContainer.removeChild(existingElement), 500);
             }
         });
+
+        updateSidebar(); // Update the sidebar after Twitch data changes
     }
 
- function updateManualElements(manualStatuses) {
-    const isStatusChanged = JSON.stringify(manualStatuses) !== JSON.stringify(cachedManualStatus);
+    // Update manual elements in the live container
+    function updateManualElements(manualStatuses) {
+        console.log('Manual statuses:', manualStatuses);  // Add logging to check the manual statuses
 
-    if (!isStatusChanged) {
-        return; // Exit if no change in manual statuses
-    }
-
-    cachedManualStatus = { ...manualStatuses }; // Update cache
-
-    customUsers.forEach(user => {
-        const isManualOn = manualStatuses[user.username] === 'on';
-        let existingElement = document.getElementById(user.username);
-
-        if (isManualOn) {
-            // Add the user as live
-            if (!existingElement) {
-                const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
-                liveContainer.appendChild(newElement);
-            } else {
-                existingElement.classList.remove('fade-out');
-                existingElement.classList.add('fade-in');
-            }
-        } else if (existingElement) {
-            // Fade out and remove the user if set to off
-            existingElement.classList.add('fade-out');
-            setTimeout(() => {
-                // Ensure the element is still a child of liveContainer before removing
-                if (liveContainer.contains(existingElement)) {
-                    liveContainer.removeChild(existingElement);
-                }
-            }, 500);
+        if (JSON.stringify(manualStatuses) === JSON.stringify(cachedManualStatus)) {
+            return; // No update if data hasn't changed
         }
-    });
-}
 
+        cachedManualStatus = { ...manualStatuses }; // Update cache
+
+        customUsers.forEach(user => {
+            const isManualOn = manualStatuses[user.username] === 'on';
+            let existingElement = document.getElementById(user.username);
+
+            if (isManualOn) {
+                // Add the user as live
+                if (!existingElement) {
+                    const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
+                    liveContainer.appendChild(newElement);
+                } else {
+                    existingElement.classList.remove('fade-out');
+                    existingElement.classList.add('fade-in');
+                }
+            } else if (existingElement) {
+                // Fade out and remove the user if set to off
+                existingElement.classList.add('fade-out');
+                setTimeout(() => liveContainer.removeChild(existingElement), 500);
+            }
+        });
+
+        updateSidebar(); // Update the sidebar after manual statuses change
+    }
 
     // Function to update the sidebar
     function updateSidebar() {
-        if (!sidebarContainer) {
-            console.error('Sidebar container not found.');
-            return;
-        }
+        sidebarContainer.innerHTML = ''; // Clear current sidebar content
 
-        sidebarContainer.innerHTML = '';
-
-        allUsers.forEach(user => {
+        [...twitchUsers, ...customUsers].forEach(user => {
             const url = twitchUsers.find(tu => tu.username === user.username) ? `https://www.twitch.tv/${user.username}` : user.url;
             const userLi = createSidebarUserElement(user.username, user.channelName, url);
             sidebarContainer.appendChild(userLi);
         });
     }
 
-    // SSE connection to receive updates
-    const eventSource = new EventSource('/events');
+    // Poll the server every 2 minutes
+    function pollForUpdates() {
+        fetch('/updates')
+            .then(response => response.json())
+            .then(data => {
+                if (data.twitch && data.twitch.data) {
+                    const liveUsernames = data.twitch.data.map(stream => stream.user_login.toLowerCase());
+                    updateTwitchElements(liveUsernames, data.twitch.data);
+                } else {
+                    console.log('No Twitch data found.');
+                }
 
-    eventSource.onopen = () => {
-        console.log('Connected to SSE server');
-    };
-
-    eventSource.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-
-        if (message.type === 'twitch-update') {
-            const liveUsernames = message.data.data.map(stream => stream.user_login.toLowerCase());
-            updateTwitchElements(liveUsernames, message.data.data); // Only update if data has changed
-        }
-
-        if (message.type === 'manual-status-update') {
-            updateManualElements(message.data); // Only update manual statuses if changed
-        }
-    };
-
-    eventSource.onerror = (error) => {
-        console.error('SSE connection error:', error);
-    };
-
-    initializeDarkMode();
-    updateSidebar(); // Update the sidebar on page load
-
-    if (window.matchMedia("(max-width: 768px)").matches) {
-        toggleSidebarWrapper.addEventListener('click', () => {
-            sidebar.classList.toggle('visible');
-        });
+                if (data.manual) {
+                    updateManualElements(data.manual);
+                } else {
+                    console.log('No manual statuses found.');
+                }
+            })
+            .catch(error => console.error('Error fetching updates:', error));
     }
+
+    // Poll every 2 minutes (120000 ms)
+    setInterval(pollForUpdates, 120000);
+    pollForUpdates(); // Initial fetch
+
+    updateSidebar(); // Initial sidebar update on page load
 });
