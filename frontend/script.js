@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function() {
         li.id = `${username}-sidebar`;
 
         const img = document.createElement('img');
-        img.src = customLogos[username] || 'assets/default_logo.png';
+        img.src = customLogos[username] || 'assets/kp.jpg';
         img.alt = `${username} logo`;
         img.classList.add('sidebar-logo');
 
