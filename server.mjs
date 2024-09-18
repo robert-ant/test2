@@ -82,18 +82,16 @@ setInterval(async () => {
     }
 }, 60000); // Fetch every 1 minute
 
-// Polling endpoint for updates (manual and Twitch)
-app.get('/updates', async (req, res) => {
-    try {
-        const twitchData = cache.get('twitchData') || {};
-        const manualStatuses = cache.get('userStatuses') || {};
-        res.json({
-            twitch: twitchData,
-            manual: manualStatuses,
-        });
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch updates' });
-    }
+// Polling endpoint for Twitch data
+app.get('/twitch/live', (req, res) => {
+    const twitchData = cache.get('twitchData') || {};
+    res.json(twitchData);
+});
+
+// Endpoint to fetch user statuses
+app.get('/user-status', (req, res) => {
+    const manualStatuses = cache.get('userStatuses') || {};
+    res.json(manualStatuses);
 });
 
 // Handle manual status updates (admin or user pages)
