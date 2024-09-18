@@ -105,7 +105,9 @@ async function fetchTwitchData(token) {
     };
 
     try {
-        return await twitchLimiter.schedule(() => retryFetchWithBackoff(url, options));
+        const response = await twitchLimiter.schedule(() => retryFetchWithBackoff(url, options));
+        console.log('Fetched Twitch Data:', response); // Log the response for debugging
+        return response;
     } catch (error) {
         console.error('Error fetching Twitch data after retries:', error);
         return null;
@@ -132,8 +134,8 @@ app.get('/updates', (req, res) => {
     const twitchData = cache.get('twitchData') || {};
     const manualStatuses = cache.get('userStatuses') || {};
 
-    console.log('Twitch Data:', twitchData);
-    console.log('Manual Statuses:', manualStatuses);
+    console.log('Twitch Data:', twitchData); // Log to check Twitch data
+    console.log('Manual Statuses:', manualStatuses); // Log to check manual statuses
 
     res.json({
         twitch: twitchData,

@@ -81,6 +81,9 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
+        console.log('Live Twitch usernames:', liveUsernames); // Log live Twitch users
+        console.log('Streams data:', streamsData); // Log streams data
+
         if (JSON.stringify(liveUsernames) === JSON.stringify(cachedTwitchData)) {
             return; // No update if data hasn't changed
         }
