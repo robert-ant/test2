@@ -7,6 +7,8 @@ import cookieSession from 'cookie-session';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import dotenv from 'dotenv';
+import Bottleneck from 'bottleneck';
+import https from 'https';
 
 dotenv.config();
 
@@ -33,6 +35,36 @@ app.use(
     })
 );
 
+// Bottleneck to limit Twitch API requests
+const twitchLimiter = new Bottleneck({
+    minTime: 1000, // Minimum 1 second between requests
+    maxConcurrent: 1, // Only 1 concurrent request at a time
+});
+
+// Agent to reuse connections
+const agent = new https.Agent({
+    keepAlive: true,
+});
+
+// Retry function with exponential backoff for fetch failures
+async function retryFetchWithBackoff(url, options, retries = 3, delay = 2000) {
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        if (retries > 0) {
+            console.log(`Retrying in ${delay} ms... (${retries} retries left)`);
+            await new Promise(res => setTimeout(res, delay));
+            return retryFetchWithBackoff(url, options, retries - 1, delay * 2); // Exponential backoff
+        } else {
+            throw error; // Exhausted retries
+        }
+    }
+}
+
 // Fetch Twitch OAuth token
 async function fetchTwitchToken() {
     try {
@@ -57,18 +89,27 @@ async function fetchTwitchToken() {
     }
 }
 
-// Fetch Twitch data
+// Fetch Twitch data with retries and throttling
 async function fetchTwitchData(token) {
     const users = ['SidneyEweka', 'fl0m', 'Ranger', 'ohnePixel', 'jasontheween'];
     const queryParams = users.map((user) => `user_login=${user}`).join('&');
-    const response = await fetch(`https://api.twitch.tv/helix/streams?${queryParams}`, {
+    const url = `https://api.twitch.tv/helix/streams?${queryParams}`;
+
+    const options = {
         headers: {
             'Client-ID': process.env.TWITCH_CLIENT_ID,
             'Authorization': `Bearer ${token}`,
         },
-    });
-    const data = await response.json();
-    return data;
+        agent, // Use keep-alive agent for persistent connections
+        timeout: 15000, // 15 seconds timeout
+    };
+
+    try {
+        return await twitchLimiter.schedule(() => retryFetchWithBackoff(url, options));
+    } catch (error) {
+        console.error('Error fetching Twitch data after retries:', error);
+        return null;
+    }
 }
 
 // Periodically fetch Twitch data and cache it
@@ -80,23 +121,23 @@ setInterval(async () => {
     }
     if (token) {
         const twitchData = await fetchTwitchData(token);
-        cache.set('twitchData', twitchData, 300); // Cache Twitch data for 5 minutes
+        if (twitchData) {
+            cache.set('twitchData', twitchData, 300); // Cache Twitch data for 5 minutes
+        }
     }
-}, 60000); // Fetch every 1 minute
+}, 120000); // Fetch every 2 minutes
 
 // Polling endpoint for updates (manual and Twitch)
 app.get('/updates', (req, res) => {
     const twitchData = cache.get('twitchData') || {};
     const manualStatuses = cache.get('userStatuses') || {};
 
-    // Debugging logs to check what's returned
     console.log('Twitch Data:', twitchData);
     console.log('Manual Statuses:', manualStatuses);
 
-    // Ensure valid structure is returned
     res.json({
         twitch: twitchData,
-        manual: manualStatuses
+        manual: manualStatuses,
     });
 });
 
@@ -104,7 +145,6 @@ app.get('/updates', (req, res) => {
 app.post('/update-user-status', (req, res) => {
     const { user, state } = req.body || {};
 
-    // Debug logging to check incoming status updates
     console.log('Received manual status update:', { user, state });
 
     if (!user || !state) {
@@ -116,29 +156,12 @@ app.post('/update-user-status', (req, res) => {
         userStatuses[user] = state;
         cache.set('userStatuses', userStatuses); // Cache the updated user statuses
 
-        // Log the updated manual statuses to verify
         console.log('Updated manual statuses:', userStatuses);
-
         res.sendStatus(200);
     } else {
         console.log('Invalid user or state.');
         res.status(400).send('Invalid user or state');
     }
-});
-
-// Polling endpoint for updates (manual and Twitch)
-app.get('/updates', (req, res) => {
-    const twitchData = cache.get('twitchData') || {};
-    const manualStatuses = cache.get('userStatuses') || {};
-
-    // Debugging logs to check what's returned
-    console.log('Twitch Data:', twitchData);
-    console.log('Manual Statuses:', manualStatuses);
-
-    res.json({
-        twitch: twitchData,
-        manual: manualStatuses
-    });
 });
 
 // Route for login handling
