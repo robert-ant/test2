@@ -125,6 +125,7 @@ setInterval(async () => {
         const twitchData = await fetchTwitchData(token);
         if (twitchData) {
             cache.set('twitchData', twitchData, 300); // Cache Twitch data for 5 minutes
+            console.log('Cached Twitch Data:', twitchData);
         }
     }
 }, 120000); // Fetch every 2 minutes
