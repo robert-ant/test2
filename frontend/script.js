@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
     const liveContainer = document.getElementById('live-container');
     const sidebarContainer = document.getElementById('user-list'); // Sidebar element
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const body = document.body;
 
     const twitchUsers = [
         { username: "SidneyEweka", channelName: "SidneyEweka" },
@@ -28,6 +30,35 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let cachedTwitchData = null;
     let cachedManualStatus = {};
+
+    // Dark mode functionality
+    function enableDarkMode() {
+        body.classList.add('dark-mode');
+        darkModeToggle.checked = true;
+        localStorage.setItem('darkMode', 'enabled');
+    }
+
+    function disableDarkMode() {
+        body.classList.remove('dark-mode');
+        darkModeToggle.checked = false;
+        localStorage.setItem('darkMode', 'disabled');
+    }
+
+    // Check system preference for dark mode
+    const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (localStorage.getItem('darkMode') === 'enabled' || (systemDarkMode && !localStorage.getItem('darkMode'))) {
+        enableDarkMode();
+    }
+
+    // Toggle dark mode on switch change
+    darkModeToggle.addEventListener('change', () => {
+        if (darkModeToggle.checked) {
+            enableDarkMode();
+        } else {
+            disableDarkMode();
+        }
+    });
 
     // Create streamer elements for the live container
     function createStreamerElement(username, channelName, thumbnail, url) {
