@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function() {
         li.id = `${username}-sidebar`;
 
         const img = document.createElement('img');
-        img.src = 'assets/emoji.png'; // Example image for the sidebar
+        img.src = 'assets/emoji.png';
         img.alt = `${username} logo`;
         img.classList.add('sidebar-logo');
 
@@ -81,14 +81,14 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        console.log('Live Twitch usernames:', liveUsernames); // Log live Twitch users
-        console.log('Streams data:', streamsData); // Log streams data
+        console.log('Live Twitch usernames:', liveUsernames);
+        console.log('Streams data:', streamsData);
 
         if (JSON.stringify(liveUsernames) === JSON.stringify(cachedTwitchData)) {
-            return; // No update if data hasn't changed
+            return;
         }
 
-        cachedTwitchData = [...liveUsernames]; // Update cache
+        cachedTwitchData = [...liveUsernames];
 
         twitchUsers.forEach(user => {
             const isLive = liveUsernames.includes(user.username.toLowerCase());
@@ -118,25 +118,24 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-        updateSidebar(); // Update the sidebar after Twitch data changes
+        updateSidebar();
     }
 
     // Update manual elements in the live container
     function updateManualElements(manualStatuses) {
-        console.log('Manual statuses:', manualStatuses);  // Add logging to check the manual statuses
+        console.log('Manual statuses:', manualStatuses);
 
         if (JSON.stringify(manualStatuses) === JSON.stringify(cachedManualStatus)) {
-            return; // No update if data hasn't changed
+            return;
         }
 
-        cachedManualStatus = { ...manualStatuses }; // Update cache
+        cachedManualStatus = { ...manualStatuses };
 
         customUsers.forEach(user => {
             const isManualOn = manualStatuses[user.username] === 'on';
             let existingElement = document.getElementById(user.username);
 
             if (isManualOn) {
-                // Add the user as live
                 if (!existingElement) {
                     const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
                     liveContainer.appendChild(newElement);
@@ -145,18 +144,17 @@ document.addEventListener("DOMContentLoaded", function() {
                     existingElement.classList.add('fade-in');
                 }
             } else if (existingElement) {
-                // Fade out and remove the user if set to off
                 existingElement.classList.add('fade-out');
                 setTimeout(() => liveContainer.removeChild(existingElement), 500);
             }
         });
 
-        updateSidebar(); // Update the sidebar after manual statuses change
+        updateSidebar();
     }
 
     // Function to update the sidebar
     function updateSidebar() {
-        sidebarContainer.innerHTML = ''; // Clear current sidebar content
+        sidebarContainer.innerHTML = '';
 
         [...twitchUsers, ...customUsers].forEach(user => {
             const url = twitchUsers.find(tu => tu.username === user.username) ? `https://www.twitch.tv/${user.username}` : user.url;
@@ -167,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Poll the server every 2 minutes
     function pollForUpdates() {
-        fetch('/updates') // Correctly pointing to the /updates endpoint
+        fetch('/updates')
             .then(response => response.json())
             .then(data => {
                 if (data.twitch && data.twitch.data) {
@@ -186,9 +184,8 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(error => console.error('Error fetching updates:', error));
     }
 
-    // Poll every 2 minutes (120000 ms)
     setInterval(pollForUpdates, 120000);
-    pollForUpdates(); // Initial fetch
+    pollForUpdates();
 
-    updateSidebar(); // Initial sidebar update on page load
+    updateSidebar();
 });

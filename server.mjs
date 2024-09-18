@@ -16,8 +16,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const cache = new NodeCache({ stdTTL: 300, checkperiod: 150 }); // Cache for 5 minutes
-const userStatuses = cache.get('userStatuses') || {}; // Load cached userStatuses from NodeCache
+const cache = new NodeCache({ stdTTL: 300, checkperiod: 150 });
+const userStatuses = cache.get('userStatuses') || {};
 
 // Middleware to parse incoming request bodies
 app.use(bodyParser.json());
@@ -37,8 +37,8 @@ app.use(
 
 // Bottleneck to limit Twitch API requests
 const twitchLimiter = new Bottleneck({
-    minTime: 1000, // Minimum 1 second between requests
-    maxConcurrent: 1, // Only 1 concurrent request at a time
+    minTime: 1000,
+    maxConcurrent: 1,
 });
 
 // Agent to reuse connections
@@ -57,10 +57,10 @@ async function retryFetchWithBackoff(url, options, retries = 3, delay = 2000) {
     } catch (error) {
         if (retries > 0) {
             console.log(`Retrying in ${delay} ms... (${retries} retries left)`);
-            await new Promise(res => setTimeout(res, delay));
-            return retryFetchWithBackoff(url, options, retries - 1, delay * 2); // Exponential backoff
+            await new Promise((res) => setTimeout(res, delay));
+            return retryFetchWithBackoff(url, options, retries - 1, delay * 2);
         } else {
-            throw error; // Exhausted retries
+            throw error;
         }
     }
 }
@@ -100,13 +100,13 @@ async function fetchTwitchData(token) {
             'Client-ID': process.env.TWITCH_CLIENT_ID,
             'Authorization': `Bearer ${token}`,
         },
-        agent, // Use keep-alive agent for persistent connections
-        timeout: 15000, // 15 seconds timeout
+        agent,
+        timeout: 15000,
     };
 
     try {
         const response = await twitchLimiter.schedule(() => retryFetchWithBackoff(url, options));
-        console.log('Fetched Twitch Data:', response); // Log the response for debugging
+        console.log('Fetched Twitch Data:', response);
         return response;
     } catch (error) {
         console.error('Error fetching Twitch data after retries:', error);
@@ -128,15 +128,15 @@ setInterval(async () => {
             console.log('Cached Twitch Data:', twitchData);
         }
     }
-}, 120000); // Fetch every 2 minutes
+}, 120000);
 
 // Polling endpoint for updates (manual and Twitch)
 app.get('/updates', (req, res) => {
     const twitchData = cache.get('twitchData') || {};
     const manualStatuses = cache.get('userStatuses') || {};
 
-    console.log('Twitch Data:', twitchData); // Log to check Twitch data
-    console.log('Manual Statuses:', manualStatuses); // Log to check manual statuses
+    console.log('Twitch Data:', twitchData);
+    console.log('Manual Statuses:', manualStatuses);
 
     res.json({
         twitch: twitchData,
@@ -171,7 +171,6 @@ app.post('/update-user-status', (req, res) => {
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
-    // Hard-coded passwords for users
     const validUsers = {
         admin: 'admin_password',
         user1: 'user1_password',
