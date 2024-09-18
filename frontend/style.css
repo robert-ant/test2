@@ -133,6 +133,7 @@ body.dark-mode .live-section div {
     text-align: center;
     border-radius: 17px;
     transition: background-color 0.5s ease, opacity 0.5s ease;
+    cursor: pointer;
 }
 
 img {
