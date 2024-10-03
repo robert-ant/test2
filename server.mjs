@@ -9,7 +9,6 @@ import { dirname } from 'path';
 import dotenv from 'dotenv';
 import Bottleneck from 'bottleneck';
 import https from 'https';
-import Redis from 'ioredis';  // Added Redis for persistence
 
 dotenv.config();
 
@@ -18,9 +17,7 @@ const __dirname = dirname(__filename);
 
 const app = express();
 const cache = new NodeCache({ stdTTL: 300, checkperiod: 150 });
-
-// Redis connection for persistent storage of manual statuses
-const redis = new Redis(process.env.REDIS_URL);
+const userStatuses = cache.get('userStatuses') || {};
 
 // Middleware to parse incoming request bodies
 app.use(bodyParser.json());
@@ -134,9 +131,9 @@ setInterval(async () => {
 }, 120000);
 
 // Polling endpoint for updates (manual and Twitch)
-app.get('/updates', async (req, res) => {
+app.get('/updates', (req, res) => {
     const twitchData = cache.get('twitchData') || { data: [] };  // Ensure twitchData is always an array
-    const manualStatuses = await redis.get('userStatuses') || {};  // Fetch manual statuses from Redis
+    const manualStatuses = cache.get('userStatuses') || {};
 
     res.json({
         twitch: twitchData,
@@ -144,8 +141,9 @@ app.get('/updates', async (req, res) => {
     });
 });
 
+
 // Handle manual status updates (admin or user pages)
-app.post('/update-user-status', async (req, res) => {
+app.post('/update-user-status', (req, res) => {
     const { user, state } = req.body || {};
 
     console.log('Received manual status update:', { user, state });
@@ -156,11 +154,10 @@ app.post('/update-user-status', async (req, res) => {
     }
 
     if (user && (state === 'on' || state === 'off')) {
-        const manualStatuses = await redis.get('userStatuses') || {};
-        manualStatuses[user] = state;
-        await redis.set('userStatuses', JSON.stringify(manualStatuses)); // Persist to Redis
+        userStatuses[user] = state;
+        cache.set('userStatuses', userStatuses); // Cache the updated user statuses
 
-        console.log('Updated manual statuses:', manualStatuses);
+        console.log('Updated manual statuses:', userStatuses);
         res.sendStatus(200);
     } else {
         console.log('Invalid user or state.');
