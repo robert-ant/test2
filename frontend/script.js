@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Create sidebar user elements
-        function createSidebarUserElement(username, channelName, url) {
+    function createSidebarUserElement(username, channelName, url) {
         const li = document.createElement('li');
         li.id = `${username}-sidebar`;
 
@@ -105,8 +105,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         return li;
     }
-    
-    // Update Twitch elements in the live container (with fade-in and fade-out animation)
+
+    // Update Twitch elements in the live container
     function updateTwitchElements(liveUsernames, streamsData) {
         if (!streamsData || streamsData.length === 0) {
             console.log('No Twitch users are live.');
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function() {
         updateSidebar();
     }
 
-    // Update manual elements in the live container (with improved caching and fade-in/fade-out)
+    // Update manual elements in the live container
     function updateManualElements(manualStatuses) {
         console.log('Manual statuses:', manualStatuses);
 
