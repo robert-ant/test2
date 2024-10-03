@@ -28,8 +28,9 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "user5", channelName: "user5", url: "customPage5.html", thumbnail: "assets/emoji.png" },
     ];
 
-    let cachedTwitchData = null;
-    let cachedManualStatus = {};
+    // Load cached data from localStorage
+    let cachedTwitchData = JSON.parse(localStorage.getItem('twitchData')) || null;
+    let cachedManualStatus = JSON.parse(localStorage.getItem('manualStatuses')) || {};
 
     // Dark mode functionality
     function enableDarkMode() {
@@ -202,17 +203,29 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (data.twitch && data.twitch.data) {
                     const liveUsernames = data.twitch.data.map(stream => stream.user_login.toLowerCase());
                     updateTwitchElements(liveUsernames, data.twitch.data);
+                    localStorage.setItem('twitchData', JSON.stringify(data.twitch.data));  // Cache Twitch data
                 } else {
                     console.log('No Twitch data found.');
                 }
 
                 if (data.manual) {
                     updateManualElements(data.manual);
+                    localStorage.setItem('manualStatuses', JSON.stringify(data.manual));  // Cache manual statuses
                 } else {
                     console.log('No manual statuses found.');
                 }
             })
             .catch(error => console.error('Error fetching updates:', error));
+    }
+
+    // Load cached data on page load
+    if (cachedTwitchData) {
+        const liveUsernames = cachedTwitchData.map(stream => stream.user_login.toLowerCase());
+        updateTwitchElements(liveUsernames, cachedTwitchData);
+    }
+
+    if (cachedManualStatus) {
+        updateManualElements(cachedManualStatus);
     }
 
     setInterval(pollForUpdates, 120000);
