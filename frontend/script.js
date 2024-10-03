@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Create streamer elements for the live container
     function createStreamerElement(username, channelName, thumbnail, url) {
+        console.log('Creating element for:', username, channelName, thumbnail, url); // Debugging log
         const div = document.createElement('div');
         div.classList.add('streamer', 'online', 'fade-in');
         div.id = username;
@@ -133,6 +134,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 const stream = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
                 if (stream) {
                     thumbnail = stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180');
+                    console.log('Thumbnail URL for', user.username, ':', thumbnail); // Added log to verify thumbnail URL
                 }
 
                 if (!existingElement) {
