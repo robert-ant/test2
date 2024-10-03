@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return li;
     }
 
-    // Update Twitch elements in the live container
+    // Update Twitch elements in the live container (with fade-in and fade-out animation)
     function updateTwitchElements(liveUsernames, streamsData) {
         if (!streamsData || streamsData.length === 0) {
             console.log('No Twitch users are live.');
@@ -117,11 +117,10 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log('Live Twitch usernames:', liveUsernames);
         console.log('Streams data:', streamsData);
 
-        // Clear the liveContainer before appending new elements
-        liveContainer.innerHTML = '';
-
         twitchUsers.forEach(user => {
             const isLive = liveUsernames.includes(user.username.toLowerCase());
+            let existingElement = document.getElementById(user.username);
+
             if (isLive) {
                 let thumbnail = 'assets/emoji.png';
                 let url = `https://www.twitch.tv/${user.username}`;
@@ -129,18 +128,28 @@ document.addEventListener("DOMContentLoaded", function() {
                 const stream = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
                 if (stream) {
                     thumbnail = stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180');
-                    console.log('Thumbnail URL for', user.username, ':', thumbnail); // Added log to verify thumbnail URL
+                    console.log('Thumbnail URL for', user.username, ':', thumbnail); // Log the thumbnail URL for debugging
                 }
 
-                const newElement = createStreamerElement(user.username, user.channelName, thumbnail, url);
-                liveContainer.appendChild(newElement);
+                if (!existingElement) {
+                    const newElement = createStreamerElement(user.username, user.channelName, thumbnail, url);
+                    liveContainer.appendChild(newElement);
+                } else {
+                    existingElement.querySelector('img').src = thumbnail;
+                    existingElement.querySelector('span').innerText = user.channelName;
+                    existingElement.classList.remove('fade-out');
+                    existingElement.classList.add('fade-in');
+                }
+            } else if (existingElement) {
+                existingElement.classList.add('fade-out');
+                setTimeout(() => liveContainer.removeChild(existingElement), 500); // Fade out and remove
             }
         });
 
-        console.log('Updated liveContainer innerHTML:', liveContainer.innerHTML); // Log the current HTML structure
+        updateSidebar();
     }
 
-    // Update manual elements in the live container
+    // Update manual elements in the live container (with fade-in and fade-out animation)
     function updateManualElements(manualStatuses) {
         console.log('Manual statuses:', manualStatuses);
 
@@ -164,7 +173,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             } else if (existingElement) {
                 existingElement.classList.add('fade-out');
-                setTimeout(() => liveContainer.removeChild(existingElement), 500);
+                setTimeout(() => liveContainer.removeChild(existingElement), 500); // Fade out and remove
             }
         });
 
