@@ -85,6 +85,27 @@ document.addEventListener("DOMContentLoaded", function() {
         return div;
     }
 
+    // Create sidebar user elements
+        function createSidebarUserElement(username, channelName, url) {
+        const li = document.createElement('li');
+        li.id = `${username}-sidebar`;
+
+        const img = document.createElement('img');
+        img.src = 'assets/emoji.png';
+        img.alt = `${username} logo`;
+        img.classList.add('sidebar-logo');
+
+        const name = document.createElement('a');
+        name.href = url;
+        name.innerText = channelName || username;
+        name.classList.add('sidebar-text');
+
+        li.appendChild(img);
+        li.appendChild(name);
+
+        return li;
+    }
+    
     // Update Twitch elements in the live container (with fade-in and fade-out animation)
     function updateTwitchElements(liveUsernames, streamsData) {
         if (!streamsData || streamsData.length === 0) {
