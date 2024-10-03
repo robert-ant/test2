@@ -117,16 +117,11 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log('Live Twitch usernames:', liveUsernames);
         console.log('Streams data:', streamsData);
 
-        if (JSON.stringify(liveUsernames) === JSON.stringify(cachedTwitchData)) {
-            return;
-        }
-
-        cachedTwitchData = [...liveUsernames];
+        // Clear the liveContainer before appending new elements
+        liveContainer.innerHTML = '';
 
         twitchUsers.forEach(user => {
             const isLive = liveUsernames.includes(user.username.toLowerCase());
-            let existingElement = document.getElementById(user.username);
-
             if (isLive) {
                 let thumbnail = 'assets/emoji.png';
                 let url = `https://www.twitch.tv/${user.username}`;
@@ -137,22 +132,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     console.log('Thumbnail URL for', user.username, ':', thumbnail); // Added log to verify thumbnail URL
                 }
 
-                if (!existingElement) {
-                    const newElement = createStreamerElement(user.username, user.channelName, thumbnail, url);
-                    liveContainer.appendChild(newElement);
-                } else {
-                    existingElement.querySelector('img').src = thumbnail;
-                    existingElement.querySelector('span').innerText = user.channelName;
-                    existingElement.classList.remove('fade-out');
-                    existingElement.classList.add('fade-in');
-                }
-            } else if (existingElement) {
-                existingElement.classList.add('fade-out');
-                setTimeout(() => liveContainer.removeChild(existingElement), 500);
+                const newElement = createStreamerElement(user.username, user.channelName, thumbnail, url);
+                liveContainer.appendChild(newElement);
             }
         });
 
-        updateSidebar();
+        console.log('Updated liveContainer innerHTML:', liveContainer.innerHTML); // Log the current HTML structure
     }
 
     // Update manual elements in the live container
