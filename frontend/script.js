@@ -63,7 +63,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Create streamer elements for the live container
     function createStreamerElement(username, channelName, thumbnail, url) {
-        console.log('Creating element for:', username, channelName, thumbnail, url); // Debugging log
         const div = document.createElement('div');
         div.classList.add('streamer', 'online', 'fade-in');
         div.id = username;
@@ -86,36 +85,12 @@ document.addEventListener("DOMContentLoaded", function() {
         return div;
     }
 
-    // Create sidebar user elements
-    function createSidebarUserElement(username, channelName, url) {
-        const li = document.createElement('li');
-        li.id = `${username}-sidebar`;
-
-        const img = document.createElement('img');
-        img.src = 'assets/emoji.png';
-        img.alt = `${username} logo`;
-        img.classList.add('sidebar-logo');
-
-        const name = document.createElement('a');
-        name.href = url;
-        name.innerText = channelName || username;
-        name.classList.add('sidebar-text');
-
-        li.appendChild(img);
-        li.appendChild(name);
-
-        return li;
-    }
-
     // Update Twitch elements in the live container (with fade-in and fade-out animation)
     function updateTwitchElements(liveUsernames, streamsData) {
         if (!streamsData || streamsData.length === 0) {
             console.log('No Twitch users are live.');
             return;
         }
-
-        console.log('Live Twitch usernames:', liveUsernames);
-        console.log('Streams data:', streamsData);
 
         twitchUsers.forEach(user => {
             const isLive = liveUsernames.includes(user.username.toLowerCase());
@@ -128,7 +103,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 const stream = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
                 if (stream) {
                     thumbnail = stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180');
-                    console.log('Thumbnail URL for', user.username, ':', thumbnail); // Log the thumbnail URL for debugging
                 }
 
                 if (!existingElement) {
@@ -149,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function() {
         updateSidebar();
     }
 
-    // Update manual elements in the live container (with fade-in and fade-out animation)
+    // Update manual elements in the live container (with improved caching and fade-in/fade-out)
     function updateManualElements(manualStatuses) {
         console.log('Manual statuses:', manualStatuses);
 
@@ -221,11 +195,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (cachedManualStatus) {
-        updateManualElements(cachedManualStatus);
+        updateManualElements(cachedManualStatus); // Load cached manual statuses on page load
     }
 
-    setInterval(pollForUpdates, 120000);
-    pollForUpdates();
+    setInterval(pollForUpdates, 120000); // Poll the backend every 2 minutes for updates
+    pollForUpdates(); // Fetch data immediately on page load
 
-    updateSidebar();
+    updateSidebar(); // Update sidebar immediately
 });
