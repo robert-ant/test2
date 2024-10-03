@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const body = document.body;
 
     const twitchUsers = [
-        { username: "SidneyEweka", channelName: "SidneyEweka" },
+        { username: "LeekBeats", channelName: "LeekBeats" },
         { username: "fl0m", channelName: "fl0m" },
         { username: "ohnePixel", channelName: "OhnePixel" },
         { username: "Ranger", channelName: "Ranger" },

@@ -91,7 +91,7 @@ async function fetchTwitchToken() {
 
 // Fetch Twitch data with retries and throttling
 async function fetchTwitchData(token) {
-    const users = ['SidneyEweka', 'fl0m', 'Ranger', 'ohnePixel', 'jasontheween'];
+    const users = ['LeekBeats', 'fl0m', 'Ranger', 'ohnePixel', 'jasontheween'];
     const queryParams = users.map((user) => `user_login=${user}`).join('&');
     const url = `https://api.twitch.tv/helix/streams?${queryParams}`;
 
