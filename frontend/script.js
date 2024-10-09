@@ -144,10 +144,10 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log('Manual statuses:', manualStatuses);
 
         if (JSON.stringify(manualStatuses) === JSON.stringify(cachedManualStatus)) {
-            return;
+            return;  // No change in manual statuses
         }
 
-        cachedManualStatus = { ...manualStatuses };
+        cachedManualStatus = { ...manualStatuses };  // Update local cache
 
         customUsers.forEach(user => {
             const isManualOn = manualStatuses[user.username] === 'on';
@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
 
                 if (data.manual) {
-                    updateManualElements(data.manual);
+                    updateManualElements(data.manual);  // Sync manual statuses with backend
                     localStorage.setItem('manualStatuses', JSON.stringify(data.manual));  // Cache manual statuses
                 } else {
                     console.log('No manual statuses found.');
@@ -211,9 +211,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Sync and force manual element update on page load
-    updateManualElements(cachedManualStatus); // Load cached manual statuses on page load
-    pollForUpdates(); // Fetch data immediately on page load
+    updateManualElements(cachedManualStatus);  // Load cached manual statuses on page load
+    pollForUpdates();  // Fetch data immediately on page load
 
-    setInterval(pollForUpdates, 120000); // Poll the backend every 2 minutes for updates
-    updateSidebar(); // Update sidebar immediately
+    setInterval(pollForUpdates, 120000);  // Poll the backend every 2 minutes for updates
+    updateSidebar();  // Update sidebar immediately
 });

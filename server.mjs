@@ -132,14 +132,15 @@ setInterval(async () => {
 
 // Polling endpoint for updates (manual and Twitch)
 app.get('/updates', (req, res) => {
-    const twitchData = cache.get('twitchData') || { data: [] };  // Ensure twitchData is always an array
-    const manualStatuses = cache.get('userStatuses') || {};
+    const twitchData = cache.get('twitchData') || { data: [] };  // Always return an array
+    const manualStatuses = cache.get('userStatuses') || {};  // Use cached manual statuses
 
     res.json({
         twitch: twitchData,
-        manual: manualStatuses
+        manual: manualStatuses  // Send manual statuses
     });
 });
+
 
 // Handle manual status updates (admin or user pages)
 app.post('/update-user-status', (req, res) => {
