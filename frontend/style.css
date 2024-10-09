@@ -21,7 +21,6 @@ body.dark-mode {
     background: url('assets/2024-07-14_18.17.57.jpg') no-repeat center center fixed;
     background-size: cover;
     color: #E9E9E9;
-    text-shadow: 2px 2px 1px #000000;
 }
 
 .header {
