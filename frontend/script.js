@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     const liveContainer = document.getElementById('live-container');
-    const sidebarContainer = document.getElementById('user-list'); // Sidebar element
+    const sidebarContainer = document.getElementById('user-list');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
 
@@ -108,11 +108,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Update Twitch elements in the live container
     function updateTwitchElements(liveUsernames, streamsData) {
-        if (!streamsData || streamsData.length === 0) {
-            console.log('No Twitch users are live.');
-            return;
-        }
-
         twitchUsers.forEach(user => {
             const isLive = liveUsernames.includes(user.username.toLowerCase());
             let existingElement = document.getElementById(user.username);
@@ -215,12 +210,10 @@ document.addEventListener("DOMContentLoaded", function() {
         updateTwitchElements(liveUsernames, cachedTwitchData);
     }
 
-    if (cachedManualStatus) {
-        updateManualElements(cachedManualStatus); // Load cached manual statuses on page load
-    }
-
-    setInterval(pollForUpdates, 120000); // Poll the backend every 2 minutes for updates
+    // Sync and force manual element update on page load
+    updateManualElements(cachedManualStatus); // Load cached manual statuses on page load
     pollForUpdates(); // Fetch data immediately on page load
 
+    setInterval(pollForUpdates, 120000); // Poll the backend every 2 minutes for updates
     updateSidebar(); // Update sidebar immediately
 });
