@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "user2", channelName: "user2", url: "customPage2.html", thumbnail: "assets/emoji.png" },
         { username: "user3", channelName: "user3", url: "customPage3.html", thumbnail: "assets/emoji.png" },
         { username: "user4", channelName: "user4", url: "customPage4.html", thumbnail: "assets/emoji.png" },
-        { username: "user5", channelName: "user5", url: "customPage5.html", thumbnail: "assets/emoji.png" },
+        { username: "user5", channelName: "user5", url: "customPage5.html", thumbnail: "assets/emoji.png" }
     ];
 
     // Load cached data from localStorage

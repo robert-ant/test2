@@ -141,7 +141,6 @@ app.get('/updates', (req, res) => {
     });
 });
 
-
 // Handle manual status updates (admin or user pages)
 app.post('/update-user-status', (req, res) => {
     const { user, state } = req.body || {};
