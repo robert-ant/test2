@@ -80,8 +80,6 @@ async function fetchTwitchToken() {
 
         const data = await response.json();
         if (!response.ok) throw new Error(`Error fetching token: ${data.error} - ${data.message}`);
-
-        console.log('Fetched Twitch Token:', data.access_token);
         return data.access_token;
     } catch (error) {
         console.error('Failed to fetch Twitch OAuth token:', error);
@@ -125,7 +123,6 @@ setInterval(async () => {
         const twitchData = await fetchTwitchData(token);
         if (twitchData) {
             cache.set('twitchData', twitchData, 300); // Cache Twitch data for 5 minutes
-            console.log('Cached Twitch Data:', twitchData);
         }
     }
 }, 120000);
@@ -133,7 +130,7 @@ setInterval(async () => {
 // Polling endpoint for updates (manual and Twitch)
 app.get('/updates', (req, res) => {
     const twitchData = cache.get('twitchData') || { data: [] };  // Ensure twitchData is always an array
-    const manualStatuses = cache.get('userStatuses') || {};
+    const manualStatuses = cache.get('userStatuses') || {};  // Ensure manual statuses are retrieved
 
     res.json({
         twitch: twitchData,
@@ -145,23 +142,17 @@ app.get('/updates', (req, res) => {
 app.post('/update-user-status', (req, res) => {
     const { user, state } = req.body || {};
 
-    console.log('Received manual status update:', { user, state });
-
     if (!user || !state) {
-        console.log('Missing user or state in manual status update.');
         return res.status(400).send('Missing user or state');
     }
 
-    if (user && (state === 'on' || state === 'off')) {
+    if (state === 'on' || state === 'off') {
         userStatuses[user] = state;
-        cache.set('userStatuses', userStatuses); // Cache the updated user statuses
-
-        console.log('Updated manual statuses:', userStatuses);
-        res.sendStatus(200);
-    } else {
-        console.log('Invalid user or state.');
-        res.status(400).send('Invalid user or state');
+        cache.set('userStatuses', userStatuses);  // Cache the updated user statuses
+        return res.sendStatus(200);
     }
+
+    return res.status(400).send('Invalid state');
 });
 
 // Route for login handling
