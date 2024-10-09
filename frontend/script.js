@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "jasontheween", channelName: "jasontheween" },
         { username: "BLASTPremier", channelName: "BLASTPremier" },
         { username: "trausi", channelName: "trausi" },
-        { username: "Fibii", channelName: "Fibii" },F
+        { username: "Fibii", channelName: "Fibii" },
         { username: "PRXf0rsakeN", channelName: "PRXf0rsakeN" },
         { username: "Dashy", channelName: "Dashy" },
         { username: "s0mcs", channelName: "s0mcs" },
