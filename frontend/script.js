@@ -152,15 +152,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
         customUsers.forEach(user => {
             const isManualOn = manualStatuses[user.username] === 'on';
-            let existingElement = document.getElementById(user.username);
+            console.log(`${user.username} is ${isManualOn ? 'on' : 'off'}`);
 
+            let existingElement = document.getElementById(user.username);
             if (isManualOn) {
                 if (!existingElement) {
                     const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
+                    console.log(`Creating element for ${user.username}`);
                     liveContainer.appendChild(newElement);
-                } else {
-                    existingElement.classList.remove('fade-out');
-                    existingElement.classList.add('fade-in');
                 }
             } else if (existingElement) {
                 existingElement.classList.add('fade-out');

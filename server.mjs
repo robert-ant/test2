@@ -132,6 +132,8 @@ app.get('/updates', (req, res) => {
     const twitchData = cache.get('twitchData') || { data: [] };  // Ensure twitchData is always an array
     const manualStatuses = cache.get('userStatuses') || {};  // Ensure manual statuses are retrieved and cached
 
+    console.log('Manual Statuses:', manualStatuses);  // Added logging for manual statuses
+    
     res.json({
         twitch: twitchData,
         manual: manualStatuses
@@ -149,6 +151,7 @@ app.post('/update-user-status', (req, res) => {
     if (state === 'on' || state === 'off') {
         userStatuses[user] = state;
         cache.set('userStatuses', userStatuses);  // Cache the updated user statuses
+        console.log(`Updated status for ${user}: ${state}`);  // Logging for user status updates
         return res.sendStatus(200);
     }
 
