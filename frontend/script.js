@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Custom manual users
     const customUsers = [
-        { username: "RalfYT", channelName: "ismaralf", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/emoji.png" },
+        { username: "RalfYT", channelName: "RalfYT", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/emoji.png" },
         { username: "hundijalavesi", channelName: "hundijalavesi", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/emoji.png" },
         { username: "user3", channelName: "user3", url: "customPage3.html", thumbnail: "assets/emoji.png" },
         { username: "user4", channelName: "user4", url: "customPage4.html", thumbnail: "assets/emoji.png" },
