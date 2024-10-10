@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function() {
             let existingElement = document.getElementById(user.username);
             if (isManualOn) {
                 if (!existingElement) {
-                    const newElement = createStreamerElement(customUsers.username, customUsers.channelName, customUsers.thumbnail, customUsers.url);
+                    const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
                     console.log(`Creating element for ${user.username}`);
                     liveContainer.appendChild(newElement);
                 }
