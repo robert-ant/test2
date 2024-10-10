@@ -80,6 +80,7 @@ h3 {
 .live-container h2 {
     margin-top: 20px; /* Adjust this value to move the headers down */
     margin-bottom: 5px;
+    text-shadow: 2px 2px 1px #000000;
 }
 
 body.dark-mode h2 {
