@@ -132,7 +132,7 @@ app.get('/updates', (req, res) => {
     const twitchData = cache.get('twitchData') || { data: [] };  // Ensure twitchData is always an array
     const manualStatuses = cache.get('userStatuses') || {};  // Ensure manual statuses are retrieved and cached
 
-    console.log('Manual Statuses:', manualStatuses);  // Added logging for manual statuses
+    console.log('Sending manual statuses to frontend:', manualStatuses);  // Added logging for manual statuses
     
     res.json({
         twitch: twitchData,

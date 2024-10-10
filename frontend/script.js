@@ -33,6 +33,8 @@ document.addEventListener("DOMContentLoaded", function() {
     let cachedTwitchData = JSON.parse(localStorage.getItem('twitchData')) || null;
     let cachedManualStatus = JSON.parse(localStorage.getItem('manualStatuses')) || {};
 
+    console.log("Cached manual statuses after refresh:", cachedManualStatus);  // Log manual statuses on refresh
+
     // Dark mode functionality
     function enableDarkMode() {
         body.classList.add('dark-mode');
@@ -142,12 +144,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Update manual elements in the live container
     function updateManualElements(manualStatuses) {
-        console.log('Manual statuses:', manualStatuses);
-
-        if (JSON.stringify(manualStatuses) === JSON.stringify(cachedManualStatus)) {
-            return;
-        }
-
+        console.log('Updating manual elements:', manualStatuses);
         cachedManualStatus = { ...manualStatuses };
 
         customUsers.forEach(user => {
@@ -163,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             } else if (existingElement) {
                 existingElement.classList.add('fade-out');
-                setTimeout(() => liveContainer.removeChild(existingElement), 500); // Fade out and remove
+                setTimeout(() => liveContainer.removeChild(existingElement), 500);
             }
         });
 
@@ -186,6 +183,7 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch('/updates')
             .then(response => response.json())
             .then(data => {
+                console.log("Data fetched from backend:", data);  // Log data fetched from backend
                 if (data.twitch && data.twitch.data) {
                     const liveUsernames = data.twitch.data.map(stream => stream.user_login.toLowerCase());
                     updateTwitchElements(liveUsernames, data.twitch.data);
