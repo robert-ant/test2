@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
 
+    // Twitch users fetched from Twitch API
     const twitchUsers = [
         { username: "LeekBeats", channelName: "LeekBeats" },
         { username: "freq_k", channelName: "freq_k" },
@@ -21,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Smacko", channelName: "Smacko" }
     ];
 
+    // Custom manual users
     const customUsers = [
         { username: "RalfYT", channelName: "ismaralf", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/emoji.png" },
         { username: "hundijalavesi", channelName: "hundijalavesi", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/emoji.png" },
@@ -142,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function() {
         updateSidebar();
     }
 
-    // Update manual elements in the live container
+    // Update manual elements in the live container (for customUsers)
     function updateManualElements(manualStatuses) {
         console.log('Updating manual elements:', manualStatuses);
         cachedManualStatus = { ...manualStatuses };
@@ -171,7 +173,9 @@ document.addEventListener("DOMContentLoaded", function() {
     function updateSidebar() {
         sidebarContainer.innerHTML = '';
 
+        // Add Twitch users and custom users to the sidebar
         [...twitchUsers, ...customUsers].forEach(user => {
+            // Correct URL logic for both Twitch and custom users
             const url = twitchUsers.find(tu => tu.username === user.username) ? `https://www.twitch.tv/${user.username}` : user.url;
             const userLi = createSidebarUserElement(user.username, user.channelName, url);
             sidebarContainer.appendChild(userLi);

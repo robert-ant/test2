@@ -129,10 +129,10 @@ setInterval(async () => {
 
 // Polling endpoint for updates (manual and Twitch)
 app.get('/updates', (req, res) => {
-    const twitchData = cache.get('twitchData') || { data: [] };  // Ensure twitchData is always an array
-    const manualStatuses = cache.get('userStatuses') || {};  // Ensure manual statuses are retrieved and cached
-
-    console.log('Sending manual statuses to frontend:', manualStatuses);  // Added logging for manual statuses
+    const twitchData = cache.get('twitchData') || { data: [] };  
+    const manualStatuses = cache.get('userStatuses') || {};  
+    
+    console.log('Sending manual statuses:', manualStatuses);  // Log statuses sent to the frontend
     
     res.json({
         twitch: twitchData,
@@ -148,14 +148,16 @@ app.post('/update-user-status', (req, res) => {
         return res.status(400).send('Missing user or state');
     }
 
-    if (state === 'on' || state === 'off') {
+    const validUsers = ["user1", "user2", "user3", "user4", "user5"];
+
+    if (validUsers.includes(user) && (state === 'on' || state === 'off')) {
         userStatuses[user] = state;
-        cache.set('userStatuses', userStatuses);  // Cache the updated user statuses
-        console.log(`Updated status for ${user}: ${state}`);  // Logging for user status updates
+        cache.set('userStatuses', userStatuses);
+        console.log(`Updated status for ${user}: ${state}`);
         return res.sendStatus(200);
     }
 
-    return res.status(400).send('Invalid state');
+    return res.status(400).send('Invalid user or state');
 });
 
 // Route for login handling
@@ -164,11 +166,11 @@ app.post('/login', (req, res) => {
 
     const validUsers = {
         admin: 'admin_password',
-        user1: 'user1_password',
-        user2: 'user2_password',
-        user3: 'user3_password',
-        user4: 'user4_password',
-        user5: 'user5_password',
+        user1: 'password1',
+        user2: 'password2',
+        user3: 'password3',
+        user4: 'password4',
+        user5: 'password5',
         user6: 'user6_password',
         user7: 'user7_password',
         user8: 'user8_password',
@@ -186,7 +188,7 @@ app.post('/login', (req, res) => {
     }
 });
 
-// Route to serve user pages (adminPage, user1Page, etc.)
+// Route to serve user pages (user1Page.html, user2Page.html, etc.)
 app.get('/:userPage', (req, res) => {
     const userPage = req.params.userPage;
     const validPages = [
