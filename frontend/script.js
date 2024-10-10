@@ -5,10 +5,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const body = document.body;
 
     const twitchUsers = [
-        { username: "LeekBeats", channelName: "LeekBeats" },
-        { username: "fl0m", channelName: "fl0m" },
-        { username: "ohnePixel", channelName: "OhnePixel" },
-        { username: "Ranger", channelName: "Ranger" },
+        { username: "freq_k", channelName: "freq_k" },
+        { username: "Carms", channelName: "carms" },
+        { username: "M6isnik", channelName: "m6isnik" },
+        { username: "qellox", channelName: "qellox1" },
         { username: "jasontheween", channelName: "jasontheween" },
         { username: "BLASTPremier", channelName: "BLASTPremier" },
         { username: "trausi", channelName: "trausi" },
@@ -21,8 +21,8 @@ document.addEventListener("DOMContentLoaded", function() {
     ];
 
     const customUsers = [
-        { username: "user1", channelName: "user1", url: "https://www.tiktok.com/", thumbnail: "assets/emoji.png" },
-        { username: "user2", channelName: "user2", url: "customPage2.html", thumbnail: "assets/emoji.png" },
+        { username: "RalfYT", channelName: "ismaralf", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/emoji.png" },
+        { username: "hundijalavesi", channelName: "hundijalavesi", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/emoji.png" },
         { username: "user3", channelName: "user3", url: "customPage3.html", thumbnail: "assets/emoji.png" },
         { username: "user4", channelName: "user4", url: "customPage4.html", thumbnail: "assets/emoji.png" },
         { username: "user5", channelName: "user5", url: "customPage5.html", thumbnail: "assets/emoji.png" }
