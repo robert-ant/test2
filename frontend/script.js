@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const body = document.body;
 
     const twitchUsers = [
+        { username: "LeekBeats", channelName: "LeekBeats" },
         { username: "freq_k", channelName: "freq_k" },
         { username: "Carms", channelName: "carms" },
         { username: "M6isnik", channelName: "m6isnik" },

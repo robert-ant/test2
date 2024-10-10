@@ -177,12 +177,18 @@
                 }
             });
         }
-    
+
         document.querySelectorAll('input[type="checkbox"]').forEach(switchElement => {
+            const user = switchElement.id.split('-')[0]; // Extract user ID from the switch ID
+            const savedState = localStorage.getItem(`${user}-switch-state`);
+            if (savedState) {
+                switchElement.checked = savedState === 'on';
+            }
+
             switchElement.addEventListener('change', (event) => {
-                const user = event.target.id.split('-')[0]; // Extract user ID from the switch ID
                 const state = event.target.checked ? 'on' : 'off'; // Determine the state
                 handleSwitchChange(user, state);
+                localStorage.setItem(`${user}-switch-state`, state);  // Cache the switch state
             });
         });
     </script>

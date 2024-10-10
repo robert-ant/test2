@@ -16,8 +16,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const cache = new NodeCache({ stdTTL: 300, checkperiod: 150 });
-const userStatuses = cache.get('userStatuses') || {};
+const cache = new NodeCache({ stdTTL: 0, checkperiod: 150 });  // Set stdTTL to 0 for no expiration
+let userStatuses = cache.get('userStatuses') || {};  // Cache for manual box statuses
 
 // Middleware to parse incoming request bodies
 app.use(bodyParser.json());
@@ -31,7 +31,7 @@ app.use(
     cookieSession({
         name: 'session',
         keys: [process.env.SESSION_SECRET],
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        maxAge: 24 * 60 * 60 * 1000,  // 24 hours
     })
 );
 
@@ -117,12 +117,12 @@ setInterval(async () => {
     let token = cache.get('twitchToken');
     if (!token) {
         token = await fetchTwitchToken();
-        if (token) cache.set('twitchToken', token, 3600); // Cache token for 1 hour
+        if (token) cache.set('twitchToken', token, 3600);  // Cache token for 1 hour
     }
     if (token) {
         const twitchData = await fetchTwitchData(token);
         if (twitchData) {
-            cache.set('twitchData', twitchData, 300); // Cache Twitch data for 5 minutes
+            cache.set('twitchData', twitchData, 300);  // Cache Twitch data for 5 minutes
         }
     }
 }, 120000);
@@ -130,7 +130,7 @@ setInterval(async () => {
 // Polling endpoint for updates (manual and Twitch)
 app.get('/updates', (req, res) => {
     const twitchData = cache.get('twitchData') || { data: [] };  // Ensure twitchData is always an array
-    const manualStatuses = cache.get('userStatuses') || {};  // Ensure manual statuses are retrieved
+    const manualStatuses = cache.get('userStatuses') || {};  // Ensure manual statuses are retrieved and cached
 
     res.json({
         twitch: twitchData,
