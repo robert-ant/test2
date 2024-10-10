@@ -148,7 +148,7 @@ app.post('/update-user-status', (req, res) => {
         return res.status(400).send('Missing user or state');
     }
 
-    const validUsers = ["user1", "user2", "user3", "user4", "user5"];
+    const validUsers = ["RalfYT", "hundijalavesi", "user3", "user4", "user5"];
 
     if (validUsers.includes(user) && (state === 'on' || state === 'off')) {
         userStatuses[user] = state;
