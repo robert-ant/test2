@@ -413,17 +413,6 @@ html, body {
     padding: 0;
 }
 
-body {
-    font-family: 'Montserrat', sans-serif;
-    background: url('assets/2024-07-14_18.17.44.jpg') no-repeat center center fixed;
-    background-size: cover;
-    transition: background-color 0.5s ease, background-image 0.5s ease, color 0.5s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-}
-
 body.dark-mode {
     background: url('assets/2024-07-14_18.17.57.jpg') no-repeat center center fixed;
     background-size: cover;
