@@ -66,22 +66,22 @@
         <div class="box">
             <span class="slider-label">Kas ma olen live?</span>
             <label class="switch">
-                <input type="checkbox" id="user1-switch">
+                <input type="checkbox" id="RalfYT-switch"> <!-- Use the correct switch ID -->
                 <span class="slider"></span>
             </label>
         </div>
     </div>
     <script>
-        const switchElement = document.getElementById('user1-switch');
-        const user = 'RalfYT';  // Replace 'user1' with the actual username, such as 'RalfYT'
+        const switchElement = document.getElementById('RalfYT-switch');  // Correct switch ID
+        const user = 'RalfYT';  // The username to use for the backend communication
 
-        // Load switch state from cache
+        // Load switch state from cache (localStorage)
         const savedState = localStorage.getItem(`${user}-switch-state`);
         if (savedState) {
             switchElement.checked = savedState === 'on';
         }
 
-        // Handle switch state changes
+        // Handle switch state changes and send updates to backend
         switchElement.addEventListener('change', function() {
             const state = this.checked ? 'on' : 'off';
             fetch('/update-user-status', {
@@ -89,7 +89,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ user, state })  // Send the current state to the backend
+                body: JSON.stringify({ user, state })  // Send the username and state
             }).then(response => {
                 if (response.ok) {
                     console.log(`${user} status updated to ${state}`);
