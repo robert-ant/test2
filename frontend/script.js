@@ -206,32 +206,40 @@ document.addEventListener("DOMContentLoaded", function() {
             'user1Page': 'RalfYT',
             'user2Page': 'hundijalavesi'
         };
-
+    
         Object.keys(userPages).forEach(page => {
             const user = userPages[page];
             const switchElement = document.getElementById(`${user}-switch`);
-            const savedState = localStorage.getItem(`${user}-switch-state`);
-            if (savedState) {
-                switchElement.checked = savedState === 'on';
-            }
-
-            // Poll the backend every 2 minutes to check for admin overrides
-            fetch('/updates')
-                .then(response => response.json())
-                .then(data => {
-                    const adminOverrideState = data.manual[user];
-                    if (adminOverrideState) {
-                        // If the admin override differs from the local state, update the switch
-                        if (adminOverrideState !== (switchElement.checked ? 'on' : 'off')) {
-                            switchElement.checked = adminOverrideState === 'on';
-                            localStorage.setItem(`${user}-switch-state`, adminOverrideState);  // Update cached state
-                            console.log(`Admin override applied: ${adminOverrideState}`);
+    
+            // Check if the switchElement exists
+            if (switchElement) {
+                const savedState = localStorage.getItem(`${user}-switch-state`);
+                if (savedState) {
+                    switchElement.checked = savedState === 'on';
+                }
+    
+                // Poll the backend every 2 minutes to check for admin overrides
+                fetch('/updates')
+                    .then(response => response.json())
+                    .then(data => {
+                        const adminOverrideState = data.manual[user];
+                        if (adminOverrideState) {
+                            // If the admin override differs from the local state, update the switch
+                            if (adminOverrideState !== (switchElement.checked ? 'on' : 'off')) {
+                                switchElement.checked = adminOverrideState === 'on';
+                                localStorage.setItem(`${user}-switch-state`, adminOverrideState);  // Update cached state
+                                console.log(`Admin override applied: ${adminOverrideState}`);
+                            }
                         }
-                    }
-                })
-                .catch(error => console.error('Error fetching updates:', error));
+                    })
+                    .catch(error => console.error('Error fetching updates:', error));
+            } else {
+                // Log to console to help debug why the element wasn't found
+                console.warn(`Switch element not found for user: ${user}`);
+            }
         });
     }
+    
 
     // Initial load logic
     if (cachedTwitchData) {
