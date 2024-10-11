@@ -1,4 +1,5 @@
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import bodyParser from 'body-parser';
 import NodeCache from 'node-cache';
 import fetch from 'node-fetch';
@@ -17,8 +18,8 @@ const __dirname = dirname(__filename);
 
 const app = express();
 const cache = new NodeCache({ stdTTL: 0, checkperiod: 150 });
-let userStatuses = cache.get('userStatuses') || {};  // Cache for user statuses
-let adminOverrides = cache.get('adminOverrides') || {};  // Cache for admin overrides
+let userStatuses = cache.get('userStatuses') || {};
+let adminOverrides = cache.get('adminOverrides') || {};
 
 // Middleware to parse incoming request bodies
 app.use(bodyParser.json());
@@ -32,7 +33,7 @@ app.use(
     cookieSession({
         name: 'session',
         keys: [process.env.SESSION_SECRET],
-        maxAge: 24 * 60 * 60 * 1000,  // 24 hours
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
     })
 );
 
@@ -223,6 +224,19 @@ app.get('/:userPage', (req, res) => {
         res.status(404).send('Page not found');
     }
 });
+
+// Rate limiting middleware to protect against abuse of /updates endpoint
+import rateLimit from 'express-rate-limit';
+
+app.set('trust proxy', 1);  // Enable trust proxy for Railway
+
+// Apply rate-limiting to /updates route (max 100 requests per 15 minutes per IP)
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per window
+    message: 'Too many requests from this IP, please try again after 15 minutes.',
+});
+app.use('/updates', limiter);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
