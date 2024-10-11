@@ -1,5 +1,5 @@
 import express from 'express';
-import rateLimit from 'express-rate-limit';
+import rateLimit from 'express-rate-limit'; // Keep only one import here
 import bodyParser from 'body-parser';
 import NodeCache from 'node-cache';
 import fetch from 'node-fetch';
@@ -225,10 +225,8 @@ app.get('/:userPage', (req, res) => {
     }
 });
 
-// Rate limiting middleware to protect against abuse of /updates endpoint
-import rateLimit from 'express-rate-limit';
-
-app.set('trust proxy', 1);  // Enable trust proxy for Railway
+// Trust proxy for Railway (important for correct IP handling)
+app.set('trust proxy', 1);
 
 // Apply rate-limiting to /updates route (max 100 requests per 15 minutes per IP)
 const limiter = rateLimit({
