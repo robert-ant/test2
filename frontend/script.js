@@ -33,6 +33,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // Load cached data from localStorage
     let cachedTwitchData = JSON.parse(localStorage.getItem('twitchData')) || null;
     let cachedManualStatus = JSON.parse(localStorage.getItem('manualStatuses')) || {};
+    let lastUpdateTimestamp = localStorage.getItem('lastUpdateTimestamp') || 0;
+
+    // Check if cache is still valid (within 5 minutes)
+    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+    const isCacheValid = (Date.now() - lastUpdateTimestamp) < CACHE_DURATION;
 
     // Dark mode functionality
     function enableDarkMode() {
@@ -176,8 +181,14 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Poll the server every 2 minutes
+    // Poll the server every 2 minutes, but only if cache is invalid
     function pollForUpdates() {
+        if (isCacheValid) {
+            console.log('Cache is valid, using cached data.');
+            return;
+        }
+
+        console.log('Fetching data from backend...');
         fetch('/updates')
             .then(response => response.json())
             .then(data => {
@@ -186,16 +197,15 @@ document.addEventListener("DOMContentLoaded", function() {
                     const liveUsernames = data.twitch.data.map(stream => stream.user_login.toLowerCase());
                     updateTwitchElements(liveUsernames, data.twitch.data);
                     localStorage.setItem('twitchData', JSON.stringify(data.twitch.data));  // Cache Twitch data
-                } else {
-                    console.log('No Twitch data found.');
                 }
 
                 if (data.manual) {
                     updateManualElements(data.manual);
                     localStorage.setItem('manualStatuses', JSON.stringify(data.manual));  // Cache manual statuses
-                } else {
-                    console.log('No manual statuses found.');
                 }
+
+                // Update the last update timestamp
+                localStorage.setItem('lastUpdateTimestamp', Date.now().toString());
             })
             .catch(error => console.error('Error fetching updates:', error));
     }
@@ -206,22 +216,22 @@ document.addEventListener("DOMContentLoaded", function() {
             'user1Page': 'RalfYT',
             'user2Page': 'hundijalavesi'
         };
-    
+
         Object.keys(userPages).forEach(page => {
             const user = userPages[page];
             let switchElement = document.getElementById(`${user}-switch`);
-    
-            // Retry if the element is not found, log an error after multiple tries
+
+            // Check if the switch element exists before proceeding
             if (!switchElement) {
                 console.warn(`Switch element not found for user: ${user}`);
-                return; // Exit this iteration, the element doesn't exist yet
+                return; // Exit if the element doesn't exist
             }
-    
+
             const savedState = localStorage.getItem(`${user}-switch-state`);
             if (savedState) {
                 switchElement.checked = savedState === 'on';
             }
-    
+
             // Poll the backend every 2 minutes to check for admin overrides
             fetch('/updates')
                 .then(response => response.json())
@@ -239,23 +249,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 .catch(error => console.error('Error fetching updates:', error));
         });
     }
-    
-    
 
-    // Initial load logic
-    if (cachedTwitchData) {
-        const liveUsernames = cachedTwitchData.map(stream => stream.user_login.toLowerCase());
-        updateTwitchElements(liveUsernames, cachedTwitchData);
+    // Page-specific logic: run refreshUserPages only on user pages
+    const currentPage = window.location.pathname.split("/").pop();
+    if (currentPage === "user1Page.html" || currentPage === "user2Page.html") {
+        refreshUserPages();
+        setInterval(refreshUserPages, 120000);  // Poll every 2 minutes for user page updates
     }
 
-    // Sync and force manual element update on page load
-    updateManualElements(cachedManualStatus); // Load cached manual statuses on page load
-    pollForUpdates(); // Fetch data immediately on page load
+    // Poll for updates in general (this can be run on all pages)
+    pollForUpdates();
+    setInterval(pollForUpdates, 120000);  // Poll every 2 minutes for live updates
 
-    setInterval(pollForUpdates, 120000); // Poll the backend every 2 minutes for updates
     updateSidebar(); // Update sidebar immediately
-
-    // Call the refresh for user pages like user1Page, user2Page
-    refreshUserPages();
-    setInterval(refreshUserPages, 120000);  // Poll every 2 minutes for user page updates
 });
