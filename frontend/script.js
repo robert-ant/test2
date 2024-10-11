@@ -34,8 +34,6 @@ document.addEventListener("DOMContentLoaded", function() {
     let cachedTwitchData = JSON.parse(localStorage.getItem('twitchData')) || null;
     let cachedManualStatus = JSON.parse(localStorage.getItem('manualStatuses')) || {};
 
-    console.log("Cached manual statuses after refresh:", cachedManualStatus);  // Log manual statuses on refresh
-
     // Dark mode functionality
     function enableDarkMode() {
         body.classList.add('dark-mode');
@@ -150,13 +148,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
         customUsers.forEach(user => {
             const isManualOn = manualStatuses[user.username] === 'on';
-            console.log(`${user.username} is ${isManualOn ? 'on' : 'off'}`);
 
             let existingElement = document.getElementById(user.username);
             if (isManualOn) {
                 if (!existingElement) {
                     const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
-                    console.log(`Creating element for ${user.username}`);
                     liveContainer.appendChild(newElement);
                 }
             } else if (existingElement) {
@@ -204,7 +200,40 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(error => console.error('Error fetching updates:', error));
     }
 
-    // Load cached data on page load
+    // Refresh logic for user1Page, user2Page, etc.
+    function refreshUserPages() {
+        const userPages = {
+            'user1Page': 'RalfYT',
+            'user2Page': 'hundijalavesi'
+        };
+
+        Object.keys(userPages).forEach(page => {
+            const user = userPages[page];
+            const switchElement = document.getElementById(`${user}-switch`);
+            const savedState = localStorage.getItem(`${user}-switch-state`);
+            if (savedState) {
+                switchElement.checked = savedState === 'on';
+            }
+
+            // Poll the backend every 2 minutes to check for admin overrides
+            fetch('/updates')
+                .then(response => response.json())
+                .then(data => {
+                    const adminOverrideState = data.manual[user];
+                    if (adminOverrideState) {
+                        // If the admin override differs from the local state, update the switch
+                        if (adminOverrideState !== (switchElement.checked ? 'on' : 'off')) {
+                            switchElement.checked = adminOverrideState === 'on';
+                            localStorage.setItem(`${user}-switch-state`, adminOverrideState);  // Update cached state
+                            console.log(`Admin override applied: ${adminOverrideState}`);
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching updates:', error));
+        });
+    }
+
+    // Initial load logic
     if (cachedTwitchData) {
         const liveUsernames = cachedTwitchData.map(stream => stream.user_login.toLowerCase());
         updateTwitchElements(liveUsernames, cachedTwitchData);
@@ -216,4 +245,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     setInterval(pollForUpdates, 120000); // Poll the backend every 2 minutes for updates
     updateSidebar(); // Update sidebar immediately
+
+    // Call the refresh for user pages like user1Page, user2Page
+    refreshUserPages();
+    setInterval(refreshUserPages, 120000);  // Poll every 2 minutes for user page updates
 });
