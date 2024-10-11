@@ -24,53 +24,34 @@
             justify-content: space-between;
         }
 
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
+        .select-status {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
         }
 
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
+        .status-button {
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            border: none;
+            font-weight: bold;
+        }
+
+        .on-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .off-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .neutral-btn {
             background-color: #ccc;
-            transition: 0.4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: 0.4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: #2196F3;
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-
-        .slider-label {
-            margin-right: 10px;
+            color: black;
         }
     </style>
 </head>
@@ -78,94 +59,25 @@
     <div class="admin-container">
         <div class="box">
             <span class="slider-label">RalfYT</span>
-            <label class="switch">
-                <input type="checkbox" id="RalfYT-switch">
-                <span class="slider"></span>
-            </label>
+            <div class="select-status">
+                <button class="status-button on-btn" id="RalfYT-on">On</button>
+                <button class="status-button off-btn" id="RalfYT-off">Off</button>
+                <button class="status-button neutral-btn" id="RalfYT-neutral">Neutral</button>
+            </div>
         </div>
         <div class="box">
             <span class="slider-label">hundijalavesi</span>
-            <label class="switch">
-                <input type="checkbox" id="hundijalavesi-switch">
-                <span class="slider"></span>
-            </label>
-        </div>
-            <div class="box">
-                <span class="slider-label">user3</span>
-                <label class="switch">
-                    <input type="checkbox" id="user3-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="box">
-                <span class="slider-label">user4</span>
-                <label class="switch">
-                    <input type="checkbox" id="user4-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="box">
-                <span class="slider-label">user5</span>
-                <label class="switch">
-                    <input type="checkbox" id="user5-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="box">
-                <span class="slider-label">user6</span>
-                <label class="switch">
-                    <input type="checkbox" id="user6-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="box">
-                <span class="slider-label">user7</span>
-                <label class="switch">
-                    <input type="checkbox" id="user7-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="box">
-                <span class="slider-label">user8</span>
-                <label class="switch">
-                    <input type="checkbox" id="user8-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="box">
-                <span class="slider-label">user9</span>
-                <label class="switch">
-                    <input type="checkbox" id="user9-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="box">
-                <span class="slider-label">user10</span>
-                <label class="switch">
-                    <input type="checkbox" id="user10-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="box">
-                <span class="slider-label">user11</span>
-                <label class="switch">
-                    <input type="checkbox" id="user11-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="box">
-                <span class="slider-label">user12</span>
-                <label class="switch">
-                    <input type="checkbox" id="user12-switch">
-                    <span class="slider"></span>
-                </label>
+            <div class="select-status">
+                <button class="status-button on-btn" id="hundijalavesi-on">On</button>
+                <button class="status-button off-btn" id="hundijalavesi-off">Off</button>
+                <button class="status-button neutral-btn" id="hundijalavesi-neutral">Neutral</button>
             </div>
         </div>
         <!-- Add more users as needed -->
     </div>
 
     <script>
-        function handleSwitchChange(user, state) {
+        function handleAdminOverride(user, state) {
             fetch('/update-user-status', {
                 method: 'POST',
                 headers: {
@@ -175,40 +87,47 @@
             }).then(response => {
                 if (response.ok) {
                     console.log(`Admin override for ${user} updated to ${state}`);
-                    localStorage.setItem(`${user}-switch-state`, state);  // Cache the admin switch state
+                    localStorage.setItem(`${user}-admin-override`, state);  // Cache the admin override state
                 } else {
                     console.error('Failed to update admin status');
                 }
             });
         }
 
-        // Initialize switches based on localStorage and attach event listeners
-        document.querySelectorAll('input[type="checkbox"]').forEach(switchElement => {
-            const user = switchElement.id.split('-')[0];  // Extract user ID from the switch ID
-            const savedState = localStorage.getItem(`${user}-switch-state`);
-            if (savedState) {
-                switchElement.checked = savedState === 'on';  // Set the switch state from cached value
-            }
+        // Set the admin override status to neutral after forcing a state
+        function resetToNeutral(user) {
+            localStorage.setItem(`${user}-admin-override`, 'neutral');
+        }
 
-            // Handle switch state changes
-            switchElement.addEventListener('change', (event) => {
-                const state = event.target.checked ? 'on' : 'off';
-                handleSwitchChange(user, state);  // Send the state to the server
+        document.querySelectorAll('.status-button').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const [user, state] = event.target.id.split('-');
+                
+                // Handle the state change and reset to neutral afterward
+                handleAdminOverride(user, state);
+                if (state !== 'neutral') {
+                    setTimeout(() => {
+                        resetToNeutral(user);
+                    }, 1000);  // Give a short delay before switching to neutral
+                }
             });
         });
 
-        // Function to poll the server for updates on statuses
+        // Poll for updates and update user statuses if needed
         function pollForUpdates() {
             fetch('/updates')
                 .then(response => response.json())
                 .then(data => {
                     const manualStatuses = data.manual;
-                    document.querySelectorAll('input[type="checkbox"]').forEach(switchElement => {
-                        const user = switchElement.id.split('-')[0];  // Get the user ID
-                        const adminOverrideState = manualStatuses[user];
-                        if (adminOverrideState) {
-                            switchElement.checked = adminOverrideState === 'on';
-                            localStorage.setItem(`${user}-switch-state`, adminOverrideState);  // Cache state
+                    document.querySelectorAll('.status-button').forEach(button => {
+                        const [user, state] = button.id.split('-');
+                        const adminOverrideState = localStorage.getItem(`${user}-admin-override`);
+                        
+                        // Check if we should be in neutral state, allow user control
+                        if (adminOverrideState === 'neutral') {
+                            button.classList.remove('active');
+                        } else if (manualStatuses[user] === state && adminOverrideState !== 'neutral') {
+                            button.classList.add('active');
                         }
                     });
                 })

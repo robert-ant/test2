@@ -148,9 +148,15 @@ app.post('/update-user-status', (req, res) => {
     }
 
     if (isAdmin) {
-        adminOverrides[user] = state;
-        cache.set('adminOverrides', adminOverrides);  // Cache admin overrides
-        console.log(`Admin override for ${user}: ${state}`);
+        if (state === 'neutral') {
+            delete adminOverrides[user];  // Remove admin override when neutral
+            cache.set('adminOverrides', adminOverrides);
+            console.log(`Admin set ${user} to neutral, allowing user control`);
+        } else {
+            adminOverrides[user] = state;
+            cache.set('adminOverrides', adminOverrides);
+            console.log(`Admin override for ${user}: ${state}`);
+        }
     } else {
         userStatuses[user] = state;
         cache.set('userStatuses', userStatuses);
