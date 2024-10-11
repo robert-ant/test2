@@ -11,7 +11,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            background: url(assets/2024-07-14_18.17.44.jpg); /* Use the same background color as your index page */
+            background: url(assets/2024-07-14_18.17.44.jpg);
         }
 
         .box {
@@ -79,7 +79,7 @@
         <div class="box">
             <span class="slider-label">RalfYT</span>
             <label class="switch">
-                <input type="checkbox" id="RalfYT">
+                <input type="checkbox" id="RalfYT-switch">
                 <span class="slider"></span>
             </label>
         </div>
@@ -90,77 +90,80 @@
                 <span class="slider"></span>
             </label>
         </div>
-        <div class="box">
-            <span class="slider-label">user3</span>
-            <label class="switch">
-                <input type="checkbox" id="user3-switch">
-                <span class="slider"></span>
-            </label>
+            <div class="box">
+                <span class="slider-label">user3</span>
+                <label class="switch">
+                    <input type="checkbox" id="user3-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="box">
+                <span class="slider-label">user4</span>
+                <label class="switch">
+                    <input type="checkbox" id="user4-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="box">
+                <span class="slider-label">user5</span>
+                <label class="switch">
+                    <input type="checkbox" id="user5-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="box">
+                <span class="slider-label">user6</span>
+                <label class="switch">
+                    <input type="checkbox" id="user6-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="box">
+                <span class="slider-label">user7</span>
+                <label class="switch">
+                    <input type="checkbox" id="user7-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="box">
+                <span class="slider-label">user8</span>
+                <label class="switch">
+                    <input type="checkbox" id="user8-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="box">
+                <span class="slider-label">user9</span>
+                <label class="switch">
+                    <input type="checkbox" id="user9-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="box">
+                <span class="slider-label">user10</span>
+                <label class="switch">
+                    <input type="checkbox" id="user10-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="box">
+                <span class="slider-label">user11</span>
+                <label class="switch">
+                    <input type="checkbox" id="user11-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="box">
+                <span class="slider-label">user12</span>
+                <label class="switch">
+                    <input type="checkbox" id="user12-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
-        <div class="box">
-            <span class="slider-label">user4</span>
-            <label class="switch">
-                <input type="checkbox" id="user4-switch">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="box">
-            <span class="slider-label">user5</span>
-            <label class="switch">
-                <input type="checkbox" id="user5-switch">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="box">
-            <span class="slider-label">user6</span>
-            <label class="switch">
-                <input type="checkbox" id="user6-switch">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="box">
-            <span class="slider-label">user7</span>
-            <label class="switch">
-                <input type="checkbox" id="user7-switch">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="box">
-            <span class="slider-label">user8</span>
-            <label class="switch">
-                <input type="checkbox" id="user8-switch">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="box">
-            <span class="slider-label">user9</span>
-            <label class="switch">
-                <input type="checkbox" id="user9-switch">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="box">
-            <span class="slider-label">user10</span>
-            <label class="switch">
-                <input type="checkbox" id="user10-switch">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="box">
-            <span class="slider-label">user11</span>
-            <label class="switch">
-                <input type="checkbox" id="user11-switch">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="box">
-            <span class="slider-label">user12</span>
-            <label class="switch">
-                <input type="checkbox" id="user12-switch">
-                <span class="slider"></span>
-            </label>
-        </div>
+        <!-- Add more users as needed -->
     </div>
+
     <script>
         function handleSwitchChange(user, state) {
             fetch('/update-user-status', {
@@ -168,29 +171,53 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ user, state })
+                body: JSON.stringify({ user, state, isAdmin: true })  // Admin override
             }).then(response => {
                 if (response.ok) {
-                    console.log(`User ${user} status updated to ${state}`);
+                    console.log(`Admin override for ${user} updated to ${state}`);
+                    localStorage.setItem(`${user}-switch-state`, state);  // Cache the admin switch state
                 } else {
-                    console.error('Failed to update status');
+                    console.error('Failed to update admin status');
                 }
             });
         }
 
+        // Initialize switches based on localStorage and attach event listeners
         document.querySelectorAll('input[type="checkbox"]').forEach(switchElement => {
-            const user = switchElement.id.split('-')[0]; // Extract user ID from the switch ID
+            const user = switchElement.id.split('-')[0];  // Extract user ID from the switch ID
             const savedState = localStorage.getItem(`${user}-switch-state`);
             if (savedState) {
-                switchElement.checked = savedState === 'on';
+                switchElement.checked = savedState === 'on';  // Set the switch state from cached value
             }
 
+            // Handle switch state changes
             switchElement.addEventListener('change', (event) => {
-                const state = event.target.checked ? 'on' : 'off'; // Determine the state
-                handleSwitchChange(user, state);
-                localStorage.setItem(`${user}-switch-state`, state);  // Cache the switch state
+                const state = event.target.checked ? 'on' : 'off';
+                handleSwitchChange(user, state);  // Send the state to the server
             });
         });
+
+        // Function to poll the server for updates on statuses
+        function pollForUpdates() {
+            fetch('/updates')
+                .then(response => response.json())
+                .then(data => {
+                    const manualStatuses = data.manual;
+                    document.querySelectorAll('input[type="checkbox"]').forEach(switchElement => {
+                        const user = switchElement.id.split('-')[0];  // Get the user ID
+                        const adminOverrideState = manualStatuses[user];
+                        if (adminOverrideState) {
+                            switchElement.checked = adminOverrideState === 'on';
+                            localStorage.setItem(`${user}-switch-state`, adminOverrideState);  // Cache state
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching updates:', error));
+        }
+
+        // Poll for updates every 2 minutes
+        setInterval(pollForUpdates, 120000);
+        pollForUpdates();  // Poll immediately on page load
     </script>
 </body>
 </html>

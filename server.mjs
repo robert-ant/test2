@@ -16,8 +16,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const cache = new NodeCache({ stdTTL: 0, checkperiod: 150 });  // Set stdTTL to 0 for no expiration
-let userStatuses = cache.get('userStatuses') || {};  // Cache for manual box statuses
+const cache = new NodeCache({ stdTTL: 0, checkperiod: 150 });
+let userStatuses = cache.get('userStatuses') || {};  // Cache for user statuses
+let adminOverrides = cache.get('adminOverrides') || {};  // Cache for admin overrides
 
 // Middleware to parse incoming request bodies
 app.use(bodyParser.json());
@@ -89,7 +90,7 @@ async function fetchTwitchToken() {
 
 // Fetch Twitch data with retries and throttling
 async function fetchTwitchData(token) {
-    const users = ['LeekBeats', 'fl0m', 'Ranger', 'ohnePixel', 'jasontheween'];
+    const users = ['LeekBeats', 'freq_k', 'RalfYT', 'hundijalavesi'];  // Replace with your users
     const queryParams = users.map((user) => `user_login=${user}`).join('&');
     const url = `https://api.twitch.tv/helix/streams?${queryParams}`;
 
@@ -130,34 +131,33 @@ setInterval(async () => {
 // Polling endpoint for updates (manual and Twitch)
 app.get('/updates', (req, res) => {
     const twitchData = cache.get('twitchData') || { data: [] };  
-    const manualStatuses = cache.get('userStatuses') || {};  
-    
-    console.log('Sending manual statuses:', manualStatuses);  // Log statuses sent to the frontend
-    
+    const finalStatuses = { ...userStatuses, ...adminOverrides };  // Admin overrides take precedence
+
     res.json({
         twitch: twitchData,
-        manual: manualStatuses
+        manual: finalStatuses
     });
 });
 
 // Handle manual status updates (admin or user pages)
 app.post('/update-user-status', (req, res) => {
-    const { user, state } = req.body || {};
+    const { user, state, isAdmin } = req.body;
 
     if (!user || !state) {
         return res.status(400).send('Missing user or state');
     }
 
-    const validUsers = ["RalfYT", "hundijalavesi", "user3", "user4", "user5"];
-
-    if (validUsers.includes(user) && (state === 'on' || state === 'off')) {
+    if (isAdmin) {
+        adminOverrides[user] = state;
+        cache.set('adminOverrides', adminOverrides);  // Cache admin overrides
+        console.log(`Admin override for ${user}: ${state}`);
+    } else {
         userStatuses[user] = state;
         cache.set('userStatuses', userStatuses);
-        console.log(`Updated status for ${user}: ${state}`);
-        return res.sendStatus(200);
+        console.log(`User status for ${user}: ${state}`);
     }
 
-    return res.status(400).send('Invalid user or state');
+    return res.sendStatus(200);
 });
 
 // Route for login handling
@@ -166,11 +166,11 @@ app.post('/login', (req, res) => {
 
     const validUsers = {
         admin: 'admin_password',
-        user1: 'password1',
-        user2: 'password2',
-        user3: 'password3',
-        user4: 'password4',
-        user5: 'password5',
+        user1: 'user1_password',
+        user2: 'user2_password',
+        user3: 'user3_password',
+        user4: 'user4_password',
+        user5: 'user5_password',
         user6: 'user6_password',
         user7: 'user7_password',
         user8: 'user8_password',
