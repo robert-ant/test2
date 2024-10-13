@@ -4,33 +4,33 @@ document.addEventListener("DOMContentLoaded", function() {
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
 
-    // Twitch users fetched from Twitch API
+    // Twitch users with only thumbnails (no live images for Twitch users)
     const twitchUsers = [
-        { username: "StoTheR", channelName: "StoTheR" },
-        { username: "Freq_k", channelName: "Freq_k" },
-        { username: "Carms", channelName: "Carms" },
-        { username: "M6isnik", channelName: "M6isnik" },
-        { username: "Qellox", channelName: "Qellox1" },
-        { username: "DeepPepper", channelName: "DeepPepper" },
+        { username: "StoTheR", channelName: "StoTheR", thumbnail: "assets/pfp/sto.jpg" },
+        { username: "Freq_k", channelName: "Freq_k", thumbnail: "assets/pfp/freq_k.jpg" },
+        { username: "Carms", channelName: "Carms", thumbnail: "assets/pfp/carms.jpg" },
+        { username: "M6isnik", channelName: "M6isnik", thumbnail: "assets/pfp/m6isnik.jpg" },
+        { username: "Qellox", channelName: "Qellox1", thumbnail: "assets/pfp/qellox.jpg" },
+        { username: "DeepPepper", channelName: "DeepPepper", thumbnail: "assets/pfp/deeppepper.jpg" }
     ];
 
+    // Custom users with thumbnails and live images
     const customUsers = [
-        { username: "RalfYT", channelName: "RalfYT", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/pfp/ralf.jpg" },
-        { username: "Mariliiskaer", channelName: "Mariliiskaer", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/pfp/mari.jpg" },
-        { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/pfp/Kaspar.png" },
-        { username: "MARMORMAZE", channelName: "MARMORMAZE", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/pfp/marmo.jpeg" },
-        { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/pfp/seb.jpg" },
-        { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
-        { username: "Lu0fn", channelName: "Lu0fn", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
-        { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
-        { username: "Sidni", channelName: "Sidni", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/sidni.jpg" },
-        { username: "Estmagicz", channelName: "Estmagicz", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
-        { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
-        { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
-        { username: "TormTuleb", channelName: "TormTuleb", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
-        { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
-        { username: "Krispoiss", channelName: "Krispoiss", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" }
-        
+        { username: "RalfYT", channelName: "RalfYT", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/pfp/ralf.jpg", liveImage: "assets/live/ralf-live.jpg" },
+        { username: "Mariliiskaer", channelName: "Mariliiskaer", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/pfp/mari.jpg", liveImage: "assets/live/mari-live.jpg" },
+        { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/pfp/Kaspar.png", liveImage: "assets/live/kaspar-live.jpg" },
+        { username: "MARMORMAZE", channelName: "MARMORMAZE", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/pfp/marmo.jpeg", liveImage: "assets/live/marmo-live.jpg" },
+        { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/pfp/seb.jpg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Lu0fn", channelName: "Lu0fn", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Sidni", channelName: "Sidni", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/sidni.jpg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Estmagicz", channelName: "Estmagicz", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "TormTuleb", channelName: "TormTuleb", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Krispoiss", channelName: "Krispoiss", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" }
     ];
 
     // Load cached data from localStorage
@@ -38,8 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let cachedManualStatus = JSON.parse(localStorage.getItem('manualStatuses')) || {};
     let lastUpdateTimestamp = localStorage.getItem('lastUpdateTimestamp') || 0;
 
-    // Check if cache is still valid (within 5 minutes)
-    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+    const CACHE_DURATION = 5 * 60 * 1000; // Cache for 5 minutes (in milliseconds)
     const isCacheValid = (Date.now() - lastUpdateTimestamp) < CACHE_DURATION;
 
     // Dark mode functionality
@@ -55,14 +54,11 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.setItem('darkMode', 'disabled');
     }
 
-    // Check system preference for dark mode
     const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
     if (localStorage.getItem('darkMode') === 'enabled' || (systemDarkMode && !localStorage.getItem('darkMode'))) {
         enableDarkMode();
     }
 
-    // Toggle dark mode on switch change
     darkModeToggle.addEventListener('change', () => {
         if (darkModeToggle.checked) {
             enableDarkMode();
@@ -71,15 +67,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Create streamer elements for the live container
-    function createStreamerElement(username, channelName, thumbnail, url) {
+    // Create streamer elements for the live container (use `liveImage` only for custom users)
+    function createStreamerElement(username, channelName, image, url) {
         const div = document.createElement('div');
         div.classList.add('streamer', 'online', 'fade-in');
         div.id = username;
 
         const img = document.createElement('img');
-        img.src = thumbnail;
-        img.alt = `${username} thumbnail`;
+        img.src = image || 'assets/emoji.png';  // Use liveImage for custom users, thumbnail for Twitch users
+        img.alt = `${username} live image`;
         img.classList.add('stream-thumbnail');
 
         const name = document.createElement('span');
@@ -95,13 +91,13 @@ document.addEventListener("DOMContentLoaded", function() {
         return div;
     }
 
-    // Create sidebar user elements
-    function createSidebarUserElement(username, channelName, url) {
+    // Create sidebar user elements (use `thumbnail` for sidebar)
+    function createSidebarUserElement(username, channelName, url, thumbnail) {
         const li = document.createElement('li');
         li.id = `${username}-sidebar`;
 
         const img = document.createElement('img');
-        img.src = 'assets/emoji.png';
+        img.src = thumbnail || 'assets/emoji.png';  // Use thumbnail for sidebar
         img.alt = `${username} logo`;
         img.classList.add('sidebar-logo');
 
@@ -116,26 +112,23 @@ document.addEventListener("DOMContentLoaded", function() {
         return li;
     }
 
-    // Update Twitch elements in the live container
+    // Update Twitch elements in the live container (use thumbnail, no live image for Twitch users)
     function updateTwitchElements(liveUsernames, streamsData) {
         twitchUsers.forEach(user => {
             const isLive = liveUsernames.includes(user.username.toLowerCase());
             let existingElement = document.getElementById(user.username);
 
+            let streamData = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
+            let image = user.thumbnail || (streamData ? streamData.thumbnail_url.replace('{width}', '320').replace('{height}', '180') : 'assets/emoji.png'); // Use thumbnail for live image
+
+            let url = `https://www.twitch.tv/${user.username}`;
+
             if (isLive) {
-                let thumbnail = 'assets/emoji.png';
-                let url = `https://www.twitch.tv/${user.username}`;
-
-                const stream = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
-                if (stream) {
-                    thumbnail = stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180');
-                }
-
                 if (!existingElement) {
-                    const newElement = createStreamerElement(user.username, user.channelName, thumbnail, url);
+                    const newElement = createStreamerElement(user.username, user.channelName, image, url);
                     liveContainer.appendChild(newElement);
                 } else {
-                    existingElement.querySelector('img').src = thumbnail;
+                    existingElement.querySelector('img').src = image;
                     existingElement.querySelector('span').innerText = user.channelName;
                     existingElement.classList.remove('fade-out');
                     existingElement.classList.add('fade-in');
@@ -149,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function() {
         updateSidebar();
     }
 
-    // Update manual elements in the live container
+    // Update custom user elements in the live container (use `liveImage` for custom users)
     function updateManualElements(manualStatuses) {
         console.log('Updating manual elements:', manualStatuses);
         cachedManualStatus = { ...manualStatuses };
@@ -160,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function() {
             let existingElement = document.getElementById(user.username);
             if (isManualOn) {
                 if (!existingElement) {
-                    const newElement = createStreamerElement(user.username, user.channelName, user.thumbnail, user.url);
+                    const newElement = createStreamerElement(user.username, user.channelName, user.liveImage, user.url);
                     liveContainer.appendChild(newElement);
                 }
             } else if (existingElement) {
@@ -176,15 +169,23 @@ document.addEventListener("DOMContentLoaded", function() {
     function updateSidebar() {
         sidebarContainer.innerHTML = '';
 
-        // Add Twitch users and custom users to the sidebar
-        [...twitchUsers, ...customUsers].forEach(user => {
-            const url = twitchUsers.find(tu => tu.username === user.username) ? `https://www.twitch.tv/${user.username}` : user.url;
-            const userLi = createSidebarUserElement(user.username, user.channelName, url);
+        // Add Twitch users to the sidebar
+        twitchUsers.forEach(user => {
+            let url = `https://www.twitch.tv/${user.username}`;
+            let imgSrc = user.thumbnail; // Use thumbnail for sidebar
+
+            const userLi = createSidebarUserElement(user.username, user.channelName, url, imgSrc);
+            sidebarContainer.appendChild(userLi);
+        });
+
+        // Add custom users to the sidebar
+        customUsers.forEach(user => {
+            const userLi = createSidebarUserElement(user.username, user.channelName, user.url, user.thumbnail);
             sidebarContainer.appendChild(userLi);
         });
     }
 
-    // Poll the server every 2 minutes, but only if cache is invalid
+    // Poll the server every 2 minutes
     function pollForUpdates() {
         if (isCacheValid) {
             console.log('Cache is valid, using cached data.');
@@ -195,25 +196,23 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch('/updates')
             .then(response => response.json())
             .then(data => {
-                console.log("Data fetched from backend:", data);  // Log data fetched from backend
+                console.log("Data fetched from backend:", data);
                 if (data.twitch && data.twitch.data) {
                     const liveUsernames = data.twitch.data.map(stream => stream.user_login.toLowerCase());
                     updateTwitchElements(liveUsernames, data.twitch.data);
-                    localStorage.setItem('twitchData', JSON.stringify(data.twitch.data));  // Cache Twitch data
+                    localStorage.setItem('twitchData', JSON.stringify(data.twitch.data));
                 }
 
                 if (data.manual) {
                     updateManualElements(data.manual);
-                    localStorage.setItem('manualStatuses', JSON.stringify(data.manual));  // Cache manual statuses
+                    localStorage.setItem('manualStatuses', JSON.stringify(data.manual));
                 }
 
-                // Update the last update timestamp
                 localStorage.setItem('lastUpdateTimestamp', Date.now().toString());
             })
             .catch(error => console.error('Error fetching updates:', error));
     }
 
-    // Refresh logic for user1Page, user2Page, etc.
     function refreshUserPages() {
         const userPages = {
             'user1Page': 'RalfYT',
@@ -224,10 +223,9 @@ document.addEventListener("DOMContentLoaded", function() {
             const user = userPages[page];
             let switchElement = document.getElementById(`${user}-switch`);
 
-            // Check if the switch element exists before proceeding
             if (!switchElement) {
                 console.warn(`Switch element not found for user: ${user}`);
-                return; // Exit if the element doesn't exist
+                return;
             }
 
             const savedState = localStorage.getItem(`${user}-switch-state`);
@@ -235,13 +233,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 switchElement.checked = savedState === 'on';
             }
 
-            // Poll the backend every 2 minutes to check for admin overrides
             fetch('/updates')
                 .then(response => response.json())
                 .then(data => {
                     const adminOverrideState = data.manual[user];
                     if (adminOverrideState) {
-                        // If the admin override differs from the local state, update the switch
                         if (adminOverrideState !== (switchElement.checked ? 'on' : 'off')) {
                             switchElement.checked = adminOverrideState === 'on';
                             localStorage.setItem(`${user}-switch-state`, adminOverrideState);  // Update cached state
@@ -253,16 +249,14 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Page-specific logic: run refreshUserPages only on user pages
     const currentPage = window.location.pathname.split("/").pop();
     if (currentPage === "user1Page.html" || currentPage === "user2Page.html") {
         refreshUserPages();
-        setInterval(refreshUserPages, 120000);  // Poll every 2 minutes for user page updates
+        setInterval(refreshUserPages, 120000);
     }
 
-    // Poll for updates in general (this can be run on all pages)
     pollForUpdates();
-    setInterval(pollForUpdates, 120000);  // Poll every 2 minutes for live updates
+    setInterval(pollForUpdates, 120000);
 
     updateSidebar(); // Update sidebar immediately
 });
