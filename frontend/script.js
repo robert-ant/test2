@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
         { username: "TormTuleb", channelName: "TormTuleb", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
         { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
+        { username: "Krissupissu", channelName: "Krissupissu", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" }
         
     ];
 
