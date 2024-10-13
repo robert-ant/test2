@@ -7,10 +7,10 @@ document.addEventListener("DOMContentLoaded", function() {
     // Twitch users fetched from Twitch API
     const twitchUsers = [
         { username: "StoTheR", channelName: "StoTheR" },
-        { username: "freq_k", channelName: "freq_k" },
-        { username: "Carms", channelName: "carms" },
-        { username: "M6isnik", channelName: "m6isnik" },
-        { username: "qellox", channelName: "qellox1" },
+        { username: "Freq_k", channelName: "Freq_k" },
+        { username: "Carms", channelName: "Carms" },
+        { username: "M6isnik", channelName: "M6isnik" },
+        { username: "Qellox", channelName: "Qellox1" },
         { username: "DeepPepper", channelName: "DeepPepper" },
     ];
 
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Mariliiskaer", channelName: "Mariliiskaer", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/emoji.png" },
         { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/emoji.png" },
         { username: "MARMORMAZE", channelName: "MARMORMAZE", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/emoji.png" },
-        { username: "sebfreiberg", channelName: "sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/emoji.png" },
+        { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/emoji.png" },
         { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
         { username: "Lu0fn", channelName: "Lu0fn", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
         { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
