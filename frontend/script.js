@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
 
-    // Twitch users with only thumbnails (no live images for Twitch users)
+    // Twitch users with only thumbnails for the sidebar
     const twitchUsers = [
         { username: "StoTheR", channelName: "StoTheR", thumbnail: "assets/pfp/stother.jpeg" },
         { username: "Freq_k", channelName: "Freq_k", thumbnail: "assets/pfp/freq.jpg" },
@@ -68,14 +68,14 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Create streamer elements for the live container (use `liveImage` only for custom users)
+    // Create streamer elements for the live container (use `liveImage` only for custom users, Twitch API live screenshot for Twitch users)
     function createStreamerElement(username, channelName, image, url) {
         const div = document.createElement('div');
         div.classList.add('streamer', 'online', 'fade-in');
         div.id = username;
 
         const img = document.createElement('img');
-        img.src = image || 'assets/emoji.png';  // Use liveImage for custom users, thumbnail for Twitch users
+        img.src = image || 'assets/emoji.png';  // Use liveImage for custom users, Twitch API screenshot for Twitch users
         img.alt = `${username} live image`;
         img.classList.add('stream-thumbnail');
 
@@ -113,23 +113,23 @@ document.addEventListener("DOMContentLoaded", function() {
         return li;
     }
 
-    // Update Twitch elements in the live container (use thumbnail, no live image for Twitch users)
+    // Update Twitch elements in the live container (use Twitch API thumbnail as live image)
     function updateTwitchElements(liveUsernames, streamsData) {
         twitchUsers.forEach(user => {
             const isLive = liveUsernames.includes(user.username.toLowerCase());
             let existingElement = document.getElementById(user.username);
 
             let streamData = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
-            let image = user.thumbnail || (streamData ? streamData.thumbnail_url.replace('{width}', '320').replace('{height}', '180') : 'assets/emoji.png'); // Use thumbnail for live image
+            let twitchLiveImage = streamData ? streamData.thumbnail_url.replace('{width}', '320').replace('{height}', '180') : 'assets/emoji.png'; // Twitch live image
 
             let url = `https://www.twitch.tv/${user.username}`;
 
             if (isLive) {
                 if (!existingElement) {
-                    const newElement = createStreamerElement(user.username, user.channelName, image, url);
+                    const newElement = createStreamerElement(user.username, user.channelName, twitchLiveImage, url);
                     liveContainer.appendChild(newElement);
                 } else {
-                    existingElement.querySelector('img').src = image;
+                    existingElement.querySelector('img').src = twitchLiveImage;
                     existingElement.querySelector('span').innerText = user.channelName;
                     existingElement.classList.remove('fade-out');
                     existingElement.classList.add('fade-in');
