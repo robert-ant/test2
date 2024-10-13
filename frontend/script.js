@@ -68,6 +68,20 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
+    // Helper function to load data from cache
+    function loadFromCache() {
+        console.log("Loading data from cache...");
+
+        if (cachedTwitchData) {
+            const liveUsernames = cachedTwitchData.map(stream => stream.user_login.toLowerCase());
+            updateTwitchElements(liveUsernames, cachedTwitchData);
+        }
+        
+        if (Object.keys(cachedManualStatus).length > 0) {
+            updateManualElements(cachedManualStatus);
+        }
+    }
+
     // Create streamer elements for the live container (use `liveImage` only for custom users, Twitch API live screenshot for Twitch users)
     function createStreamerElement(username, channelName, image, url) {
         const div = document.createElement('div');
@@ -256,8 +270,14 @@ document.addEventListener("DOMContentLoaded", function() {
         setInterval(refreshUserPages, 120000);
     }
 
-    pollForUpdates();
-    setInterval(pollForUpdates, 120000);
+    // Load from cache if available and valid
+    if (isCacheValid) {
+        loadFromCache();
+    } else {
+        pollForUpdates();
+    }
+
+    setInterval(pollForUpdates, 120000); // Poll every 2 minutes
 
     updateSidebar(); // Update sidebar immediately
 });
