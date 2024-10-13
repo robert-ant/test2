@@ -6,28 +6,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Twitch users fetched from Twitch API
     const twitchUsers = [
-        { username: "LeekBeats", channelName: "LeekBeats" },
+        { username: "StoTheR", channelName: "StoTheR" },
         { username: "freq_k", channelName: "freq_k" },
         { username: "Carms", channelName: "carms" },
         { username: "M6isnik", channelName: "m6isnik" },
         { username: "qellox", channelName: "qellox1" },
-        { username: "jasontheween", channelName: "jasontheween" },
-        { username: "BLASTPremier", channelName: "BLASTPremier" },
-        { username: "trausi", channelName: "trausi" },
-        { username: "Fibii", channelName: "Fibii" },
-        { username: "PRXf0rsakeN", channelName: "PRXf0rsakeN" },
-        { username: "Dashy", channelName: "Dashy" },
-        { username: "s0mcs", channelName: "s0mcs" },
-        { username: "d0cc_tv", channelName: "d0cc_tv" },
-        { username: "Smacko", channelName: "Smacko" }
+        { username: "DeepPepper", channelName: "DeepPepper" },
     ];
 
     const customUsers = [
         { username: "RalfYT", channelName: "RalfYT", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/emoji.png" },
         { username: "hundijalavesi", channelName: "hundijalavesi", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/emoji.png" },
-        { username: "user3", channelName: "user3", url: "customPage3.html", thumbnail: "assets/emoji.png" },
-        { username: "user4", channelName: "user4", url: "customPage4.html", thumbnail: "assets/emoji.png" },
-        { username: "user5", channelName: "user5", url: "customPage5.html", thumbnail: "assets/emoji.png" }
+        { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia/live", thumbnail: "assets/emoji.png" },
+        { username: "MARMORMAZE", channelName: "MARMORMAZEMARMORMAZE", url: "https://www.tiktok.com/@marmormaze/live", thumbnail: "assets/emoji.png" },
+        { username: "sebfreiberg", channelName: "sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg/live", thumbnail: "assets/emoji.png" },
+        { username: "Sidni", channelName: "Sidni", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
     ];
 
     // Load cached data from localStorage
