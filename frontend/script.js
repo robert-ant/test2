@@ -6,8 +6,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Twitch users with only thumbnails (no live images for Twitch users)
     const twitchUsers = [
-        { username: "StoTheR", channelName: "StoTheR", thumbnail: "assets/pfp/sto.jpg" },
-        { username: "Freq_k", channelName: "Freq_k", thumbnail: "assets/pfp/freq_k.jpg" },
+        { username: "StoTheR", channelName: "StoTheR", thumbnail: "assets/pfp/stother.jpg" },
+        { username: "Freq_k", channelName: "Freq_k", thumbnail: "assets/pfp/freq.jpg" },
         { username: "Carms", channelName: "Carms", thumbnail: "assets/pfp/carms.jpg" },
         { username: "M6isnik", channelName: "M6isnik", thumbnail: "assets/pfp/m6isnik.jpg" },
         { username: "Qellox", channelName: "Qellox1", thumbnail: "assets/pfp/qellox.jpg" },
