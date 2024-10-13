@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
         { username: "Lu0fn", channelName: "Lu0fn", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
         { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
+        { username: "Sidni", channelName: "Sidni", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
         { username: "Estmagicz", channelName: "Estmagicz", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
         { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
         { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
