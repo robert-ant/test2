@@ -6,20 +6,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Twitch users with only thumbnails (no live images for Twitch users)
     const twitchUsers = [
-        { username: "StoTheR", channelName: "StoTheR", thumbnail: "assets/pfp/stother.jpg" },
+        { username: "StoTheR", channelName: "StoTheR", thumbnail: "assets/pfp/stother.jpeg" },
         { username: "Freq_k", channelName: "Freq_k", thumbnail: "assets/pfp/freq.jpg" },
-        { username: "Carms", channelName: "Carms", thumbnail: "assets/pfp/carms.jpg" },
-        { username: "M6isnik", channelName: "M6isnik", thumbnail: "assets/pfp/m6isnik.jpg" },
-        { username: "Qellox", channelName: "Qellox1", thumbnail: "assets/pfp/qellox.jpg" },
-        { username: "DeepPepper", channelName: "DeepPepper", thumbnail: "assets/pfp/deeppepper.jpg" }
+        { username: "Carms", channelName: "Carms", thumbnail: "assets/pfp/carms.png" },
+        { username: "M6isnik", channelName: "M6isnik", thumbnail: "assets/pfp/m6isnik.png" },
+        { username: "Qellox", channelName: "Qellox1", thumbnail: "assets/pfp/qellox.png" },
+        { username: "DeepPepper", channelName: "DeepPepper", thumbnail: "assets/pfp/New_Pepper.png" }
     ];
 
     // Custom users with thumbnails and live images
     const customUsers = [
         { username: "RalfYT", channelName: "RalfYT", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/pfp/ralf.jpg", liveImage: "assets/live/ralf-live.jpg" },
-        { username: "Mariliiskaer", channelName: "Mariliiskaer", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/pfp/mari.jpg", liveImage: "assets/live/mari-live.jpg" },
+        { username: "Mariliiskaer", channelName: "Mariliiskaer", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/pfp/mari.jpeg", liveImage: "assets/live/mari-live.jpg" },
         { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/pfp/Kaspar.png", liveImage: "assets/live/kaspar-live.jpg" },
-        { username: "MARMORMAZE", channelName: "MARMORMAZE", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/pfp/marmo.jpeg", liveImage: "assets/live/marmo-live.jpg" },
+        { username: "MARMORMAZE", channelName: "MARMORMAZE", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/pfp/marmo.jpg", liveImage: "assets/live/marmo-live.jpg" },
         { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/pfp/seb.jpg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
         { username: "Lu0fn", channelName: "Lu0fn", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
