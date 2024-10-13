@@ -21,16 +21,16 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/pfp/Kaspar.png", liveImage: "assets/live/kaspar-live.jpg" },
         { username: "MARMORMAZE", channelName: "MARMORMAZE", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/pfp/marmo.jpg", liveImage: "assets/live/marmo-live.jpg" },
         { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/pfp/seb.jpg", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Lu0fn", channelName: "Lu0fn", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/artjom.jpeg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Lu0fn", channelName: "Lu0fn", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/luo.jpeg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/sam.png", liveImage: "assets/live/seb-live.jpg" },
         { username: "Sidni", channelName: "Sidni", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/sidni.jpg", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Estmagicz", channelName: "Estmagicz", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
-        { username: "TormTuleb", channelName: "TormTuleb", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Krispoiss", channelName: "Krispoiss", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png", liveImage: "assets/live/seb-live.jpg" }
+        { username: "Estmagicz", channelName: "Estmagicz", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/oliver.jpg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "TormTuleb", channelName: "TormTuleb", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/pfp/torm.jpg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/gerhard.jpeg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Krispoiss", channelName: "Krispoiss", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/kris.üng", liveImage: "assets/live/seb-live.jpg" }
     ];
 
     // Load cached data from localStorage
