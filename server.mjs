@@ -172,19 +172,19 @@ app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
     const validUsers = {
-        admin: 'admin_password',
-        user1: 'user1_password',
-        user2: 'user2_password',
-        user3: 'user3_password',
-        user4: 'user4_password',
-        user5: 'user5_password',
-        user6: 'user6_password',
-        user7: 'user7_password',
-        user8: 'user8_password',
-        user9: 'user9_password',
-        user10: 'user10_password',
-        user11: 'user11_password',
-        user12: 'user12_password',
+        admin: 'jcneojrwäipnrobbevj=(I"!',
+        user1: 'oiwrgbäouewi(&/()=',
+        user2: 'difc4sw5678¤%&',
+        user3: 'djhebwvgiubb/&%¤',
+        user4: 'aepovh54#¤%&/()',
+        user5: 'user5_¤%&/(passwopwqdrvord',
+        user6: '=/&%FVBJGFTR#"',
+        user7: 'KVTXE#&/PV',
+        user8: 'user8_paoishvcy&CVYssword',
+        user9: 'ihyfvc98sgPGYF¤&/',
+        user10: 'jubuvcYBREE%¤###2567',
+        user11: 'OOIV7894198)/&%',
+        user12: 'user12_passjwbqyv%##%&/(75664fgcwFIYSVword',
     };
 
     if (validUsers[username] && validUsers[username] === password) {
