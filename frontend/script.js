@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "StoTheR", channelName: "StoTheR", thumbnail: "assets/pfp/stother.jpeg" },
         { username: "Freq_k", channelName: "Freq_k", thumbnail: "assets/pfp/freq.jpg" },
         { username: "Carms", channelName: "Carms", thumbnail: "assets/pfp/carms.png" },
-        { username: "M6isnik", channelName: "M6isnik", thumbnail: "assets/pfp/m6isnik.png" },
+        { username: "M6isnik", channelName: "M6isnik", thumbnail: "assets/pfp/mõisnik.png" },
         { username: "Qellox", channelName: "Qellox1", thumbnail: "assets/pfp/qellox.png" },
         { username: "DeepPepper", channelName: "DeepPepper", thumbnail: "assets/pfp/New_Pepper.png" }
     ];
