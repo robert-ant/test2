@@ -17,18 +17,18 @@ document.addEventListener("DOMContentLoaded", function() {
     const customUsers = [
         { username: "RalfYT", channelName: "RalfYT", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/emoji.png" },
         { username: "Mariliiskaer", channelName: "Mariliiskaer", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/emoji.png" },
-        { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia/live", thumbnail: "assets/emoji.png" },
-        { username: "MARMORMAZE", channelName: "MARMORMAZE", url: "https://www.tiktok.com/@marmormaze/live", thumbnail: "assets/emoji.png" },
-        { username: "sebfreiberg", channelName: "sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg/live", thumbnail: "assets/emoji.png" },
-        { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
-        { username: "Lu0fn", channelName: "Lu0fn", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
+        { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/emoji.png" },
+        { username: "MARMORMAZE", channelName: "MARMORMAZE", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/emoji.png" },
+        { username: "sebfreiberg", channelName: "sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/emoji.png" },
+        { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
+        { username: "Lu0fn", channelName: "Lu0fn", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
         { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
-        { username: "Estmagicz", channelName: "Estmagicz", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
-        { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
-        { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
+        { username: "Estmagicz", channelName: "Estmagicz", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
+        { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
+        { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
         { username: "TormTuleb", channelName: "TormTuleb", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
-        { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
-        { username: "Krispoiss", channelName: "Krispoiss", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" }
+        { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" },
+        { username: "Krispoiss", channelName: "Krispoiss", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/emoji.png" }
         
     ];
 
