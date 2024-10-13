@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function refreshUserPages() {
         const userPages = {
             'user1Page': 'RalfYT',
-            'user2Page': 'hundijalavesi'
+            'user2Page': 'Mariliis Kaer'
         };
 
         Object.keys(userPages).forEach(page => {
