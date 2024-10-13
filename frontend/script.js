@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/live/seb-live.jpg" },
         { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/live/seb-live.jpg" },
         { username: "TormTuleb", channelName: "TormTuleb", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/pfp/torm.jpg", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/gerhard.jpeg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Roosabanaanike", channelName: "Roosabanaanike", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/roosa.png", liveImage: "assets/live/seb-live.jpg" },
         { username: "Krispoiss", channelName: "Krispoiss", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/kris.png", liveImage: "assets/live/seb-live.jpg" }
     ];
 
