@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "RalfYT", channelName: "RalfYT", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/emoji.png" },
         { username: "hundijalavesi", channelName: "hundijalavesi", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/emoji.png" },
         { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia/live", thumbnail: "assets/emoji.png" },
-        { username: "MARMORMAZE", channelName: "MARMORMAZEMARMORMAZE", url: "https://www.tiktok.com/@marmormaze/live", thumbnail: "assets/emoji.png" },
+        { username: "MARMORMAZE", channelName: "MARMORMAZE", url: "https://www.tiktok.com/@marmormaze/live", thumbnail: "assets/emoji.png" },
         { username: "sebfreiberg", channelName: "sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg/live", thumbnail: "assets/emoji.png" },
         { username: "Sidni", channelName: "Sidni", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/emoji.png" },
     ];
