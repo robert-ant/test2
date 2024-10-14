@@ -13,8 +13,8 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Carms", channelName: "Carms", thumbnail: "assets/pfp/carms.png" },
         { username: "M6isnik", channelName: "M6isnik", thumbnail: "assets/pfp/mõisnik.png" },
         { username: "qellox1", channelName: "Qellox1", thumbnail: "assets/pfp/qellox1.png" },
-        { username: "DeepPepper", channelName: "DeepPepper", thumbnail: "assets/pfp/New_Pepper.png", },
-        { username: "Lu0fn", channelName: "Lu0fn", thumbnail: "assets/pfp/luo.jpeg", }
+        { username: "DeepPepper", channelName: "DeepPepper", thumbnail: "assets/pfp/New_Pepper.png" },
+        { username: "Lu0fn", channelName: "Lu0fn", thumbnail: "assets/pfp/luo.jpeg" }
         
     ];
 
