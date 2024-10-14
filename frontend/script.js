@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", function() {
     const liveContainer = document.getElementById('live-container');
     const sidebarContainer = document.getElementById('user-list');
-      const toggleSidebarWrapper = document.getElementById('toggleSidebarWrapper');
+    const toggleSidebarWrapper = document.getElementById('toggleSidebarWrapper');
     const darkModeToggle = document.getElementById('darkModeToggle');
+    const darkModeSwitch = document.querySelector('.switch'); // The whole switch element (label)
     const sidebar = document.querySelector('.sidebar');
     const body = document.body;
 
@@ -15,20 +16,19 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "qellox1", channelName: "Qellox1", thumbnail: "assets/pfp/qellox1.png" },
         { username: "DeepPepper", channelName: "DeepPepper", thumbnail: "assets/pfp/New_Pepper.png" },
         { username: "Lu0fn", channelName: "Lu0fn", thumbnail: "assets/pfp/luo.jpeg" }
-        
     ];
 
     // Custom users with thumbnails and live images
     const customUsers = [
-        { username: "RalfYT", channelName: "RalfYT", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/pfp/ralf.jpg", liveImage: "assets/pfp/ralfs.png" },
+        { username: "Ralf Paldermaa", channelName: "Ralf Paldermaa", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/pfp/ralf.jpg", liveImage: "assets/pfp/ralfs.png" },
         { username: "Mariliis Kaer", channelName: "Mariliis Kaer", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/pfp/mari.jpeg", liveImage: "assets/emoji.png" },
         { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/pfp/Kaspar.png", liveImage: "assets/live/kaspar-live.jpg" },
         { username: "MARMORMAZE", channelName: "MARMORMAZE", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/pfp/marmo.jpg", liveImage: "assets/live/marmo-live.jpg" },
         { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/pfp/seb.jpg", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/artjom.jpeg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@artjomsavitski", thumbnail: "assets/pfp/artjom.jpeg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@ainukesam", thumbnail: "assets/pfp/sam.png", liveImage: "assets/live/seb-live.jpg" },
         { username: "Sidni", channelName: "Sidni", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/sidni.jpg", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Estmagicz", channelName: "Estmagicz", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/oliver.jpg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Estmagicz", channelName: "Estmagicz", url: "https://www.youtube.com/@estmagicz", thumbnail: "assets/pfp/oliver.jpg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/live/seb-live.jpg" },
         { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/live/seb-live.jpg" },
         { username: "TormTuleb", channelName: "TormTuleb", url: "https://www.tiktok.com/@bieberismyfather/live", thumbnail: "assets/pfp/torm.jpg", liveImage: "assets/live/seb-live.jpg" },
@@ -44,38 +44,78 @@ document.addEventListener("DOMContentLoaded", function() {
     const CACHE_DURATION = 5 * 60 * 1000; // Cache for 5 minutes (in milliseconds)
     const isCacheValid = (Date.now() - lastUpdateTimestamp) < CACHE_DURATION;
 
-    // Dark mode functionality
-    function enableDarkMode() {
+      // Dark mode functionality
+      function enableDarkMode() {
         body.classList.add('dark-mode');
-        darkModeToggle.checked = true;
+        if (toggleImage) {
+            toggleImage.src = 'assets/muun.png'; // Change to moon image when dark mode is enabled
+        }
         localStorage.setItem('darkMode', 'enabled');
     }
 
     function disableDarkMode() {
         body.classList.remove('dark-mode');
-        darkModeToggle.checked = false;
+        if (toggleImage) {
+            toggleImage.src = 'assets/son.png'; // Change to sun image when dark mode is disabled
+        }
+        localStorage.setItem('darkMode', 'disabled');
+    }
+
+    // Dark mode functionality
+    function enableDarkMode() {
+        body.classList.add('dark-mode');
+        localStorage.setItem('darkMode', 'enabled');
+    }
+
+    function disableDarkMode() {
+        body.classList.remove('dark-mode');
         localStorage.setItem('darkMode', 'disabled');
     }
 
     const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (localStorage.getItem('darkMode') === 'enabled' || (systemDarkMode && !localStorage.getItem('darkMode'))) {
+
+    // Apply dark mode based on system preference on mobile and hide toggle
+    if (window.innerWidth <= 768) {
+        if (darkModeSwitch) {
+            darkModeSwitch.style.display = 'none'; // Hide the entire dark mode switch on mobile
+        }
+        if (systemDarkMode) {
+            enableDarkMode(); // Apply system dark mode if enabled
+        } else {
+            disableDarkMode(); // Disable dark mode if system preference is light
+        }
+    } else {
+
+      // On desktop, allow users to toggle dark mode and respect their stored preference
+      if (localStorage.getItem('darkMode') === 'enabled') {
         enableDarkMode();
+        darkModeToggle.checked = true;
+    } else if (localStorage.getItem('darkMode') === 'disabled') {
+        disableDarkMode();
+        darkModeToggle.checked = false;
+    } else if (systemDarkMode) {
+        enableDarkMode();
+        darkModeToggle.checked = true;
     }
 
-    darkModeToggle.addEventListener('change', () => {
-        if (darkModeToggle.checked) {
-            enableDarkMode();
-        } else {
-            disableDarkMode();
-        }
-    });
+    // Event listener for the dark mode toggle switch on desktop
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('change', () => {
+            if (darkModeToggle.checked) {
+                enableDarkMode();
+            } else {
+                disableDarkMode();
+            }
+        });
+    }
+}
 
     // Initially hide the sidebar on mobile by ensuring it doesn't have the 'visible' class
     sidebar.classList.remove('visible');
 
     // Toggle sidebar visibility on mobile when clicking the wrapper
     toggleSidebarWrapper.addEventListener('click', function() {
-    sidebar.classList.toggle('visible'); // Toggle the 'visible' class
+        sidebar.classList.toggle('visible'); // Toggle the 'visible' class
     });
 
     // Helper function to load data from cache
@@ -240,7 +280,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function refreshUserPages() {
         const userPages = {
-            'user1Page': 'RalfYT',
+            'user1Page': 'Ralf Paldermaa',
             'user2Page': 'Mariliis Kaer'
         };
 

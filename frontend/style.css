@@ -212,6 +212,30 @@ img {
     transition: transform 0.5s ease;
 }
 
+/* Move the image to the right when the switch is toggled */
+input:checked + .slider img {
+    transform: translateX(26px);
+}
+
+/* Image change for dark mode and light mode */
+body.dark-mode .slider img {
+    content: url('assets/muun.png'); /* Show moon icon for dark mode */
+}
+
+body:not(.dark-mode) .slider img {
+    content: url('assets/son.png'); /* Show sun icon for light mode */
+}
+
+/* Move the handle when checked */
+input:checked + .slider {
+    background-color: #2196F3; /* Background when active */
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px); /* Smoothly move the slider handle */
+}
+
+
 .footer {
     width: 100%;
     text-align: center;
@@ -439,6 +463,27 @@ img {
         height: auto;
     }
 
+    h3 {
+        margin-top: 5px;
+        font-size: 1rem;
+        transition: opacity 0.5s ease;
+        position: relative;
+        top: 5px;
+        left: 0px;
+        display: inline-block;
+        text-shadow: 2px 2px 1px #000000;
+    }
+
+    #wise {
+    width: 250px;
+    height: 44px;
+    transition: opacity 0.5s ease;
+    position: relative;
+    top: 13px;
+    left: 0px;
+    display: inline-block;
+    }
+
     .container {
         flex-direction: column;
         padding: 10px;
@@ -501,7 +546,7 @@ img {
         padding: 20px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         border-radius: 17px;
-        width: auto;
+        width: 266px;
     }
 
     .sidebar.visible {
@@ -517,4 +562,9 @@ img {
     #toggleSidebar {
         display: none; /* Hide toggle button on desktop */
     }
+
+    #darkModeToggle {
+        display: none; /* Hide the dark mode toggle on mobile */
+}
+
 }
