@@ -11,7 +11,9 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Carms", channelName: "Carms", thumbnail: "assets/pfp/carms.png" },
         { username: "M6isnik", channelName: "M6isnik", thumbnail: "assets/pfp/mõisnik.png" },
         { username: "qellox1", channelName: "Qellox1", thumbnail: "assets/pfp/qellox1.png" },
-        { username: "DeepPepper", channelName: "DeepPepper", thumbnail: "assets/pfp/New_Pepper.png" }
+        { username: "DeepPepper", channelName: "DeepPepper", thumbnail: "assets/pfp/New_Pepper.png", }
+        { username: "Lu0fn", channelName: "Lu0fn", thumbnail: "assets/pfp/luo.jpeg" }
+        
     ];
 
     // Custom users with thumbnails and live images
@@ -22,7 +24,6 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "MARMORMAZE", channelName: "MARMORMAZE", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/pfp/marmo.jpg", liveImage: "assets/live/marmo-live.jpg" },
         { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/pfp/seb.jpg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/artjom.jpeg", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Lu0fn", channelName: "Lu0fn", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/luo.jpeg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@ainukesam", thumbnail: "assets/pfp/sam.png", liveImage: "assets/live/seb-live.jpg" },
         { username: "Sidni", channelName: "Sidni", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/sidni.jpg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Estmagicz", channelName: "Estmagicz", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/oliver.jpg", liveImage: "assets/live/seb-live.jpg" },
