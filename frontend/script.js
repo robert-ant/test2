@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
     const liveContainer = document.getElementById('live-container');
     const sidebarContainer = document.getElementById('user-list');
-    const toggleSidebarWrapper = document.getElementById('toggleSidebarWrapper');
+      const toggleSidebarWrapper = document.getElementById('toggleSidebarWrapper');
     const darkModeToggle = document.getElementById('darkModeToggle');
-    const sidebar = document.querySelector('.sidebar');
     const body = document.body;
 
     // Twitch users with only thumbnails for the sidebar
@@ -70,14 +69,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Initially hide the sidebar on mobile by ensuring it doesn't have the 'visible' class
-    sidebar.classList.remove('visible');
-    
-    // Toggle sidebar visibility on mobile when clicking the wrapper
-    toggleSidebarWrapper.addEventListener('click', function() {
-        sidebar.classList.toggle('closed');
-    });
-    
     // Helper function to load data from cache
     function loadFromCache() {
         console.log("Loading data from cache...");
