@@ -29,8 +29,8 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@ainukesam", thumbnail: "assets/pfp/sam.png", liveImage: "assets/live/seb-live.jpg" },
         { username: "Sidni", channelName: "Sidni", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/sidni.jpg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Estmagicz", channelName: "Estmagicz", url: "https://www.youtube.com/@estmagicz", thumbnail: "assets/pfp/oliver.jpg", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@kozipeesti", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.youtube.com/@KozipEesti", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/live/seb-live.jpg" },
         { username: "TormTuleb", channelName: "TormTuleb", url: "https://www.youtube.com/@Torm_tuleb", thumbnail: "assets/pfp/torm.jpg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.youtube.com/@gerhard.trolla", thumbnail: "assets/pfp/gerhard.jpeg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Krispoiss", channelName: "Krispoiss", url: "https://www.tiktok.com/@krispoiss", thumbnail: "assets/pfp/kris.png", liveImage: "assets/live/seb-live.jpg" }
