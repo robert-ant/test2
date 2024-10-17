@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const customUsers = [
         { username: "Ralf Paldermaa", channelName: "Ralf Paldermaa", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/pfp/ralf.jpg", liveImage: "assets/landscape/Ralfs.png" },
         { username: "Mariliis Kaer", channelName: "Mariliis Kaer", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/pfp/mari.jpeg", liveImage: "assets/landscape/marihorizont.jpg" },
-        { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/pfp/Kaspar.png", liveImage: "assets/live/kaspar-live.jpg" },
+        { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/pfp/Kaspar.png", liveImage: "assets/landscape/Kasparhorisont.jpg" },
         { username: "Marmormaze", channelName: "Marmormaze", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/pfp/marmo.jpg", liveImage: "assets/live/marmo-live.jpg" },
         { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/pfp/seb.jpg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@artjomsavitski", thumbnail: "assets/pfp/artjom.jpeg", liveImage: "assets/live/seb-live.jpg" },
