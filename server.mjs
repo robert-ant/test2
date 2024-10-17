@@ -185,6 +185,8 @@ app.post('/login', (req, res) => {
         user10: 'jubuvcYBREE%¤###2567',
         user11: 'OOIV7894198)/&%',
         user12: 'user12_passjwbqyv%##%&/(75664fgcwFIYSVword',
+        user13: 'user12_passjwb##%&/(75664fgcwFIYSVword',
+        user14: 'user12_passjwbqyv%##%&/(75IYSVword',
     };
 
     if (validUsers[username] && validUsers[username] === password) {
@@ -212,6 +214,8 @@ app.get('/:userPage', (req, res) => {
         'user10Page.html',
         'user11Page.html',
         'user12Page.html',
+        'user13Page.html',
+        'user14Page.html',
     ];
 
     if (validPages.includes(userPage)) {

@@ -66,28 +66,60 @@
         <div class="box">
             <span class="slider-label">Kas ma olen live?</span>
             <label class="switch">
-                <input type="checkbox" id="user1-switch">
+                <input type="checkbox" id="Marmormaze-switch"> <!-- Use the correct switch ID -->
                 <span class="slider"></span>
             </label>
         </div>
     </div>
     <script>
-        document.getElementById('user4-switch').addEventListener('change', function() {
+        const switchElement = document.getElementById('Marmormaze-switch');  // Correct switch ID
+        const user = 'Marmormaze';  // The username to use for the backend communication
+
+        // Load switch state from cache (localStorage)
+        const savedState = localStorage.getItem(`${user}-switch-state`);
+        if (savedState) {
+            switchElement.checked = savedState === 'on';
+        }
+
+        // Handle switch state changes and send updates to backend
+        switchElement.addEventListener('change', function() {
             const state = this.checked ? 'on' : 'off';
             fetch('/update-user-status', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ user: 'user4', state: state })
+                body: JSON.stringify({ user, state })  // Send the username and state
             }).then(response => {
                 if (response.ok) {
-                    console.log(`User4 status updated to ${state}`);
+                    console.log(`${user} status updated to ${state}`);
+                    localStorage.setItem(`${user}-switch-state`, state);  // Cache the state
                 } else {
                     console.error('Failed to update status');
                 }
             });
         });
+
+        // Poll the backend every 2 minutes to check for admin overrides
+        function pollForUpdates() {
+            fetch('/updates')
+                .then(response => response.json())
+                .then(data => {
+                    const adminOverrideState = data.manual[user];
+                    if (adminOverrideState) {
+                        // If the admin override differs from the local state, update the switch
+                        if (adminOverrideState !== (switchElement.checked ? 'on' : 'off')) {
+                            switchElement.checked = adminOverrideState === 'on';
+                            localStorage.setItem(`${user}-switch-state`, adminOverrideState);  // Update cached state
+                            console.log(`Admin override applied: ${adminOverrideState}`);
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching updates:', error));
+        }
+
+        pollForUpdates();
+        setInterval(pollForUpdates, 120000);  // Poll every 2 minutes
     </script>
 </body>
 </html>
