@@ -15,24 +15,25 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "M6isnik", channelName: "M6isnik", thumbnail: "assets/pfp/mõisnik.png" },
         { username: "qellox1", channelName: "Qellox1", thumbnail: "assets/pfp/qellox1.png" },
         { username: "DeepPepper", channelName: "DeepPepper", thumbnail: "assets/pfp/New_Pepper.png" },
-        { username: "Lu0fn", channelName: "Lu0fn", thumbnail: "assets/pfp/luo.jpeg" }
+        { username: "Lu0fn", channelName: "Lu0fn", thumbnail: "assets/pfp/luo.jpeg" }   
     ];
 
     // Custom users with thumbnails and live images
     const customUsers = [
-        { username: "Ralf Paldermaa", channelName: "Ralf Paldermaa", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/pfp/ralf.jpg", liveImage: "assets/pfp/ralfs.png" },
+        { username: "Ralf Paldermaa", channelName: "Ralf Paldermaa", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/pfp/ralf.jpg", liveImage: "assets/landscape/Ralfs.png" },
         { username: "Mariliis Kaer", channelName: "Mariliis Kaer", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/pfp/mari.jpeg", liveImage: "assets/emoji.png" },
         { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/pfp/Kaspar.png", liveImage: "assets/live/kaspar-live.jpg" },
         { username: "Marmormaze", channelName: "Marmormaze", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/pfp/marmo.jpg", liveImage: "assets/live/marmo-live.jpg" },
         { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/pfp/seb.jpg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@artjomsavitski", thumbnail: "assets/pfp/artjom.jpeg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@ainukesam", thumbnail: "assets/pfp/sam.png", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Sidni", channelName: "Sidni", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/sidni.jpg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Sidni", channelName: "Sidni", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/sidni.jpg", liveImage: "assets/landscape/sidnihorizont.jpg" },
         { username: "Estmagicz", channelName: "Estmagicz", url: "https://www.youtube.com/@estmagicz", thumbnail: "assets/pfp/oliver.jpg", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@kozipeesti", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.youtube.com/@KozipEesti", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@kozipeesti", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/landscape/maia.jpeg" },
+        { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.youtube.com/@KozipEesti", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/landscape/mihkel.jpg" },
         { username: "TormTuleb", channelName: "TormTuleb", url: "https://www.youtube.com/@Torm_tuleb", thumbnail: "assets/pfp/torm.jpg", liveImage: "assets/live/seb-live.jpg" },
-        { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.youtube.com/@gerhard.trolla", thumbnail: "assets/pfp/gerhard.jpeg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.youtube.com/@gerhard.trolla", thumbnail: "assets/pfp/gerhard.jpeg", liveImage: "assets/landscape/Gerhardhorizont.png" },
+        { username: "Joosep Teeb Asju", channelName: "Joosep Teeb Asju", url: "https://youtube.com/@joosepteebasju", thumbnail: "assets/pfp/joosep.jpg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Krispoiss", channelName: "Krispoiss", url: "https://www.tiktok.com/@krispoiss", thumbnail: "assets/pfp/kris.png", liveImage: "assets/live/seb-live.jpg" }
     ];
 
