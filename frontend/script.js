@@ -121,8 +121,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Helper function to load data from cache
     function loadFromCache() {
-        console.log("Loading data from cache...");
-
         if (cachedTwitchData) {
             const liveUsernames = cachedTwitchData.map(stream => stream.user_login.toLowerCase());
             updateTwitchElements(liveUsernames, cachedTwitchData);
@@ -210,7 +208,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Update custom user elements in the live container (use `liveImage` for custom users)
     function updateManualElements(manualStatuses) {
-        console.log('Updating manual elements:', manualStatuses);
         cachedManualStatus = { ...manualStatuses };
 
         customUsers.forEach(user => {
@@ -254,15 +251,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // Poll the server every 2 minutes
     function pollForUpdates() {
         if (isCacheValid) {
-            console.log('Cache is valid, using cached data.');
             return;
         }
-
-        console.log('Fetching data from backend...');
         fetch('/updates')
             .then(response => response.json())
             .then(data => {
-                console.log("Data fetched from backend:", data);
                 if (data.twitch && data.twitch.data) {
                     const liveUsernames = data.twitch.data.map(stream => stream.user_login.toLowerCase());
                     updateTwitchElements(liveUsernames, data.twitch.data);
@@ -302,7 +295,6 @@ document.addEventListener("DOMContentLoaded", function() {
             let switchElement = document.getElementById(`${user}-switch`);
 
             if (!switchElement) {
-                console.warn(`Switch element not found for user: ${user}`);
                 return;
             }
 
