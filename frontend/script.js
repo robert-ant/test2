@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const darkModeSwitch = document.querySelector('.switch'); // The whole switch element (label)
     const sidebar = document.querySelector('.sidebar');
     const body = document.body;
+    const toggleImage = document.getElementById('darkModeImage'); // Assuming there's an image element to indicate dark mode
 
     // Twitch users with only thumbnails for the sidebar
     const twitchUsers = [
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Mariliis Kaer", channelName: "Mariliis Kaer", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/pfp/mari.jpeg", liveImage: "assets/landscape/marihorizont.jpg" },
         { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/pfp/Kaspar.png", liveImage: "assets/landscape/Kasparhorisont.jpg" },
         { username: "Marmormaze", channelName: "Marmormaze", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/pfp/marmo.jpg", liveImage: "assets/live/marmo-live.jpg" },
-        { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/pfp/seb.jpg", liveImage: "assets/live/seb-live.jpg" },
+        { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/pfp/seb.jpg", liveImage: "assets/landscape/Sebhorizont.jpg" },
         { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@artjomsavitski", thumbnail: "assets/pfp/artjom.jpeg", liveImage: "assets/live/seb-live.jpg" },
         { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@ainukesam", thumbnail: "assets/pfp/sam.png", liveImage: "assets/landscape/samhorizont.jpg" },
         { username: "Sidni", channelName: "Sidni", url: "https://www.tiktok.com/@bieberismyfather", thumbnail: "assets/pfp/sidni.jpg", liveImage: "assets/landscape/sidnihorizont.jpg" },
@@ -45,8 +46,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const CACHE_DURATION = 5 * 60 * 1000; // Cache for 5 minutes (in milliseconds)
     const isCacheValid = (Date.now() - lastUpdateTimestamp) < CACHE_DURATION;
 
-      // Dark mode functionality
-      function enableDarkMode() {
+    // Dark mode functionality
+    function enableDarkMode() {
         body.classList.add('dark-mode');
         if (toggleImage) {
             toggleImage.src = 'assets/muun.png'; // Change to moon image when dark mode is enabled
@@ -59,17 +60,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if (toggleImage) {
             toggleImage.src = 'assets/son.png'; // Change to sun image when dark mode is disabled
         }
-        localStorage.setItem('darkMode', 'disabled');
-    }
-
-    // Dark mode functionality
-    function enableDarkMode() {
-        body.classList.add('dark-mode');
-        localStorage.setItem('darkMode', 'enabled');
-    }
-
-    function disableDarkMode() {
-        body.classList.remove('dark-mode');
         localStorage.setItem('darkMode', 'disabled');
     }
 
@@ -181,12 +171,12 @@ document.addEventListener("DOMContentLoaded", function() {
         twitchUsers.forEach(user => {
             const isLive = liveUsernames.includes(user.username.toLowerCase());
             let existingElement = document.getElementById(user.username);
-
+    
             let streamData = streamsData.find(s => s.user_login.toLowerCase() === user.username.toLowerCase());
             let twitchLiveImage = streamData ? streamData.thumbnail_url.replace('{width}', '320').replace('{height}', '180') : 'assets/emoji.png'; // Twitch live image
-
+    
             let url = `https://www.twitch.tv/${user.username}`;
-
+    
             if (isLive) {
                 if (!existingElement) {
                     const newElement = createStreamerElement(user.username, user.channelName, twitchLiveImage, url);
@@ -199,10 +189,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             } else if (existingElement) {
                 existingElement.classList.add('fade-out');
-                setTimeout(() => liveContainer.removeChild(existingElement), 500); // Fade out and remove
+                setTimeout(() => {
+                    if (existingElement.parentNode) {
+                        liveContainer.removeChild(existingElement);
+                    }
+                }, 500); // Fade out and remove
             }
         });
-
+    
         updateSidebar();
     }
 
@@ -212,16 +206,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
         customUsers.forEach(user => {
             const isManualOn = manualStatuses[user.username] === 'on';
-
             let existingElement = document.getElementById(user.username);
             if (isManualOn) {
                 if (!existingElement) {
                     const newElement = createStreamerElement(user.username, user.channelName, user.liveImage, user.url);
                     liveContainer.appendChild(newElement);
+                } else {
+                    existingElement.classList.remove('fade-out');
+                    existingElement.classList.add('fade-in');
                 }
             } else if (existingElement) {
                 existingElement.classList.add('fade-out');
-                setTimeout(() => liveContainer.removeChild(existingElement), 500);
+                setTimeout(() => {
+                    if (existingElement.parentNode) {
+                        liveContainer.removeChild(existingElement);
+                    }
+                }, 500); // Wait for fade-out animation to complete
             }
         });
 
@@ -248,11 +248,8 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Poll the server every 2 minutes
+    // Poll the server every 2 minutes for updates and refresh liveContainer elements
     function pollForUpdates() {
-        if (isCacheValid) {
-            return;
-        }
         fetch('/updates')
             .then(response => response.json())
             .then(data => {
@@ -272,6 +269,19 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(error => console.error('Error fetching updates:', error));
     }
 
+    // Poll for updates every 2 minutes and update live streamer elements dynamically
+    setInterval(pollForUpdates, 120000); // Poll every 2 minutes
+
+    // Load from cache if available and valid, otherwise poll for updates
+    if (isCacheValid) {
+        loadFromCache();
+    } else {
+        pollForUpdates();
+    }
+
+    updateSidebar(); // Update sidebar immediately
+
+    // Refresh user pages based on their specific switches
     function refreshUserPages() {
         const userPages = {
             'user1Page': 'Ralf Paldermaa',
@@ -324,15 +334,4 @@ document.addEventListener("DOMContentLoaded", function() {
         refreshUserPages();
         setInterval(refreshUserPages, 120000);
     }
-
-    // Load from cache if available and valid
-    if (isCacheValid) {
-        loadFromCache();
-    } else {
-        pollForUpdates();
-    }
-
-    setInterval(pollForUpdates, 120000); // Poll every 2 minutes
-
-    updateSidebar(); // Update sidebar immediately
 });
