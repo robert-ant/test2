@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Custom users with thumbnails and live images
     const customUsers = [
         { username: "Ralf Paldermaa", channelName: "Ralf Paldermaa", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/pfp/ralf.jpg", liveImage: "assets/landscape/Ralfs.png" },
-        { username: "Mariliis Kaer", channelName: "Mariliis Kaer", url: "https://www.tiktok.com/@hundijalavesi?lang=en", thumbnail: "assets/pfp/mari.jpeg", liveImage: "assets/landscape/marihorizont.jpg" },
+        { username: "Mariliis Kaer", channelName: "Mariliis Kaer", url: "https://www.tiktok.com/@hundijalavesi", thumbnail: "assets/pfp/mari.jpeg", liveImage: "assets/landscape/marihorizont.jpg" },
         { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/pfp/Kaspar.png", liveImage: "assets/landscape/Kasparhorisont.jpg" },
         { username: "Marmormaze", channelName: "Marmormaze", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/pfp/marmo.jpg", liveImage: "assets/landscape/marmorhorizont.jpg" },
         { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/pfp/seb.jpg", liveImage: "assets/landscape/Sebhorizont.jpg" },
@@ -37,6 +37,25 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Joosep Teeb Asju", channelName: "Joosep Teeb Asju", url: "https://youtube.com/@joosepteebasju", thumbnail: "assets/pfp/joosep.jpg", liveImage: "assets/emoji.png" },
         { username: "Krispoiss", channelName: "Krispoiss", url: "https://www.tiktok.com/@krispoiss", thumbnail: "assets/pfp/kris.png", liveImage: "assets/landscape/krissupissuhorizont.jpg" }
     ];
+
+    // Custom URLs for manual users
+    const manualUserUrls = {
+        "Ralf Paldermaa": "https://www.youtube.com/@ismaralf",
+        "Mariliis Kaer": "https://www.tiktok.com/@hundijalavesi/live",
+        "Kaspar Wang": "https://www.tiktok.com/@kaspar_in_estonia/live",
+        "Marmormaze": "https://www.tiktok.com/@marmormaze/live",
+        "Sebfreiberg": "https://www.tiktok.com//@sebfreiberg/live",
+        "Artjom": "https://www.tiktok.com/@artjomsavitski/live",
+        "Säm": "https://www.tiktok.com/@ainukesam/live",
+        "Sidni": "https://www.tiktok.com/@bieberismyfather/live",
+        "Estmagicz": "https://www.youtube.com/@estmagicz",
+        "Kozip Maia": "https://www.tiktok.com/@kozipeesti/live",
+        "Kozip Mihkel": "https://www.youtube.com/@KozipEesti",
+        "TormTuleb": "https://www.youtube.com/@Torm_tuleb",
+        "Gerhard Trolla": "https://www.youtube.com/@gerhard.trolla",
+        "Joosep Teeb Asju": "https://youtube.com/@joosepteebasju",
+        "Krispoiss": "https://www.tiktok.com/@krispoiss/live"
+    };
 
     // Load cached data from localStorage
     let cachedTwitchData = JSON.parse(localStorage.getItem('twitchData')) || null;
@@ -207,13 +226,19 @@ document.addEventListener("DOMContentLoaded", function() {
         customUsers.forEach(user => {
             const isManualOn = manualStatuses[user.username] === 'on';
             let existingElement = document.getElementById(user.username);
+            let manualUrl = manualUserUrls[user.username] || user.url; // Use custom manual URL if available, otherwise default
+
             if (isManualOn) {
                 if (!existingElement) {
-                    const newElement = createStreamerElement(user.username, user.channelName, user.liveImage, user.url);
+                    const newElement = createStreamerElement(user.username, user.channelName, user.liveImage, manualUrl);
                     liveContainer.appendChild(newElement);
                 } else {
                     existingElement.classList.remove('fade-out');
                     existingElement.classList.add('fade-in');
+                    existingElement.querySelector('img').src = user.liveImage;
+                    existingElement.addEventListener('click', () => {
+                        window.location.href = manualUrl;
+                    });
                 }
             } else if (existingElement) {
                 existingElement.classList.add('fade-out');
