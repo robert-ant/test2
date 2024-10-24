@@ -333,6 +333,18 @@ input:checked + .slider:before {
         height: auto;
     }
 
+    .streamer {
+        width: 100%; /* Reduce width to ensure better fit on smaller screens */
+        margin: 10px auto; /* Center align and reduce margin */
+        padding: 5px; /* Add padding for a more compact appearance */
+        box-sizing: border-box;
+    }
+
+    img {
+        width: 180px;
+        height: 100px;
+    }
+
     .container {
         flex-direction: column;
         padding: 10px;
@@ -373,7 +385,7 @@ input:checked + .slider:before {
     .sidebar-header {
         display: flex;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
         width: 100%;
     }
 
@@ -474,6 +486,13 @@ input:checked + .slider:before {
         text-shadow: 2px 2px 1px #000000;
     }
 
+    h2{
+        text-shadow: 2px 2px 1px #000000;
+        display: flex;
+        justify-content: center;
+    }
+
+    
     #wise {
     width: 250px;
     height: 44px;
@@ -497,7 +516,7 @@ input:checked + .slider:before {
         width: 100%;
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
-        max-width: 100%; /* Ensure the live section does not exceed the screen width */
+        max-width: 100%;
     }
 
     .switch {
@@ -524,7 +543,7 @@ input:checked + .slider:before {
     .sidebar-header {
         display: flex;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
         width: 100%;
     }
 
