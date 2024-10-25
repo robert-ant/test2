@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Kozip Maia", channelName: "Kozip Maia", url: "https://www.tiktok.com/@kozipeesti", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/landscape/maia.jpg" },
         { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.youtube.com/@KozipEesti", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/landscape/mihkel.jpg" },
         { username: "TormTuleb", channelName: "TormTuleb", url: "https://www.youtube.com/@Torm_tuleb", thumbnail: "assets/pfp/torm.jpg", liveImage: "assets/landscape/tormhorizont.jpg" },
-        { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.youtube.com/@gerhard.trolla", thumbnail: "assets/pfp/gerhard.jpeg", liveImage: "assets/landscape/gerhardhorizont.jpg" },
+        { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.youtube.com/@gerhard.trolla", thumbnail: "assets/pfp/gerhard.jpeg", liveImage: "assets/landscape/gerhardhorizontuus.jpg" },
         { username: "Joosep Teeb Asju", channelName: "Joosep Teeb Asju", url: "https://youtube.com/@joosepteebasju", thumbnail: "assets/pfp/joosep.jpg", liveImage: "assets/emoji.png" },
         { username: "Krispoiss", channelName: "Krispoiss", url: "https://www.tiktok.com/@krispoiss", thumbnail: "assets/pfp/kris.png", liveImage: "assets/landscape/krissupissuhorizont.jpg" }
     ];
