@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "Kozip Mihkel": "https://www.youtube.com/@KozipEesti",
         "TormTuleb": "https://www.youtube.com/@Torm_tuleb",
         "Gerhard Trolla": "https://www.youtube.com/@gerhard.trolla",
-        "Selgrootu": "https://youtube.com/@selegrootu/live",
+        "Selgrootu": "https://youtube.com/@selgrootu/live",
         "Joosep Teeb Asju": "https://youtube.com/@joosepteebasju",
         "Krispoiss": "https://www.tiktok.com/@krispoiss/live"
     };
