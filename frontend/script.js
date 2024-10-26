@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Kozip Mihkel", channelName: "Kozip Mihkel", url: "https://www.youtube.com/@KozipEesti", thumbnail: "assets/pfp/kozip.png", liveImage: "assets/landscape/mihkel.jpg" },
         { username: "TormTuleb", channelName: "TormTuleb", url: "https://www.youtube.com/@Torm_tuleb", thumbnail: "assets/pfp/torm.jpg", liveImage: "assets/landscape/tormhorizont.jpg" },
         { username: "Gerhard Trolla", channelName: "Gerhard Trolla", url: "https://www.youtube.com/@gerhard.trolla", thumbnail: "assets/pfp/gerhard.jpeg", liveImage: "assets/landscape/gerhardhorizontuus.jpg" },
+        { username: "Selgrootu", channelName: "Selgrootu", url: "https://www.tiktok.com/@selgrootu", thumbnail: "assets/pfp/selgrootu.jpg", liveImage: "assets/landscape/selgrootuhorizont.jpg" },
         { username: "Joosep Teeb Asju", channelName: "Joosep Teeb Asju", url: "https://youtube.com/@joosepteebasju", thumbnail: "assets/pfp/joosep.jpg", liveImage: "assets/emoji.png" },
         { username: "Krispoiss", channelName: "Krispoiss", url: "https://www.tiktok.com/@krispoiss", thumbnail: "assets/pfp/kris.png", liveImage: "assets/landscape/krissupissuhorizont.jpg" }
     ];
@@ -53,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "Kozip Mihkel": "https://www.youtube.com/@KozipEesti",
         "TormTuleb": "https://www.youtube.com/@Torm_tuleb",
         "Gerhard Trolla": "https://www.youtube.com/@gerhard.trolla",
+        "Selgrootu": "https://youtube.com/@selegrootu/live",
         "Joosep Teeb Asju": "https://youtube.com/@joosepteebasju",
         "Krispoiss": "https://www.tiktok.com/@krispoiss/live"
     };
@@ -322,7 +324,8 @@ document.addEventListener("DOMContentLoaded", function() {
             'user11Page': 'Kozip Mihkel',
             'user12Page': 'TormTuleb',
             'user13Page': 'Gerhard Trolla',
-            'user14Page': 'Krispoiss'
+            'user14Page': 'Krispoiss',
+            'user15Page': 'Selgrootu'
         };
 
         Object.keys(userPages).forEach(page => {
