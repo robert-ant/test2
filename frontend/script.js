@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "M6isnik", channelName: "M6isnik", thumbnail: "assets/pfp/mõisnik.png" },
         { username: "qellox1", channelName: "Qellox1", thumbnail: "assets/pfp/qellox1.png" },
         { username: "DeepPepper", channelName: "DeepPepper", thumbnail: "assets/pfp/New_Pepper.png" },
-        { username: "Lu0fn", channelName: "Lu0fn", thumbnail: "assets/pfp/luo.jpeg" }   
+        { username: "Marmormaze", channelName: "Marmormaze", thumbnail: "assets/pfp/marmor.jpg" }   
     ];
 
     // Custom users with thumbnails and live images
@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", function() {
         { username: "Ralf Paldermaa", channelName: "Ralf Paldermaa", url: "https://www.youtube.com/@ismaralf", thumbnail: "assets/pfp/ralf.jpg", liveImage: "assets/landscape/Ralfs.png" },
         { username: "Mariliis Kaer", channelName: "Mariliis Kaer", url: "https://www.tiktok.com/@hundijalavesi", thumbnail: "assets/pfp/mari.jpeg", liveImage: "assets/landscape/marihorizont.jpg" },
         { username: "Kaspar Wang", channelName: "Kaspar Wang", url: "https://www.tiktok.com/@kaspar_in_estonia", thumbnail: "assets/pfp/Kaspar.png", liveImage: "assets/landscape/Kasparhorisont.jpg" },
-        { username: "Marmormaze", channelName: "Marmormaze", url: "https://www.tiktok.com/@marmormaze", thumbnail: "assets/pfp/marmo.jpg", liveImage: "assets/landscape/marmorhorizont.jpg" },
         { username: "Sebfreiberg", channelName: "Sebfreiberg", url: "https://www.tiktok.com/@sebfreiberg", thumbnail: "assets/pfp/seb.jpg", liveImage: "assets/landscape/Sebhorizont.jpg" },
         { username: "Artjom", channelName: "Artjom", url: "https://www.tiktok.com/@artjomsavitski", thumbnail: "assets/pfp/artjom.jpeg", liveImage: "assets/landscape/artjomhorizont.jpg" },
         { username: "Säm", channelName: "Säm", url: "https://www.tiktok.com/@ainukesam", thumbnail: "assets/pfp/sam.png", liveImage: "assets/landscape/samhorizont.jpg" },
@@ -44,7 +43,6 @@ document.addEventListener("DOMContentLoaded", function() {
         "Ralf Paldermaa": "https://www.youtube.com/@ismaralf",
         "Mariliis Kaer": "https://www.tiktok.com/@hundijalavesi/live",
         "Kaspar Wang": "https://www.tiktok.com/@kaspar_in_estonia/live",
-        "Marmormaze": "https://www.tiktok.com/@marmormaze/live",
         "Sebfreiberg": "https://www.tiktok.com//@sebfreiberg/live",
         "Artjom": "https://www.tiktok.com/@artjomsavitski/live",
         "Säm": "https://www.tiktok.com/@ainukesam/live",
@@ -314,7 +312,6 @@ document.addEventListener("DOMContentLoaded", function() {
             'user1Page': 'Ralf Paldermaa',
             'user2Page': 'Mariliis Kaer',
             'user3Page': 'Kaspar Wang',
-            'user4Page': 'Marmormaze',
             'user5Page': 'Sebfreiberg',
             'user6Page': 'Artjom',
             'user7Page': 'Säm',
