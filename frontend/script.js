@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Twitch users with only thumbnails for the sidebar
     const twitchUsers = [
+        { username: "ChukuBala", channelName: "ChukuBala", thumbnail: "assets/pfp/chukupfp.png" },
         { username: "StoTheR", channelName: "StoTheR", thumbnail: "assets/pfp/stother.jpeg" },
         { username: "Carms", channelName: "Carms", thumbnail: "assets/pfp/carms.png" },
         { username: "M6isnik", channelName: "M6isnik", thumbnail: "assets/pfp/mõisnik.png" },
