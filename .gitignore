@@ -1,6 +1,7 @@
 # Ignore port.txt in frontend directory
 frontend/port.txt
 
+.env
 _site/
 .sass-cache/
 .jekyll-cache/
