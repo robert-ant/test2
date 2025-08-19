@@ -3,169 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Page</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>Admin – Kontrollpaneel</title>
+  <link rel="stylesheet" href="style.css" />
 
   <style>
-    /* Non-invasive extras (works alongside your style.css) */
-    .admin-wrap { max-width: 1100px; margin: 24px auto; padding: 16px; }
-    .controls { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; }
-    .controls input { padding: .6rem .8rem; border-radius: .5rem; border: 1px solid #ccc; }
-    .btn { padding: .6rem .9rem; border: 0; border-radius: .5rem; cursor: pointer; font-weight: 600; }
-    .btn.on  { background: #e6ffed; }
-    .btn.off { background: #ffecec; }
-    .btn.neu { background: #eef2ff; }
-    .grid { margin-top: 16px; border-collapse: collapse; width: 100%; }
-    .grid th, .grid td { border: 1px solid #e5e7eb; padding: .6rem .8rem; }
-    .pill { padding: .15rem .5rem; border-radius: 999px; font-weight: 600; display: inline-block; }
-    .pill.online { background:#16a34a22; color:#166534; }
-    .pill.offline { background:#dc262622; color:#7f1d1d; }
-    .note { font-size: .9rem; opacity:.8; margin-top: 4px; }
-    .muted { opacity: .8; }
-    .log { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9rem; margin-top: 16px; white-space: pre-wrap; }
+    body { font-family: sans-serif; margin: 0; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+    .online { color: green; font-weight: bold; }
+    .offline { color: red; font-weight: bold; }
+    button { margin-right: 6px; }
   </style>
 </head>
 <body>
-  <div class="admin-wrap">
-    <h1>Admin Presence</h1>
+  <h1>Admin – Kontrollpaneel</h1>
 
-    <!-- Control row: type a username and force status -->
-    <div class="controls">
-      <input id="username" placeholder="Sisesta kasutajanimi (nt. 'Ralf Paldermaa')" />
-      <button class="btn on"  id="forceOn">Force Online</button>
-      <button class="btn off" id="forceOff">Force Offline</button>
-      <button class="btn neu" id="forceNeutral" title="Eemalda admin override">Neutral</button>
-    </div>
-    <div class="note">Neutral = eemaldab admini ülekatte. Kasutaja saab jälle ise Online/Offline valida.</div>
+  <table id="user-table">
+    <thead>
+      <tr><th>Nimi</th><th>Olek</th><th>Tegevused</th></tr>
+    </thead>
+    <tbody>
+      <!-- ✨ Replace these with your full user list -->
+      <tr data-user="Ralf Paldermaa">
+        <td>Ralf Paldermaa</td>
+        <td class="status">-</td>
+        <td>
+          <button class="force" data-state="on">Force Online</button>
+          <button class="force" data-state="off">Force Offline</button>
+        </td>
+      </tr>
+      <tr data-user="Mariliis Kaer">
+        <td>Mariliis Kaer</td>
+        <td class="status">-</td>
+        <td>
+          <button class="force" data-state="on">Force Online</button>
+          <button class="force" data-state="off">Force Offline</button>
+        </td>
+      </tr>
+      <!-- add more rows here for user3, user4, etc. -->
+    </tbody>
+  </table>
 
-    <!-- Live grid of all known statuses pulled from /updates -->
-    <table class="grid" id="statusGrid">
-      <thead>
-        <tr>
-          <th class="muted">#</th>
-          <th>Kasutaja</th>
-          <th>Staatus</th>
-          <th>Viimane tegija</th>
-          <th>Uuendatud</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <div class="log" id="log"></div>
-  </div>
-
-  <script type="module">
-    const input = document.getElementById('username');
-    const btnOn = document.getElementById('forceOn');
-    const btnOff = document.getElementById('forceOff');
-    const btnNeu = document.getElementById('forceNeutral');
-    const gridBody = document.querySelector('#statusGrid tbody');
-    const logEl = document.getElementById('log');
-
-    // Local cache of rows: username -> {tr, last}
-    const rows = new Map();
-
-    function log(line) {
-      const t = new Date().toLocaleTimeString();
-      logEl.textContent = `[${t}] ${line}\n` + logEl.textContent;
-    }
-
-    function pill(status) {
-      const s = (status === 'on' || status === 'online') ? 'online' : 'offline';
-      return `<span class="pill ${s}">${s}</span>`;
-    }
-
-    function ensureRow(name) {
-      if (rows.has(name)) return rows.get(name).tr;
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="muted"></td>
-        <td class="user"></td>
-        <td class="status"></td>
-        <td class="actor muted">—</td>
-        <td class="time muted">—</td>
-      `;
-      gridBody.appendChild(tr);
-      rows.set(name, { tr, last: null });
-      renumber();
-      return tr;
-    }
-
-    function renumber() {
-      [...gridBody.querySelectorAll('tr')].forEach((tr, i) => {
-        tr.firstElementChild.textContent = i + 1;
-      });
-    }
-
-    function updateRow(name, status, actorType, actorId) {
-      const { tr } = rows.get(name) || { tr: ensureRow(name) };
-      tr.querySelector('.user').textContent = name;
-      tr.querySelector('.status').innerHTML = pill(status);
-      if (actorType) tr.querySelector('.actor').textContent = `${actorType}${actorId ? ':'+actorId : ''}`;
-      tr.querySelector('.time').textContent = new Date().toLocaleTimeString();
-      rows.set(name, { tr, last: { status, actorType, actorId, at: Date.now() } });
-    }
-
-    async function force(name, state) {
-      if (!name) return;
-      try {
-        const res = await fetch('/update-user-status', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ user: name, state, isAdmin: true })
-        });
-        if (!res.ok) {
-          const msg = await res.text();
-          log(`❌ Failed: ${name} -> ${state} (${res.status}) ${msg}`);
-          return;
-        }
-        const data = await res.json().catch(()=>null);
-        log(`✔ Admin set ${name} -> ${state}${data ? '' : ''}`);
-        // Optimistic UI: update now; polling will reconcile anyway
-        updateRow(name, state === 'on' ? 'online' : state === 'off' ? 'offline' : (rows.get(name)?.last?.status || 'offline'), 'admin', 'ui');
-      } catch (e) {
-        log(`❌ Error: ${e.message}`);
-      }
-    }
-
-    btnOn.onclick  = () => force(input.value.trim(), 'on');
-    btnOff.onclick = () => force(input.value.trim(), 'off');
-    btnNeu.onclick = () => force(input.value.trim(), 'neutral');
-
-    // Poll /updates to render the ground truth (admin overrides already applied server-side)
-    async function refresh() {
-      try {
-        const res = await fetch('/updates', { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-
-        // data.manual is merged userStatuses + adminOverrides (admin wins)
-        const manual = data?.manual || {};
-        const names = Object.keys(manual).sort((a,b)=>a.localeCompare(b,'et'));
-
-        // Render
-        const seen = new Set();
-        names.forEach((name) => {
-          const status = manual[name]; // 'on' | 'off'
-          updateRow(name, status === 'on' ? 'online' : 'offline');
-          seen.add(name);
-        });
-
-        // (Optional) prune rows no longer present
-        for (const name of rows.keys()) {
-          if (!seen.has(name)) {
-            // keep it (users not in manual might appear later). Skip pruning.
-          }
-        }
-      } catch (e) {
-        log('Refresh error: ' + e.message);
-      }
-    }
-
-    // Initial load & periodic refresh
-    refresh();
-    setInterval(refresh, 5000); // every 5s for snappy updates
-  </script>
+  <script type="module" src="adminPage.js"></script>
 </body>
 </html>

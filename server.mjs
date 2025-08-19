@@ -149,22 +149,28 @@ app.post('/update-user-status', (req, res) => {
     }
 
     if (isAdmin) {
-        if (state === 'neutral') {
-            delete adminOverrides[user];  // Remove admin override when neutral
+        // One-shot override: apply directly to userStatuses, then auto-neutralize admin override
+        if (state === 'on' || state === 'off') {
+            userStatuses[user] = state;
+            cache.set('userStatuses', userStatuses);
+            delete adminOverrides[user];
             cache.set('adminOverrides', adminOverrides);
-            console.log(`Admin set ${user} to neutral, allowing user control`);
-        } else {
-            adminOverrides[user] = state;
+            console.log(`Admin forced ${user} -> ${state} (auto-neutralized)`);
+        } else if (state === 'neutral') {
+            delete adminOverrides[user];
             cache.set('adminOverrides', adminOverrides);
-            console.log(`Admin override for ${user}: ${state}`);
+            console.log(`Admin set ${user} to neutral`);
         }
     } else {
-        userStatuses[user] = state;
-        cache.set('userStatuses', userStatuses);
-        console.log(`User status for ${user}: ${state}`);
+        // Regular user update
+        if (state === 'on' || state === 'off') {
+            userStatuses[user] = state;
+            cache.set('userStatuses', userStatuses);
+            console.log(`User ${user} set status -> ${state}`);
+        }
     }
 
-    return res.sendStatus(200);
+    res.json({ success: true });
 });
 
 // Route for login handling
