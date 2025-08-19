@@ -4,42 +4,46 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <!-- ✨ Set this to the real display name for this page -->
+  <!-- ✨ Set this to the correct display name for user1 -->
   <meta name="user-name" content="Ralf Paldermaa" />
 
   <title>Live – Ralf Paldermaa</title>
   <link rel="stylesheet" href="style.css" />
 
   <style>
-    /* Optional light layout helpers; your style.css stays in charge */
+    /* Non-invasive helpers; your style.css stays in charge of theme + switch visuals */
+    body { margin: 0; }
     .container { padding: 20px; max-width: 900px; margin: 0 auto; }
-    .box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,.08); }
+    .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,.08); }
     .row { display: flex; align-items: center; gap: 12px; }
     .label { font-weight: 600; }
     .hint { opacity: .75; font-size: .9rem; margin-top: 8px; }
-    .log { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9rem; margin-top: 16px; white-space: pre-wrap; }
+    .log  { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9rem; margin-top: 16px; white-space: pre-wrap; }
+    /* If your theme is dark by default, feel free to remove the .card styling above */
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="box">
+    <div class="card">
       <div class="row">
         <span class="label">Kas ma olen live?</span>
-        <!-- Keep your existing switch styles: -->
+        <!-- Keep the exact switch structure your CSS expects -->
         <label class="switch">
           <input type="checkbox" id="presence-switch" />
           <span class="slider"></span>
         </label>
       </div>
+
       <div class="hint">
-        Admin saab vajadusel üle kirjutada. Kui admin seab „neutral”, saad jälle ise lülitada.
+        Admin saab vajadusel üle kirjutada (Online/Offline). Kui admin seab “Neutral”, saad jälle ise lülitada.
       </div>
-      <!-- Optional debug log (can remove if you want) -->
+
+      <!-- Optional debug output (safe to remove if you don’t want it) -->
       <pre class="log" id="log"></pre>
     </div>
   </div>
 
-  <!-- Shared logic for ALL user pages -->
+  <!-- Shared logic for ALL user pages (handles POST /update-user-status + polling /updates) -->
   <script type="module" src="userPage.js"></script>
 </body>
 </html>
