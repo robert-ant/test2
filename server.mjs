@@ -7,11 +7,10 @@ import path, { dirname } from 'path';
 import cookieSession from 'cookie-session';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import Bottleneck from 'bottleneck';            // lowercase import on Windows
+import Bottleneck from 'bottleneck';
 import https from 'https';
-import crypto from 'crypto';                    // for HMAC verification
-import bcrypt from 'bcryptjs';                  // for password hashes
-import helmet from 'helmet';                    // security headers
+import bcrypt from 'bcryptjs';
+import helmet from 'helmet';
 
 dotenv.config();
 
@@ -20,7 +19,9 @@ const __dirname = dirname(__filename);
 
 const app = express();
 const cache = new NodeCache({ stdTTL: 0, checkperiod: 150 });
-let userStatuses = cache.get('userStatuses') || {};
+
+// Restore cached maps if present; else start empty
+let userStatuses   = cache.get('userStatuses')   || {};
 let adminOverrides = cache.get('adminOverrides') || {};
 
 // ---------- Security headers ----------
@@ -30,25 +31,25 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
 }));
 
-// ---------- Body parsing ----------
+// ---------- Parsing ----------
 app.use(bodyParser.json({ limit: '50kb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // ---------- Static frontend ----------
 app.use(express.static(path.join(__dirname, 'frontend')));
 
-// ---------- Session cookie ----------
+// ---------- Sessions ----------
 app.use(cookieSession({
   name: 'session',
-  keys: [process.env.SESSION_SECRET],              // set in .env
-  maxAge: 24 * 60 * 60 * 1000,                     // 24h
+  keys: [process.env.SESSION_SECRET],
+  maxAge: 24 * 60 * 60 * 1000,
   httpOnly: true,
   sameSite: 'lax',
   secure: process.env.NODE_ENV === 'production',
 }));
 
-// ---------- Rate limiting ----------
-app.set('trust proxy', 1); // behind Cloudflare/host
+// ---------- Rate limits ----------
+app.set('trust proxy', 1);
 
 const updatesLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -67,17 +68,11 @@ app.use('/update-user-status', writeLimiter);
 
 const loginLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
-  max: 20,                           // per IP
+  max: 20,
   standardHeaders: true,
   legacyHeaders: false,
 });
 app.use('/login', loginLimiter);
-
-const hookLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 60,
-});
-app.use('/hook', hookLimiter);
 
 // ---------- Twitch helpers ----------
 const twitchLimiter = new Bottleneck({ minTime: 1000, maxConcurrent: 1 });
@@ -93,9 +88,8 @@ async function retryFetchWithBackoff(url, options, retries = 3, delay = 2000) {
       console.log(`Retrying in ${delay} ms... (${retries} retries left)`);
       await new Promise((res) => setTimeout(res, delay));
       return retryFetchWithBackoff(url, options, retries - 1, delay * 2);
-    } else {
-      throw error;
     }
+    throw error;
   }
 }
 
@@ -120,13 +114,17 @@ async function fetchTwitchToken() {
 }
 
 async function fetchTwitchData(token) {
-  const users = ['carms', 'm6isnik', 'qellox1', 'stother', 'deeppepper', 'marmormaze', 'chukubala']; // edit
+  // Edit this list to match the Twitch users you want to track
+  const users = ['carms', 'm6isnik', 'qellox1', 'stother', 'deeppepper', 'marmormaze', 'chukubala'];
   const queryParams = users.map((u) => `user_login=${u}`).join('&');
   const url = `https://api.twitch.tv/helix/streams?${queryParams}`;
+
   const options = {
     headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID, Authorization: `Bearer ${token}` },
-    agent, timeout: 15000,
+    agent,
+    timeout: 15000,
   };
+
   try {
     const response = await twitchLimiter.schedule(() => retryFetchWithBackoff(url, options));
     console.log('Fetched Twitch Data:', response);
@@ -137,6 +135,7 @@ async function fetchTwitchData(token) {
   }
 }
 
+// Periodically fetch Twitch data and cache it
 setInterval(async () => {
   let token = cache.get('twitchToken');
   if (!token) {
@@ -145,92 +144,63 @@ setInterval(async () => {
   }
   if (token) {
     const twitchData = await fetchTwitchData(token);
-    if (twitchData) cache.set('twitchData', twitchData, 300); // 5min
+    if (twitchData) cache.set('twitchData', twitchData, 300); // 5m
   }
 }, 120000);
 
-// ---------- Updates (frontend pulls) ----------
+// ---------- /updates (frontend pulls) ----------
 app.get('/updates', (req, res) => {
   const twitchData = cache.get('twitchData') || { data: [] };
-  const finalStatuses = { ...userStatuses, ...adminOverrides };
+  const finalStatuses = { ...userStatuses, ...adminOverrides }; // admin overrides win
   res.json({ twitch: twitchData, manual: finalStatuses });
 });
 
-// ---------- HMAC webhook (from OBS/Streamlabs helper) ----------
-/**
- * Map userId -> { displayName, secret }
- *  - displayName: EXACT label used on your site
- *  - secret: per-user long random string
- *
- * Move this to a small JSON if you prefer; keep secrets out of Git.
- */
-const USER_SECRETS = {
-  // user1: { displayName: 'Ralf Paldermaa', secret: process.env.USER1_SECRET },
-  // user2: { displayName: 'Mariliis Kaer',   secret: process.env.USER2_SECRET },
+// ---------- Display name <-> userId mapping ----------
+const DISPLAY_TO_ID = {
+  'Ralf Paldermaa': 'user1',
+  'Mariliis Kaer': 'user2',
+  'Kaspar Wang': 'user3',
+  // user4 not listed
+  'Sebfreiberg': 'user5',
+  'Artjom': 'user6',
+  'Säm': 'user7',
+  'Sidni': 'user8',
+  'Estmagicz': 'user9',
+  'Kozip Maia': 'user10',
+  'Kozip Mihkel': 'user11',
+  'TormTuleb': 'user12',
+  'Gerhard Trolla': 'user13',
+  'Krispoiss': 'user14',
+  'Selgrootu': 'user15',
 };
 
-function verifySignature(req) {
-  const userId = req.header('x-user-id');
-  const ts     = req.header('x-timestamp');
-  const sig    = req.header('x-signature');
-
-  if (!userId || !ts || !sig) return { ok: false, code: 400, msg: 'Missing auth headers' };
-  const rec = USER_SECRETS[userId];
-  if (!rec) return { ok: false, code: 403, msg: 'Unknown user' };
-
-  const age = Math.abs(Date.now() - Number(ts));
-  if (!Number.isFinite(age) || age > 5 * 60 * 1000) return { ok: false, code: 403, msg: 'Stale timestamp' };
-
-  const payload  = `${req.method}|${req.path}|${ts}`;
-  const expected = crypto.createHmac('sha256', rec.secret).update(payload).digest('hex');
-
-  try {
-    const ok = crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expected, 'hex'));
-    if (!ok) return { ok: false, code: 403, msg: 'Bad signature' };
-  } catch {
-    return { ok: false, code: 403, msg: 'Bad signature' };
-  }
-  return { ok: true, displayName: rec.displayName };
+function coerceToUserId(raw) {
+  const u = String(raw || '').trim();
+  if (!u) return null;
+  if (u.toLowerCase() === 'admin') return 'admin';
+  if (/^user(1[0-5]?|[1-9])$/i.test(u)) return u.toLowerCase(); // already userN
+  return DISPLAY_TO_ID[u] || null; // try display name
 }
 
-app.post('/hook/go-live', (req, res) => {
-  const v = verifySignature(req);
-  if (!v.ok) return res.status(v.code).send(v.msg);
-  userStatuses[v.displayName] = 'on';
-  cache.set('userStatuses', userStatuses);
-  delete adminOverrides[v.displayName];
-  cache.set('adminOverrides', adminOverrides);
-  console.log(`[HOOK] ${v.displayName} → on`);
-  res.json({ ok: true });
-});
-
-app.post('/hook/go-offline', (req, res) => {
-  const v = verifySignature(req);
-  if (!v.ok) return res.status(v.code).send(v.msg);
-  userStatuses[v.displayName] = 'off';
-  cache.set('userStatuses', userStatuses);
-  delete adminOverrides[v.displayName];
-  cache.set('adminOverrides', adminOverrides);
-  console.log(`[HOOK] ${v.displayName} → off`);
-  res.json({ ok: true });
-});
-
-// ---------- Manual status updates (from site) ----------
 function isValidState(s) { return s === 'on' || s === 'off' || s === 'neutral'; }
-function isKnownUser(u) {
+function isKnownUserId(u) {
   return [
     'admin','user1','user2','user3','user4','user5','user6','user7','user8',
     'user9','user10','user11','user12','user13','user14','user15'
   ].includes(u);
 }
 
+// ---------- Manual status updates (admin/user pages) ----------
 app.post('/update-user-status', (req, res) => {
-  const { user, state, isAdmin } = req.body || {};
-  if (!isKnownUser(user) || !isValidState(state)) {
+  const { user: rawUser, state, isAdmin } = req.body || {};
+  const user = coerceToUserId(rawUser);
+
+  if (!user || !isValidState(state) || !isKnownUserId(user)) {
     return res.status(400).send('Bad request');
   }
 
   if (isAdmin) {
+    // Admin "one-shot" action: write directly and auto-neutralize
     if (state === 'on' || state === 'off') {
       userStatuses[user] = state;
       cache.set('userStatuses', userStatuses);
@@ -243,23 +213,18 @@ app.post('/update-user-status', (req, res) => {
       console.log(`Admin set ${user} to neutral`);
     }
   } else {
+    // Regular user update
     if (state === 'on' || state === 'off') {
       userStatuses[user] = state;
       cache.set('userStatuses', userStatuses);
       console.log(`User ${user} set status -> ${state}`);
     }
   }
+
   res.json({ success: true });
 });
 
-// ---------- Login (NO plaintext passwords in code) ----------
-/**
- * We keep the list of allowed usernames in code,
- * but the password *hashes* live in environment variables.
- *
- * For each username, set PASS_HASH_<UPPERCASE_USERNAME> in your .env
- * Example: PASS_HASH_ADMIN, PASS_HASH_USER1, ...
- */
+// ---------- Login (bcrypt hashes via .env) ----------
 const VALID_USERS = [
   'admin','user1','user2','user3','user4','user5','user6','user7','user8',
   'user9','user10','user11','user12','user13','user14','user15'
@@ -267,7 +232,7 @@ const VALID_USERS = [
 
 function getHashForUser(username) {
   if (!username) return null;
-  const key = `PASS_HASH_${username.toUpperCase()}`;
+  const key = `PASS_HASH_${username.toUpperCase()}`; // e.g. PASS_HASH_USER1
   return process.env[key] || null;
 }
 
@@ -286,25 +251,46 @@ app.post('/login', async (req, res) => {
   res.json({ page: `${username}Page.html` });
 });
 
-// ---------- Serve user pages ----------
+// ---------- Serve whitelisted pages (separate user pages) ----------
 app.get('/:userPage', (req, res) => {
   const userPage = req.params.userPage;
   const validPages = [
+    'index.html',
     'adminPage.html',
-    'user1Page.html','user2Page.html','user3Page.html','user4Page.html','user5Page.html',
-    'user6Page.html','user7Page.html','user8Page.html','user9Page.html','user10Page.html',
-    'user11Page.html','user12Page.html','user13Page.html','user14Page.html','user15Page.html',
+    'user1Page.html',
+    'user2Page.html',
+    'user3Page.html',
+    'user4Page.html',
+    'user5Page.html',
+    'user6Page.html',
+    'user7Page.html',
+    'user8Page.html',
+    'user9Page.html',
+    'user10Page.html',
+    'user11Page.html',
+    'user12Page.html',
+    'user13Page.html',
+    'user14Page.html',
+    'user15Page.html',
   ];
 
-  if (validPages.includes(userPage)) {
-    if (req.session.user && userPage === `${req.session.user}Page.html`) {
-      res.sendFile(path.join(__dirname, 'frontend', userPage));
-    } else {
-      res.status(403).send('Forbidden');
-    }
-  } else {
-    res.status(404).send('Page not found');
+  if (!validPages.includes(userPage)) {
+    return res.status(404).send('Page not found');
   }
+
+  if (userPage === 'adminPage.html') {
+    if (req.session.user === 'admin') {
+      return res.sendFile(path.join(__dirname, 'frontend', userPage));
+    }
+    return res.status(403).send('Forbidden');
+  }
+
+  // Enforce user -> their own page only
+  const expected = `${req.session.user}Page.html`;
+  if (req.session.user && userPage === expected) {
+    return res.sendFile(path.join(__dirname, 'frontend', userPage));
+  }
+  return res.status(403).send('Forbidden');
 });
 
 // ---------- Start ----------

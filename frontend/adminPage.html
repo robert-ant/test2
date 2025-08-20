@@ -1,50 +1,52 @@
-<!DOCTYPE html>
-<html lang="et">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin – Kontrollpaneel</title>
-  <link rel="stylesheet" href="style.css" />
-
+  <meta charset="utf-8">
+  <title>Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: sans-serif; margin: 0; padding: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background: #f0f0f0; }
-    .online { color: green; font-weight: bold; }
-    .offline { color: red; font-weight: bold; }
-    button { margin-right: 6px; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 16px; }
+    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:8px 0; }
+    .name { width: 200px; }
+    .status-pill { padding:2px 8px; border-radius:10px; background:#ddd; font-size: 12px; }
+    .row.is-online .status-pill { background:#c6f6d5; }
+    .row.is-offline .status-pill { background:#fed7d7; }
+    .btn { padding:6px 10px; cursor:pointer; border:1px solid #ccc; border-radius:6px; background:#fff; }
+    .btn:hover { background:#f5f5f5; }
+    .list { max-width: 640px; }
+    hr { margin: 16px 0; }
   </style>
 </head>
 <body>
-  <h1>Admin – Kontrollpaneel</h1>
+  <h1>Admin Controls</h1>
+  <p>Force a user Online/Offline. State mirrors here, on index, and on their user page.</p>
 
-  <table id="user-table">
-    <thead>
-      <tr><th>Nimi</th><th>Olek</th><th>Tegevused</th></tr>
-    </thead>
-    <tbody>
-      <!-- ✨ Replace these with your full user list -->
-      <tr data-user="Ralf Paldermaa">
-        <td>Ralf Paldermaa</td>
-        <td class="status">-</td>
-        <td>
-          <button class="force" data-state="on">Force Online</button>
-          <button class="force" data-state="off">Force Offline</button>
-        </td>
-      </tr>
-      <tr data-user="Mariliis Kaer">
-        <td>Mariliis Kaer</td>
-        <td class="status">-</td>
-        <td>
-          <button class="force" data-state="on">Force Online</button>
-          <button class="force" data-state="off">Force Offline</button>
-        </td>
-      </tr>
-      <!-- add more rows here for user3, user4, etc. -->
-    </tbody>
-  </table>
+  <div class="list">
+    <!-- Repeat per person -->
+    <div class="row is-offline" data-name="Ralf Paldermaa">
+      <span class="name">Ralf Paldermaa</span>
+      <span class="status-pill">Offline</span>
+      <button class="btn btn-on">Force Online</button>
+      <button class="btn btn-off">Force Offline</button>
+    </div>
 
-  <script type="module" src="adminPage.js"></script>
+    <div class="row is-offline" data-name="Mariliis Kaer">
+      <span class="name">Mariliis Kaer</span>
+      <span class="status-pill">Offline</span>
+      <button class="btn btn-on">Force Online</button>
+      <button class="btn btn-off">Force Offline</button>
+    </div>
+
+    <div class="row is-offline" data-name="Kaspar Wang">
+      <span class="name">Kaspar Wang</span>
+      <span class="status-pill">Offline</span>
+      <button class="btn btn-on">Force Online</button>
+      <button class="btn btn-off">Force Offline</button>
+    </div>
+
+    <!-- add the rest similarly ... -->
+  </div>
+
+  <script src="adminPage.js"></script>
 </body>
 </html>

@@ -1,49 +1,40 @@
-<!DOCTYPE html>
-<html lang="et">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-  <!-- ✨ Set this to the correct display name for user1 -->
-  <meta name="user-name" content="Ralf Paldermaa" />
-
-  <title>Live – Ralf Paldermaa</title>
-  <link rel="stylesheet" href="style.css" />
-
+  <meta charset="utf-8">
+  <title>User 1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    /* Non-invasive helpers; your style.css stays in charge of theme + switch visuals */
-    body { margin: 0; }
-    .container { padding: 20px; max-width: 900px; margin: 0 auto; }
-    .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,.08); }
-    .row { display: flex; align-items: center; gap: 12px; }
-    .label { font-weight: 600; }
-    .hint { opacity: .75; font-size: .9rem; margin-top: 8px; }
-    .log  { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9rem; margin-top: 16px; white-space: pre-wrap; }
-    /* If your theme is dark by default, feel free to remove the .card styling above */
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 16px; }
+    .presence { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .status-pill { padding:2px 8px; border-radius:10px; background:#ddd; }
+    .status-pill.is-online { background:#c6f6d5; }
+    .status-pill.is-offline { background:#fed7d7; }
+    .actions { display:flex; gap:8px; }
+    button { padding:6px 10px; cursor:pointer; border:1px solid #ccc; border-radius:6px; background:#fff; }
+    button:hover { background:#f5f5f5; }
+    pre { background:#f8f8f8; border:1px solid #eee; padding:8px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <div class="row">
-        <span class="label">Kas ma olen live?</span>
-        <!-- Keep the exact switch structure your CSS expects -->
-        <label class="switch">
-          <input type="checkbox" id="presence-switch" />
-          <span class="slider"></span>
-        </label>
-      </div>
+  <h1>User 1 Presence</h1>
 
-      <div class="hint">
-        Admin saab vajadusel üle kirjutada (Online/Offline). Kui admin seab “Neutral”, saad jälle ise lülitada.
-      </div>
-
-      <!-- Optional debug output (safe to remove if you don’t want it) -->
-      <pre class="log" id="log"></pre>
+  <div class="presence">
+    <span>Status:</span>
+    <span id="status-pill" class="status-pill">Offline</span>
+    <div class="actions">
+      <button id="btn-on">Go Online</button>
+      <button id="btn-off">Go Offline</button>
     </div>
   </div>
 
-  <!-- Shared logic for ALL user pages (handles POST /update-user-status + polling /updates) -->
-  <script type="module" src="userPage.js"></script>
+  <h3>Activity</h3>
+  <pre id="log" style="max-height:180px;overflow:auto;"></pre>
+
+  <script>
+    // tailor per page
+    window.USER_ID = 'user1';
+  </script>
+  <script src="userPage.js"></script>
 </body>
 </html>
