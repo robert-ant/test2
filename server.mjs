@@ -8,8 +8,9 @@ import cookieSession from 'cookie-session';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import dotenv from 'dotenv';
-import Bottleneck from 'bottleneck';
+import Bottleneck from 'Bottleneck';
 import https from 'https';
+import crypto from 'crypto'; // ⬅️ NEW: for HMAC verification
 
 dotenv.config();
 
@@ -21,7 +22,51 @@ const cache = new NodeCache({ stdTTL: 0, checkperiod: 150 });
 let userStatuses = cache.get('userStatuses') || {};
 let adminOverrides = cache.get('adminOverrides') || {};
 
-// Middleware to parse incoming request bodies
+// ---------- HMAC AUTH CONFIG (fill with your users) ----------
+/**
+ * Map a stable userId (what the helper sends in `x-user-id`) to:
+ *  - displayName: EXACT name you show on the site (box label)
+ *  - secret: a long random string UNIQUE per streamer (share privately)
+ *
+ * Example:
+ *   user1: { displayName: 'Ralf Paldermaa', secret: 'LONG_RANDOM_1' }
+ */
+const USER_SECRETS = {
+  // TODO: fill these
+  // user1: { displayName: 'Ralf Paldermaa', secret: 'LONG_RANDOM_1' },
+  // user2: { displayName: 'Mariliis Kaer',   secret: 'LONG_RANDOM_2' },
+};
+
+function verifySignature(req) {
+  const userId = req.header('x-user-id');
+  const ts     = req.header('x-timestamp');
+  const sig    = req.header('x-signature');
+
+  if (!userId || !ts || !sig) return { ok: false, code: 400, msg: 'Missing auth headers' };
+
+  const rec = USER_SECRETS[userId];
+  if (!rec) return { ok: false, code: 403, msg: 'Unknown user' };
+
+  // Replay window: 5 minutes
+  const age = Math.abs(Date.now() - Number(ts));
+  if (!Number.isFinite(age) || age > 5 * 60 * 1000) {
+    return { ok: false, code: 403, msg: 'Stale timestamp' };
+  }
+
+  const payload  = `${req.method}|${req.path}|${ts}`;
+  const expected = crypto.createHmac('sha256', rec.secret).update(payload).digest('hex');
+
+  try {
+    const ok = crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expected, 'hex'));
+    if (!ok) return { ok: false, code: 403, msg: 'Bad signature' };
+  } catch {
+    return { ok: false, code: 403, msg: 'Bad signature' };
+  }
+
+  return { ok: true, userId, displayName: rec.displayName };
+}
+
+// ---------- Middleware ----------
 app.use(bodyParser.json({ limit: '50kb' })); // small safety hardening
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -48,7 +93,7 @@ const agent = new https.Agent({
   keepAlive: true,
 });
 
-// Retry function with exponential backoff for fetch failures
+// ---------- Twitch helpers ----------
 async function retryFetchWithBackoff(url, options, retries = 3, delay = 2000) {
   try {
     const response = await fetch(url, options);
@@ -67,7 +112,6 @@ async function retryFetchWithBackoff(url, options, retries = 3, delay = 2000) {
   }
 }
 
-// Fetch Twitch OAuth token
 async function fetchTwitchToken() {
   try {
     const response = await fetch('https://id.twitch.tv/oauth2/token', {
@@ -89,7 +133,6 @@ async function fetchTwitchToken() {
   }
 }
 
-// Fetch Twitch data with retries and throttling
 async function fetchTwitchData(token) {
   const users = ['carms', 'm6isnik', 'qellox1', 'stother', 'deeppepper', 'marmormaze', 'chukubala']; // Replace with your users
   const queryParams = users.map((user) => `user_login=${user}`).join('&');
@@ -140,11 +183,10 @@ app.get('/updates', (req, res) => {
   });
 });
 
-// --- Rate limiting ---
-// Trust proxy for correct IPs behind hosts like Railway/Render/NGINX
+// ---------- Rate limiting ----------
 app.set('trust proxy', 1);
 
-// Apply rate-limiting to /updates route (max 100 requests per 15 minutes per IP)
+// /updates limiter (already present)
 const updatesLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100,
@@ -152,7 +194,7 @@ const updatesLimiter = rateLimit({
 });
 app.use('/updates', updatesLimiter);
 
-// NEW: Apply a write limiter to /update-user-status (20 writes/min/IP)
+// NEW: write limiter for manual status updates
 const writeLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 20,
@@ -160,7 +202,39 @@ const writeLimiter = rateLimit({
 });
 app.use('/update-user-status', writeLimiter);
 
-// Handle manual status updates (admin or user pages)
+// NEW: limiter for webhook endpoints (defense-in-depth)
+const hookLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+});
+app.use('/hook', hookLimiter);
+
+// ---------- NEW: HMAC-signed webhook endpoints ----------
+app.post('/hook/go-live', (req, res) => {
+  const v = verifySignature(req);
+  if (!v.ok) return res.status(v.code).send(v.msg);
+
+  userStatuses[v.displayName] = 'on';
+  cache.set('userStatuses', userStatuses);
+  delete adminOverrides[v.displayName];
+  cache.set('adminOverrides', adminOverrides);
+  console.log(`[HOOK] ${v.displayName} → on`);
+  res.json({ ok: true });
+});
+
+app.post('/hook/go-offline', (req, res) => {
+  const v = verifySignature(req);
+  if (!v.ok) return res.status(v.code).send(v.msg);
+
+  userStatuses[v.displayName] = 'off';
+  cache.set('userStatuses', userStatuses);
+  delete adminOverrides[v.displayName];
+  cache.set('adminOverrides', adminOverrides);
+  console.log(`[HOOK] ${v.displayName} → off`);
+  res.json({ ok: true });
+});
+
+// ---------- Manual status update (admin or user pages) ----------
 app.post('/update-user-status', (req, res) => {
   const { user, state, isAdmin } = req.body;
 
@@ -193,7 +267,7 @@ app.post('/update-user-status', (req, res) => {
   res.json({ success: true });
 });
 
-// Route for login handling
+// ---------- Login & page serving ----------
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -224,7 +298,6 @@ app.post('/login', (req, res) => {
   }
 });
 
-// Route to serve user pages (user1Page.html, user2Page.html, etc.)
 app.get('/:userPage', (req, res) => {
   const userPage = req.params.userPage;
   const validPages = [
@@ -257,7 +330,7 @@ app.get('/:userPage', (req, res) => {
   }
 });
 
-// Start the server
+// ---------- Start ----------
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
