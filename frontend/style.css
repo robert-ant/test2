@@ -1,589 +1,235 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
-
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+/* ---------- Theme ---------- */
+:root{
+  --bg-dim: rgba(6,14,22,.86);
+  --panel: #0f2741;        /* solid to avoid halo */
+  --panel-strong: #0b2036; /* solid to avoid halo */
+  --ink: #e6ecf5;          /* softer than #fff = less glow */
+  --muted: #b7c3d4;
+  --gap: clamp(12px, 2vw, 24px);
+  --radius: 14px;
+  --shadow: 0 10px 28px rgba(0,0,0,.35);
 }
 
-body {
-    font-family: 'Montserrat', sans-serif;
-    background: url('assets/2024-07-14_18.17.44.jpg') no-repeat center center fixed;
-    background-size: cover;
-    transition: background-color 0.5s ease, background-image 0.5s ease, color 0.5s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
+/* ---------- Custom font (replace file names if needed) ---------- */
+@font-face{
+  font-family: 'Mincraft';
+  src:
+    url('assets/fonts/Minecraft.woff2') format('woff2'),
+    url('assets/fonts/Minecraft.woff')  format('woff'),
+    url('assets/fonts/Minecraft.ttf')   format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/* If you also have bold/italic, declare them separately with correct weights/styles. */
+
+/* ---------- Base ---------- */
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body{
+  font-family: 'Minecraft', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--ink);
+  background:
+    linear-gradient(180deg, var(--bg-dim), var(--bg-dim)),
+    url('assets/2025-05-21_21.31.39.png') center/cover fixed no-repeat;
+  display: flex;
+  flex-direction: column;
+
+  /* crisp text (works better for custom fonts on Win/Chrome) */
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: geometricPrecision;
+
+  /* avoid fake bold/italic which looks blurry */
+  font-synthesis: none;
 }
 
-body.dark-mode {
-    background: url('assets/2024-07-14_18.17.57.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: #E9E9E9;
+/* ---------- Header ---------- */
+.site-header{
+  display:flex; align-items:center; justify-content:center;
+  padding: clamp(10px, 2.5vw, 20px) 0;
+}
+#logo{
+  width: clamp(220px, 42vw, 560px);
+  height: auto;
+  filter: drop-shadow(0 6px 22px rgba(0,0,0,.45));
 }
 
-.header {
-    text-align: center;
-    padding: 20px 0;
-    position: relative;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+/* ---------- Layout wrapper ---------- */
+.wrap{
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--gap) var(--gap);
+  display: grid;
+  gap: var(--gap);
 }
 
-.header img {
-    width: 800px;
-    height: 212px;
-    transition: opacity 0.5s ease;
+/* ---------- Panels ---------- */
+.panel{
+  background: var(--panel);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255,255,255,.06);
+  overflow: hidden;
+}
+.panel-title{
+  background: var(--panel-strong);
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
 }
 
-#wise {
-    width: 250px;
-    height: 44px;
-    transition: opacity 0.5s ease;
-    position: absolute;
-    top: 13px;
-    left: 20px;
-    display: inline-block;
+/* Headings use custom font (only where it’s big = looks crisp). 
+   If still glowy, change to 'Montserrat' here. */
+.panel-title h2,
+.acc-head span,
+.acc-col h3,
+.card-title {
+  font-family: 'Mincraft', 'Montserrat', sans-serif;
+  letter-spacing: 0;   /* letter-spacing causes fringe on pixel/retro fonts */
+  color: var(--ink);
+  font-synthesis: none;
 }
 
-h3 {
-    font-size: 1rem;
-    transition: opacity 0.5s ease;
-    position: absolute;
-    top: 35px;
-    left: 56px;
-    display: inline-block;
-    text-shadow: 2px 2px 1px #000000;
+/* Snap heading sizes to whole pixels (avoid fractional rendering) */
+@media (max-width: 767px){
+  .panel-title h2,
+  .acc-head span { font-size: 18px; }
+  .acc-col h3 { font-size: 16px; }
+  .card-title { font-size: 14px; }
+}
+@media (min-width: 768px) and (max-width: 1199px){
+  .panel-title h2,
+  .acc-head span { font-size: 20px; }
+  .acc-col h3 { font-size: 18px; }
+  .card-title { font-size: 15px; }
+}
+@media (min-width: 1200px){
+  .panel-title h2,
+  .acc-head span { font-size: 22px; }
+  .acc-col h3 { font-size: 18px; }
+  .card-title { font-size: 16px; }
 }
 
-.header a {
-    text-shadow: 0px 0px 0px #000000;
+/* ---------- Accordion (Contestants) ---------- */
+.accordion .acc-head{
+  width: 100%;
+  display:flex; align-items:center; justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--panel-strong);
+  color: var(--ink);
+  border: 0;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.accordion .acc-head .chev{ transition: transform .18s ease; }
+.accordion .acc-head.open .chev{ transform: rotate(180deg); }
+
+.acc-body{ padding: 12px 16px 16px; }
+.acc-cols{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap);
+}
+.acc-col h3{
+  margin: 4px 0 10px;
+  text-transform: uppercase;
+  font-weight: 700;
 }
 
-.container {
-    max-width: 800px;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex: 1;
+/* Contestants list */
+.userlist{ list-style: none; margin: 0; padding: 0; }
+.userlist li{
+  display:flex; align-items:center; gap: 10px;
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.userlist li:last-child{ border-bottom: 0; }
+.avatar{
+  width: 28px; height: 28px; border-radius: 50%; object-fit: cover;
+  border: 1px solid rgba(255,255,255,.15);
+}
+.userlist a{
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;       /* whole integer weight = cleaner */
+}
+.userlist a:hover{ text-decoration: underline; }
+
+/* ---------- Streams: two columns side-by-side ---------- */
+.streams-2col{
+  display:grid;
+  grid-template-columns: 1fr; /* stack on mobile */
+  gap: var(--gap);
+}
+@media (min-width: 1024px){
+  .streams-2col{ grid-template-columns: 1fr 1fr; } /* side-by-side on desktop */
 }
 
-.sidebar-container, .live-container {
-    flex: 1;
+/* grids inside each column */
+.grid{
+  display:grid;
+  gap: clamp(10px, 1.5vw, 18px);
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2-up inside each box */
+  padding: 12px;
 }
 
-.sidebar-container h2,
-.live-container h2 {
-    margin-top: 20px; /* Adjust this value to move the headers down */
-    margin-bottom: 5px;
+/* ---------- Cards (each livestream) ---------- */
+/* Do not transform text containers → no rasterization/blurring */
+.card{
+  background: #0c1d34;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,.28);
+  cursor: pointer;
+  transition: box-shadow .12s ease;
+  transform: none;
+}
+.card:hover{
+  box-shadow: 0 14px 28px rgba(0,0,0,.35);
+}
+.thumb{
+  width: 100%;
+  aspect-ratio: 16 / 9;   /* guaranteed 16:9, no stretch */
+  object-fit: cover;
+  display: block;
+  background: #000;
+  transition: transform .12s ease;
+  will-change: transform;
+}
+.card:hover .thumb{ transform: translateY(-3px); }
+
+.card-title{
+  text-align: center;
+  text-transform: uppercase;
+  padding: 10px 12px;
+  background: var(--panel-strong);
+  color: var(--ink);
+  font-weight: 600;
+  border-top: 1px solid rgba(255,255,255,.06);
+  transform: none;
+  position: relative;
+  z-index: 0;
+  letter-spacing: 0;
 }
 
-body.dark-mode h2 {
-    text-shadow: 2px 2px 1px #000000;
+/* ---------- Footer ---------- */
+.site-footer{
+  text-align: center;
+  padding: 18px 0 28px;
+  color: var(--muted);
+}
+.site-footer a{ color: var(--ink); }
+
+/* ---------- Responsive extras ---------- */
+@media (min-width: 768px){
+  .acc-cols{ grid-template-columns: 1fr 1fr; }
 }
 
-.sidebar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.sidebar {
-    background: rgba(255, 255, 255);
-    padding: 10px;
-    border-radius: 10px;
-    transition: background-color 0.5s ease;
-    width: 266px;
-}
-
-body.dark-mode .sidebar {
-    background-color: #17153B;
-}
-
-#user-list {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-#user-list li {
-    padding: 5px 0 16px;
-    display: flex;
-    align-items: center;
-}
-
-#user-list li a {
-    text-decoration: none;
-    color: black;
-    display: flex;
-    align-items: center;
-    transition: color 0.5s ease;
-}
-
-body.dark-mode #user-list li a {
-    color: #F4F4F4;
-}
-
-#user-list li a:hover {
-    text-decoration: underline;
-}
-
-.sidebar-logo {
-    margin-right: 10px;
-    width: 30px;
-    height: 30px;
-}
-
-.sidebar-text {
-    font-size: 16px;
-}
-
-.live-section {
-    border-radius: 17px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    transition: background-color 0.5s ease;
-    width: 527px;
-    max-width: 100%; /* Ensure the live section does not exceed the screen width */
-}
-
-body.dark-mode .live-section div {
-    background: #17153B;
-}
-
-.live-section div {
-    background: #F4F4F4;
-    padding: 10px;
-    text-align: center;
-    border-radius: 17px;
-    transition: background-color 0.5s ease, opacity 0.5s ease;
-    cursor: pointer;
-}
-
-img {
-    height: 123px;
-    width: 213.5px;
-}
-
-.live-section div a {
-    text-decoration: none;
-    color: inherit;
-}
-
-.switch {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    width: 60px;
-    height: 34px;
-    display: inline-block;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: background-color 0.5s ease;
-    display: flex;
-    align-items: center;
-    justify-content: left;
-}
-
-.slider img {
-    height: 30px;
-    width: 30px;
-    position: absolute;
-    left: 2px;
-    top: 2px; /* Adjust to align vertically */
-    transition: transform 0.5s ease;
-}
-
-/* Move the image to the right when the switch is toggled */
-input:checked + .slider img {
-    transform: translateX(26px);
-}
-
-/* Image change for dark mode and light mode */
-body.dark-mode .slider img {
-    content: url('assets/muun.png'); /* Show moon icon for dark mode */
-}
-
-body:not(.dark-mode) .slider img {
-    content: url('assets/son.png'); /* Show sun icon for light mode */
-}
-
-/* Move the handle when checked */
-input:checked + .slider {
-    background-color: #2196F3; /* Background when active */
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px); /* Smoothly move the slider handle */
-}
-
-
-.footer {
-    width: 100%;
-    text-align: center;
-    padding: 10px 0;
-    margin-top: auto;
-}
-
-.footer.dark-mode {
-    color: #F4F4F4;
-}
-
-.footer a {
-    color: black;
-}
-
-.footer.dark-mode a {
-    color: #F4F4F4;
-}
-
-.login-container {
-    background: rgba(255, 255, 255, 0.8);
-    padding: 20px;
-    border-radius: 10px;
-    width: 300px;
-    margin: 100px auto;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-sizing: border-box; /* Ensures padding is included in the total width */
-}
-
-.login-container h2 {
-    margin-bottom: 20px;
-}
-
-.login-container label {
-    align-self: flex-start;
-    margin: 5px 0;
-}
-
-.login-container input[type="text"], .login-container input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box; /* Ensures padding is included in the total width */
-}
-
-.login-container input[type="submit"] {
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    box-sizing: border-box; /* Ensures padding is included in the total width */
-}
-
-/* Fade-in and fade-out animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-.fade-in {
-    animation: fadeIn 0.5s forwards;
-}
-
-.fade-out {
-    animation: fadeOut 0.5s forwards;
-    pointer-events: none;
-}
-
-/* Media queries for mobile */
-@media (max-width: 768px) {
-    .header img {
-        width: 100%;
-        height: auto;
-    }
-
-    .streamer {
-        width: 100%; /* Reduce width to ensure better fit on smaller screens */
-        margin: 10px auto; /* Center align and reduce margin */
-        padding: 5px; /* Add padding for a more compact appearance */
-        box-sizing: border-box;
-    }
-
-    img {
-        width: 180px;
-        height: 100px;
-    }
-
-    .container {
-        flex-direction: column;
-        padding: 10px;
-    }
-    
-    .live-container {
-        width: 100%;
-    }
-
-    .live-section {
-        width: 100%;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        max-width: 100%; /* Ensure the live section does not exceed the screen width */
-    }
-
-    .switch {
-        top: 10px;
-        right: 10px;
-    }
-
-    .slider {
-        justify-content: left;
-    }
-
-    .slider img {
-        height: 30px;
-        width: 30px;
-        left: 2px;
-        top: 2px;
-        transition: transform 0.5s ease;
-    }
-
-    input:checked + .slider img {
-        transform: translateX(26px);
-    }
-
-    .sidebar-header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-    }
-
-    #toggleSidebarWrapper {
-        display: flex;
-        align-items: center;
-        cursor: pointer; /* Make the entire wrapper clickable */
-    }
-
-    #unfold {
-        margin-left: 10px;
-        height: 20px; /* Ensure the image size is appropriate */
-        vertical-align: middle; /* Vertically align the image */
-        width: auto;
-        margin-top: 20px;
-        margin-bottom: 5px;
-    }
-
-    .sidebar {
-        display: none; /* Hide sidebar by default on mobile */
-        position: relative;
-        top: 48%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        z-index: 1000;
-        background: rgba(255, 255, 255);
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 17px;
-        width: auto;
-    }
-
-    .sidebar.visible {
-        display: block; /* Show sidebar when visible class is added */
-    }
-
-    .sidebar-container h2 {
-        text-align: left !important; /* Force align "Osalised" heading to the left on mobile */
-    }
-}
-
-@media (min-width: 769px) {
-    #toggleSidebar {
-        display: none; /* Hide toggle button on desktop */
-    }
-}
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
-
-#admin{
-    margin-bottom: 0px;
-    margin-top: 0px;
-}
-
-/* Fade-in and fade-out animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-.fade-in {
-    animation: fadeIn 0.5s forwards;
-}
-
-.fade-out {
-    animation: fadeOut 0.5s forwards;
-    pointer-events: none;
-}
-
-/* Media queries for mobile */
-@media (max-width: 768px) {
-    .header img {
-        width: 100%;
-        height: auto;
-    }
-
-    h3 {
-        margin-top: 5px;
-        font-size: 1rem;
-        transition: opacity 0.5s ease;
-        position: relative;
-        top: 5px;
-        left: 0px;
-        display: inline-block;
-        text-shadow: 2px 2px 1px #000000;
-    }
-
-    h2{
-        text-shadow: 2px 2px 1px #000000;
-        display: flex;
-        justify-content: center;
-    }
-
-    
-    #wise {
-    width: 250px;
-    height: 44px;
-    transition: opacity 0.5s ease;
-    position: relative;
-    top: 13px;
-    left: 0px;
-    display: inline-block;
-    }
-
-    .container {
-        flex-direction: column;
-        padding: 10px;
-    }
-    
-    .live-container {
-        width: 100%;
-    }
-
-    .live-section {
-        width: 100%;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        max-width: 100%;
-    }
-
-    .switch {
-        top: 10px;
-        right: 10px;
-    }
-
-    .slider {
-        justify-content: left;
-    }
-
-    .slider img {
-        height: 30px;
-        width: 30px;
-        left: 2px;
-        top: 2px;
-        transition: transform 0.5s ease;
-    }
-
-    input:checked + .slider img {
-        transform: translateX(26px);
-    }
-
-    .sidebar-header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-    }
-
-    #toggleSidebarWrapper {
-        display: flex;
-        align-items: center;
-        cursor: pointer; /* Make the entire wrapper clickable */
-    }
-
-    .sidebar {
-        display: none; /* Hide sidebar by default on mobile */
-        position: relative;
-        top: 48%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        z-index: 1000;
-        background: rgba(255, 255, 255);
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 17px;
-        width: 266px;
-    }
-
-    .sidebar.visible {
-        display: block; /* Show sidebar when visible class is added */
-    }
-
-    .sidebar-container h2 {
-        text-align: left !important; /* Force align "Osalised" heading to the left on mobile */
-    }
-}
-
-@media (min-width: 769px) {
-    #toggleSidebar {
-        display: none; /* Hide toggle button on desktop */
-    }
-
-    #darkModeToggle {
-        display: none; /* Hide the dark mode toggle on mobile */
-}
-
+/* ---------- Hard no-glow overrides (safety net) ---------- */
+*, *::before, *::after {
+  text-shadow: none;
+  filter: none;
 }

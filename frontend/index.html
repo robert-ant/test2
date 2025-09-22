@@ -1,46 +1,90 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="et">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sisumaa Live</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <title>Sisumaa Live</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="header">
-        <img src="assets/LOGOversionBASIC.png" alt="Sisumää LIVE logo" id="logo">
-        <img src="assets/wise.png" alt="wise" id="wise">
-        <h3 id="server" style="color: white;">Soovid omale serverit?<br>Vajuta <a href="https://wisehosting.com" style="color: #01b7ff">siia</a></h3>
-        <label class="switch">
-            <input type="checkbox" id="darkModeToggle">
-            <span class="slider">
-                <img src="assets/son.png" alt="Toggle" id="toggleImage">
-            </span>
-        </label>
-    </div>
-    <div class="container">
-        <div class="sidebar-container">
-            <div class="sidebar-header">
-                <div id="toggleSidebarWrapper">
-                    <h2>Osalised</h2>
-                    <div id="toggleSidebar">
-                        <img src="assets/unfold.png" id="unfold">
-                    </div>
-                </div>
-            </div>
-            <div class="sidebar">
-                <ul id="user-list"></ul>
-            </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <img id="logo" src="assets/SisumaaSeason2.png" alt="Sisumaa Live">
+  </header>
+
+  <main class="wrap">
+
+    <!-- Contestants (collapsible, closed by default) -->
+    <section class="panel accordion">
+      <button class="acc-head" id="acc-toggle" aria-expanded="false" aria-controls="acc-body">
+        <span> CONTESTANTS</span>
+        <svg class="chev" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <path d="M8 10l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <div class="acc-body" id="acc-body" hidden>
+        <div class="acc-cols">
+          <div class="acc-col">
+            <h3>Estonians</h3>
+            <ul id="list-ee" class="userlist">
+              <li><img class="avatar" src="assets/pfp/a.jpg"><a href="#">KRISPOISS</a></li>
+            </ul>
+          </div>
+          <div class="acc-col">
+            <h3>Finns</h3>
+            <ul id="list-fi" class="userlist">
+              <img class="avatar" src="assets/pfp/b.jpg"><a href="#">SELGROOTU</a></li>
+            </ul>
+          </div>
         </div>
-        <div class="live-container">
-            <h2>Kes hetkel on live</h2>
-            <div class="live-section" id="live-container"></div>
+      </div>
+    </section>
+
+    <!-- Livestreams: two side-by-side boxes -->
+    <section class="streams-2col">
+      <div class="panel">
+        <div class="panel-title"><h2>ESTONIANS</h2></div>
+        <div class="grid" id="live-ee">
+          <!-- Put Estonian stream cards here -->
+          <article class="card">
+            <img class="thumb" src="assets/thumbs/sample.jpg" alt="Stream">
+            <div class="card-title">Krispoiss</div>
+          </article>
+          
         </div>
-    </div>
-    <div class="footer">
-        <p id="admin">Oled admin?</p>
-        <p id="admin"><a href="login.html">Logi sisse</a></p>
-    </div>
-    <script src="script.js"></script>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title"><h2>FINNS</h2></div>
+        <div class="grid" id="live-fi">
+          <!-- Put Finnish stream cards here -->
+           <article class="card">
+            <img class="thumb" src="assets/thumbs/sample.jpg" alt="Stream">
+            <div class="card-title">Selgrootu</div>
+            </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>Oled admin? <a href="login.html">Logi sisse</a></p>
+  </footer>
+
+  <script>
+    // Collapsible contestants panel
+    const btn = document.getElementById('acc-toggle');
+    const body = document.getElementById('acc-body');
+    btn?.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      body.hidden = open;
+      btn.classList.toggle('open', !open);
+    });
+  </script>
 </body>
 </html>
