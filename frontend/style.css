@@ -10,19 +10,6 @@
   --shadow: 0 10px 28px rgba(0,0,0,.35);
 }
 
-/* ---------- Custom font (replace file names if needed) ---------- */
-@font-face{
-  font-family: 'Mincraft';
-  src:
-    url('assets/fonts/Minecraft.woff2') format('woff2'),
-    url('assets/fonts/Minecraft.woff')  format('woff'),
-    url('assets/fonts/Minecraft.ttf')   format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-/* If you also have bold/italic, declare them separately with correct weights/styles. */
-
 /* ---------- Base ---------- */
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
@@ -31,7 +18,7 @@ body{
   color: var(--ink);
   background:
     linear-gradient(180deg, var(--bg-dim), var(--bg-dim)),
-    url('assets/2025-05-21_21.31.39.png') center/cover fixed no-repeat;
+    url('assets/2024-07-14_18.17.44.jpg') center/cover fixed no-repeat;
   display: flex;
   flex-direction: column;
 
@@ -46,8 +33,11 @@ body{
 
 /* ---------- Header ---------- */
 .site-header{
-  display:flex; align-items:center; justify-content:center;
-  padding: clamp(10px, 2.5vw, 20px) 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(30px, 6vw, 60px) 0;      /* responsive top/bottom padding */
+  margin-bottom: clamp(10px, 3vw, 40px);  /* responsive gap below header */
 }
 #logo{
   width: clamp(220px, 42vw, 560px);
@@ -78,37 +68,12 @@ body{
   padding: 12px 16px;
   border-bottom: 1px solid rgba(255,255,255,.06);
 }
-
-/* Headings use custom font (only where it’s big = looks crisp). 
-   If still glowy, change to 'Montserrat' here. */
-.panel-title h2,
-.acc-head span,
-.acc-col h3,
-.card-title {
-  font-family: 'Mincraft', 'Montserrat', sans-serif;
-  letter-spacing: 0;   /* letter-spacing causes fringe on pixel/retro fonts */
+.panel-title h2{
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   color: var(--ink);
-  font-synthesis: none;
-}
-
-/* Snap heading sizes to whole pixels (avoid fractional rendering) */
-@media (max-width: 767px){
-  .panel-title h2,
-  .acc-head span { font-size: 18px; }
-  .acc-col h3 { font-size: 16px; }
-  .card-title { font-size: 14px; }
-}
-@media (min-width: 768px) and (max-width: 1199px){
-  .panel-title h2,
-  .acc-head span { font-size: 20px; }
-  .acc-col h3 { font-size: 18px; }
-  .card-title { font-size: 15px; }
-}
-@media (min-width: 1200px){
-  .panel-title h2,
-  .acc-head span { font-size: 22px; }
-  .acc-col h3 { font-size: 18px; }
-  .card-title { font-size: 16px; }
 }
 
 /* ---------- Accordion (Contestants) ---------- */
@@ -124,38 +89,77 @@ body{
   font-weight: 700;
 }
 .accordion .acc-head .chev{ transition: transform .18s ease; }
-.accordion .acc-head.open .chev{ transform: rotate(180deg); }
+
+/* The panel itself controls open/close */
+.panel.accordion .acc-body[hidden] { display: none; }  /* safeguard */
+.panel.accordion.open .acc-body { display: block; }
+.panel.accordion.open .acc-head .chev { transform: rotate(180deg); }
 
 .acc-body{ padding: 12px 16px 16px; }
+
+/* Two blocks side-by-side: Estonians (left) + Finnish (right) */
 .acc-cols{
-  display:grid;
-  grid-template-columns: 1fr;
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* side-by-side on tablet/desktop */
   gap: var(--gap);
+}
+@media (max-width: 768px){
+  .acc-cols{ grid-template-columns: 1fr; } /* stack panels on small screens */
+}
+
+.acc-col{
+  background: var(--panel);
+  border-radius: var(--radius);
+  padding: 12px;
 }
 .acc-col h3{
   margin: 4px 0 10px;
   text-transform: uppercase;
   font-weight: 700;
+  color: var(--ink);
 }
 
-/* Contestants list */
-.userlist{ list-style: none; margin: 0; padding: 0; }
+/* Names inside each block → TWO columns (even on mobile).
+   Only collapse to one column on very narrow screens ≤ 360px. */
+.userlist{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 20px; /* vertical 8px, horizontal 20px */
+}
+@media (max-width: 360px){
+  .userlist{ grid-template-columns: 1fr; } /* single column on extra small phones */
+}
+
+/* Entire row is the link for better tap targets */
 .userlist li{
-  display:flex; align-items:center; gap: 10px;
-  padding: 8px 6px;
+  padding: 0;  /* padding moves to the link */
   border-bottom: 1px solid rgba(255,255,255,.06);
 }
 .userlist li:last-child{ border-bottom: 0; }
+
+.userlist a{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;          /* Material guideline; good for tapping */
+  padding: 10px 8px;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 8px;        /* optional: pleasant hover/tap bg */
+}
+.userlist a:hover{
+  background: rgba(255,255,255,0.06);
+}
+
 .avatar{
-  width: 28px; height: 28px; border-radius: 50%; object-fit: cover;
+  width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
   border: 1px solid rgba(255,255,255,.15);
 }
-.userlist a{
-  color: var(--ink);
-  text-decoration: none;
-  font-weight: 600;       /* whole integer weight = cleaner */
-}
-.userlist a:hover{ text-decoration: underline; }
 
 /* ---------- Streams: two columns side-by-side ---------- */
 .streams-2col{
@@ -167,7 +171,7 @@ body{
   .streams-2col{ grid-template-columns: 1fr 1fr; } /* side-by-side on desktop */
 }
 
-/* grids inside each column */
+/* Grid inside each column (cards) */
 .grid{
   display:grid;
   gap: clamp(10px, 1.5vw, 18px);
@@ -223,13 +227,9 @@ body{
 }
 .site-footer a{ color: var(--ink); }
 
-/* ---------- Responsive extras ---------- */
-@media (min-width: 768px){
-  .acc-cols{ grid-template-columns: 1fr 1fr; }
-}
-
 /* ---------- Hard no-glow overrides (safety net) ---------- */
 *, *::before, *::after {
   text-shadow: none;
   filter: none;
+  font-family: Minecraft;
 }

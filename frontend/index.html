@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <title>Sisumaa Live</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Body font -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -16,29 +17,73 @@
 
   <main class="wrap">
 
-    <!-- Contestants (collapsible, closed by default) -->
+    <!-- Contestants (collapsible, CLOSED by default) -->
     <section class="panel accordion">
       <button class="acc-head" id="acc-toggle" aria-expanded="false" aria-controls="acc-body">
-        <span> CONTESTANTS</span>
+        <span>CONTESTANTS</span>
         <svg class="chev" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
           <path d="M8 10l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
 
+      <!-- IMPORTANT: id="acc-body" + hidden -->
       <div class="acc-body" id="acc-body" hidden>
         <div class="acc-cols">
+
+          <!-- Estonians (left) -->
           <div class="acc-col">
             <h3>Estonians</h3>
-            <ul id="list-ee" class="userlist">
-              <li><img class="avatar" src="assets/pfp/a.jpg"><a href="#">KRISPOISS</a></li>
+            <ul class="userlist" id="list-ee">
+              <li>
+                <a href="https://example.com">
+                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
+                  <span>Name</span>
+                </a>
+                <a href="https://example.com">
+                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
+                  <span>Name</span>
+                </a>
+              </li>
+              <li>
+                <a href="https://example.com">
+                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
+                  <span>Name</span>
+                </a>
+                <a href="https://example.com">
+                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
+                  <span>Name</span>
+                </a>
+              </li>
             </ul>
           </div>
+
+          <!-- Finnish (right) -->
           <div class="acc-col">
-            <h3>Finns</h3>
-            <ul id="list-fi" class="userlist">
-              <img class="avatar" src="assets/pfp/b.jpg"><a href="#">SELGROOTU</a></li>
+            <h3>Finnish</h3>
+            <ul class="userlist" id="list-fi">
+              <li>
+                <a href="https://example.com">
+                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
+                  <span>Name</span>
+                </a>
+                <a href="https://example.com">
+                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
+                  <span>Name</span>
+                </a>
+              </li>
+              <li>
+                <a href="https://example.com">
+                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
+                  <span>Name</span>
+                </a>
+                <a href="https://example.com">
+                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
+                  <span>Name</span>
+                </a>
+              </li>
             </ul>
           </div>
+
         </div>
       </div>
     </section>
@@ -48,23 +93,30 @@
       <div class="panel">
         <div class="panel-title"><h2>ESTONIANS</h2></div>
         <div class="grid" id="live-ee">
-          <!-- Put Estonian stream cards here -->
-          <article class="card">
-            <img class="thumb" src="assets/thumbs/sample.jpg" alt="Stream">
-            <div class="card-title">Krispoiss</div>
-          </article>
-          
+          <div class="grid" id="live-ee">
+  <div class="card" onclick="window.open('https://www.twitch.tv/chukubala', '_blank')">
+    <img class="thumb" src="assets/pfp/chukupfp.png" alt="ChukuBala Live">
+    <div class="card-title">ChukuBala</div>
+  </div>
+
+  <div class="card" onclick="window.open('https://www.twitch.tv/stother', '_blank')">
+    <img class="thumb" src="assets/pfp/stother.jpeg" alt="StoTheR Live">
+    <div class="card-title">StoTheR</div>
+  </div>
+
+  <div class="card" onclick="window.open('https://youtube.com/@ismaralf', '_blank')">
+    <img class="thumb" src="assets/landscape/Ralfs.png" alt="Ralf Paldermaa Live">
+    <div class="card-title">Ralf Paldermaa</div>
+  </div>
+</div>
+
         </div>
       </div>
 
       <div class="panel">
         <div class="panel-title"><h2>FINNS</h2></div>
         <div class="grid" id="live-fi">
-          <!-- Put Finnish stream cards here -->
-           <article class="card">
-            <img class="thumb" src="assets/thumbs/sample.jpg" alt="Stream">
-            <div class="card-title">Selgrootu</div>
-            </article>
+          <!-- Your cards render here -->
         </div>
       </div>
     </section>
@@ -75,15 +127,24 @@
     <p>Oled admin? <a href="login.html">Logi sisse</a></p>
   </footer>
 
+  <!-- Tiny, robust accordion logic -->
   <script>
-    // Collapsible contestants panel
-    const btn = document.getElementById('acc-toggle');
-    const body = document.getElementById('acc-body');
-    btn?.addEventListener('click', () => {
-      const open = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!open));
-      body.hidden = open;
-      btn.classList.toggle('open', !open);
+    document.addEventListener('DOMContentLoaded', () => {
+      const acc = document.querySelector('.panel.accordion');
+      const btn = document.getElementById('acc-toggle');
+      const body = document.getElementById('acc-body');
+      if (!acc || !btn || !body) return;
+
+      // Start closed
+      acc.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      body.hidden = true;
+
+      btn.addEventListener('click', () => {
+        const isOpen = acc.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(isOpen));
+        body.hidden = !isOpen;
+      });
     });
   </script>
 </body>
