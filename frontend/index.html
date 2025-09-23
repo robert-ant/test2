@@ -4,8 +4,7 @@
   <meta charset="utf-8" />
   <title>Sisumaa Live</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Body font -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <!-- We use local @font-face for Minecraft in CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -26,10 +25,8 @@
         </svg>
       </button>
 
-      <!-- IMPORTANT: id="acc-body" + hidden -->
       <div class="acc-body" id="acc-body" hidden>
         <div class="acc-cols">
-
           <!-- Estonians (left) -->
           <div class="acc-col">
             <h3>Estonians</h3>
@@ -37,21 +34,31 @@
               <li>
                 <a href="https://example.com">
                   <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name</span>
-                </a>
-                <a href="https://example.com">
-                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name</span>
+                  <span>Name 1</span>
                 </a>
               </li>
               <li>
                 <a href="https://example.com">
                   <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name</span>
+                  <span>Name 2</span>
                 </a>
+              </li>
+              <li>
                 <a href="https://example.com">
                   <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name</span>
+                  <span>Name 3</span>
+                </a>
+              </li>
+              <li>
+                <a href="https://example.com">
+                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
+                  <span>Name 4</span>
+                </a>
+              </li>
+              <li>
+                <a href="https://example.com">
+                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
+                  <span>Name 4</span>
                 </a>
               </li>
             </ul>
@@ -64,59 +71,69 @@
               <li>
                 <a href="https://example.com">
                   <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name</span>
-                </a>
-                <a href="https://example.com">
-                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name</span>
+                  <span>Name A</span>
                 </a>
               </li>
               <li>
                 <a href="https://example.com">
                   <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name</span>
+                  <span>Name B</span>
                 </a>
+              </li>
+              <li>
                 <a href="https://example.com">
                   <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name</span>
+                  <span>Name C</span>
+                </a>
+              </li>
+              <li>
+                <a href="https://example.com">
+                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
+                  <span>Name D</span>
                 </a>
               </li>
             </ul>
           </div>
-
         </div>
       </div>
     </section>
 
-    <!-- Livestreams: two side-by-side boxes -->
+    <!-- Section header for livestreams (spans both columns) -->
+    <div class="livestream-title">
+      <h2>LIVESTREAMS</h2>
+      <p class="section-sub">Live right now</p>
+    </div>
+
+    <!-- Livestreams: two side-by-side boxes (with 2 cards/row on desktop) -->
     <section class="streams-2col">
       <div class="panel">
         <div class="panel-title"><h2>ESTONIANS</h2></div>
-        <div class="grid" id="live-ee">
-          <div class="grid" id="live-ee">
-  <div class="card" onclick="window.open('https://www.twitch.tv/chukubala', '_blank')">
-    <img class="thumb" src="assets/pfp/chukupfp.png" alt="ChukuBala Live">
-    <div class="card-title">ChukuBala</div>
-  </div>
+        <div class="grid grid-large" id="live-ee">
+          <!-- Visible sample cards for layout testing -->
+          <div class="card" onclick="window.open('https://www.twitch.tv/chukubala', '_blank')">
+            <img class="thumb" src="assets/pfp/chukupfp.png" alt="ChukuBala Live">
+            <div class="card-title">ChukuBala</div>
+          </div>
 
-  <div class="card" onclick="window.open('https://www.twitch.tv/stother', '_blank')">
-    <img class="thumb" src="assets/pfp/stother.jpeg" alt="StoTheR Live">
-    <div class="card-title">StoTheR</div>
-  </div>
-
-  <div class="card" onclick="window.open('https://youtube.com/@ismaralf', '_blank')">
-    <img class="thumb" src="assets/landscape/Ralfs.png" alt="Ralf Paldermaa Live">
-    <div class="card-title">Ralf Paldermaa</div>
-  </div>
-</div>
-
+          <div class="card" onclick="window.open('https://www.twitch.tv/stother', '_blank')">
+            <img class="thumb" src="assets/pfp/stother.jpeg" alt="StoTheR Live">
+            <div class="card-title">StoTheR</div>
+          </div>
         </div>
       </div>
 
       <div class="panel">
         <div class="panel-title"><h2>FINNS</h2></div>
-        <div class="grid" id="live-fi">
-          <!-- Your cards render here -->
+        <div class="grid grid-large" id="live-fi">
+          <div class="card" onclick="window.open('https://www.youtube.com/@ismaralf', '_blank')">
+            <img class="thumb" src="assets/landscape/Ralfs.png" alt="Ralf Paldermaa Live">
+            <div class="card-title">Ralf Paldermaa</div>
+          </div>
+
+          <div class="card" onclick="window.open('https://www.youtube.com/@estmagicz', '_blank')">
+            <img class="thumb" src="assets/pfp/oliver.jpg" alt="Estmagicz Live">
+            <div class="card-title">Estmagicz</div>
+          </div>
         </div>
       </div>
     </section>
@@ -127,7 +144,7 @@
     <p>Oled admin? <a href="login.html">Logi sisse</a></p>
   </footer>
 
-  <!-- Tiny, robust accordion logic -->
+  <!-- Accordion logic -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const acc = document.querySelector('.panel.accordion');
