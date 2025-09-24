@@ -4,10 +4,18 @@
   <meta charset="utf-8" />
   <title>Sisumaa Live</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- We use local @font-face for Minecraft in CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- Top-left badge -->
+  <a class="wise-badge" href="#" aria-label="Wise info">
+    <img src="assets/wise.png" alt="" class="wise-logo">
+    <div class="wise-text">
+      <strong>Wise</strong>
+      <span>placeholder line</span>
+    </div>
+  </a>
 
   <!-- Header -->
   <header class="site-header">
@@ -17,90 +25,63 @@
   <main class="wrap">
 
     <!-- Contestants (collapsible, CLOSED by default) -->
-    <section class="panel accordion">
-      <button class="acc-head" id="acc-toggle" aria-expanded="false" aria-controls="acc-body">
-        <span>CONTESTANTS</span>
+    <section class="panel accordion" id="contestants">
+      <button class="acc-head" id="acc-toggle" aria-expanded="false" aria-controls="acc-anim">
+        <h2>CONTESTANTS</h2>
         <svg class="chev" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
           <path d="M8 10l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
 
-      <div class="acc-body" id="acc-body" hidden>
-        <div class="acc-cols">
-          <!-- Estonians (left) -->
-          <div class="acc-col">
-            <h3>Estonians</h3>
-            <ul class="userlist" id="list-ee">
-              <li>
-                <a href="https://example.com">
-                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name 1</span>
-                </a>
-              </li>
-              <li>
-                <a href="https://example.com">
-                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name 2</span>
-                </a>
-              </li>
-              <li>
-                <a href="https://example.com">
-                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name 3</span>
-                </a>
-              </li>
-              <li>
-                <a href="https://example.com">
-                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name 4</span>
-                </a>
-              </li>
-              <li>
-                <a href="https://example.com">
-                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name 4</span>
-                </a>
-              </li>
-            </ul>
-          </div>
+      <!-- Animate this wrapper's height (no padding here to avoid “lip”) -->
+      <div class="acc-anim" id="acc-anim" hidden>
+        <div class="acc-inner">
+          <div class="acc-cols">
+            <!-- Estonians (left) -->
+            <div class="acc-col">
+              <h3>Estonians</h3>
+              <ul class="userlist" id="list-ee">
+                <li>
+                  <a href="#"><img class="avatar" src="assets/pfp/person.jpg" alt=""><span>Name 1</span></a>
+                </li>
+                <li>
+                  <a href="#"><img class="avatar" src="assets/pfp/person.jpg" alt=""><span>Name 2</span></a>
+                </li>
+                <li>
+                  <a href="#"><img class="avatar" src="assets/pfp/person.jpg" alt=""><span>Name 3</span></a>
+                </li>
+                <li>
+                  <a href="#"><img class="avatar" src="assets/pfp/person.jpg" alt=""><span>Name 4</span></a>
+                </li>
+              </ul>
+            </div>
 
-          <!-- Finnish (right) -->
-          <div class="acc-col">
-            <h3>Finnish</h3>
-            <ul class="userlist" id="list-fi">
-              <li>
-                <a href="https://example.com">
-                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name A</span>
-                </a>
-              </li>
-              <li>
-                <a href="https://example.com">
-                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name B</span>
-                </a>
-              </li>
-              <li>
-                <a href="https://example.com">
-                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name C</span>
-                </a>
-              </li>
-              <li>
-                <a href="https://example.com">
-                  <img class="avatar" src="assets/pfp/person.jpg" alt="">
-                  <span>Name D</span>
-                </a>
-              </li>
-            </ul>
+            <!-- Finnish (right) -->
+            <div class="acc-col">
+              <h3>Finnish</h3>
+              <ul class="userlist" id="list-fi">
+                <li>
+                  <a href="#"><img class="avatar" src="assets/pfp/person.jpg" alt=""><span>Name A</span></a>
+                </li>
+                <li>
+                  <a href="#"><img class="avatar" src="assets/pfp/person.jpg" alt=""><span>Name B</span></a>
+                </li>
+                <li>
+                  <a href="#"><img class="avatar" src="assets/pfp/person.jpg" alt=""><span>Name C</span></a>
+                </li>
+                <li>
+                  <a href="#"><img class="avatar" src="assets/pfp/person.jpg" alt=""><span>Name D</span></a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Section header for livestreams (spans both columns) -->
+    <!-- Livestreams heading (no box) -->
     <div class="livestream-title">
-      <h2>LIVESTREAMS</h2>
+      <h2>LIVESTREAMS <img src="assets/ball.png"></img></h2>
       <p class="section-sub">Live right now</p>
     </div>
 
@@ -109,15 +90,15 @@
       <div class="panel">
         <div class="panel-title"><h2>ESTONIANS</h2></div>
         <div class="grid grid-large" id="live-ee">
-          <!-- Visible sample cards for layout testing -->
+          <!-- Samples for layout -->
           <div class="card" onclick="window.open('https://www.twitch.tv/chukubala', '_blank')">
             <img class="thumb" src="assets/pfp/chukupfp.png" alt="ChukuBala Live">
-            <div class="card-title">ChukuBala</div>
+            <div class="card-title"><img class="flags" src="assets/flags/Flag_of_Estonia.png" alt="">ChukuBala</div>
           </div>
 
           <div class="card" onclick="window.open('https://www.twitch.tv/stother', '_blank')">
             <img class="thumb" src="assets/pfp/stother.jpeg" alt="StoTheR Live">
-            <div class="card-title">StoTheR</div>
+            <div class="card-title"><img class="flags" src="assets/flags/Flag_of_Estonia.png" alt="">StoTheR</div>
           </div>
         </div>
       </div>
@@ -127,12 +108,12 @@
         <div class="grid grid-large" id="live-fi">
           <div class="card" onclick="window.open('https://www.youtube.com/@ismaralf', '_blank')">
             <img class="thumb" src="assets/landscape/Ralfs.png" alt="Ralf Paldermaa Live">
-            <div class="card-title">Ralf Paldermaa</div>
+            <div class="card-title"><img class="flags" src="assets/flags/Flag_of_Finland.png" alt="">Ralf Paldermaa</div>
           </div>
 
           <div class="card" onclick="window.open('https://www.youtube.com/@estmagicz', '_blank')">
             <img class="thumb" src="assets/pfp/oliver.jpg" alt="Estmagicz Live">
-            <div class="card-title">Estmagicz</div>
+            <div class="card-title"><img class="flags" src="assets/flags/Flag_of_Finland.png" alt="">Estmagicz</div>
           </div>
         </div>
       </div>
@@ -140,28 +121,43 @@
 
   </main>
 
-  <footer class="site-footer">
-    <p>Oled admin? <a href="login.html">Logi sisse</a></p>
-  </footer>
-
-  <!-- Accordion logic -->
+  <!-- Accordion animation -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const acc = document.querySelector('.panel.accordion');
+      // Smooth accordion without “lip”
+      const acc = document.getElementById('contestants');
       const btn = document.getElementById('acc-toggle');
-      const body = document.getElementById('acc-body');
-      if (!acc || !btn || !body) return;
+      const anim = document.getElementById('acc-anim');
+      if (acc && btn && anim) {
+        acc.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        anim.hidden = true;
+        anim.style.maxHeight = '0px';
+        anim.style.overflow = 'hidden';
+        anim.style.transition = 'max-height 280ms ease';
 
-      // Start closed
-      acc.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-      body.hidden = true;
-
-      btn.addEventListener('click', () => {
-        const isOpen = acc.classList.toggle('open');
-        btn.setAttribute('aria-expanded', String(isOpen));
-        body.hidden = !isOpen;
-      });
+        btn.addEventListener('click', () => {
+          const isOpen = acc.classList.toggle('open');
+          btn.setAttribute('aria-expanded', String(isOpen));
+          if (isOpen) {
+            anim.hidden = false;
+            requestAnimationFrame(() => {
+              anim.style.maxHeight = anim.scrollHeight + 'px';
+            });
+          } else {
+            anim.style.maxHeight = anim.scrollHeight + 'px';
+            requestAnimationFrame(() => {
+              anim.style.maxHeight = '0px';
+            });
+            anim.addEventListener('transitionend', function onEnd(e){
+              if (e.propertyName === 'max-height' && !acc.classList.contains('open')) {
+                anim.hidden = true;
+                anim.removeEventListener('transitionend', onEnd);
+              }
+            });
+          }
+        });
+      }
     });
   </script>
 </body>
